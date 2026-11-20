@@ -41,7 +41,7 @@
 | `sc-alert-modal` | EXTENDED | ready | primeng/dynamicdialog | 16 inputs | sc-custom-modal sc-button | ✓ | — |
 | `sc-avatar` | EXTENDED | ready | primeng/avatar, primeng/overlaybadge | 12 inputs | — | ✓ | 4 |
 | `sc-avatargroup` | STANDARD | experimental (sin demo) | primeng/avatargroup | 0 inputs | — | — | — |
-| `sc-badge` | STANDARD | ready | primeng/badge | 3 inputs | — | ✓ | 6 |
+| `sc-badge` | STANDARD | ready | primeng/badge | 3 inputs | — | ✓ | 11 |
 | `sc-breadcrumb` | EXTENDED | ready | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
 | `sc-bulk-action-bar` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-message sc-button | ✓ | 2 |
 | `sc-bulk-edit-menu` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-select sc-button | ✓ | — |
@@ -72,7 +72,7 @@
 | `sc-group-popover` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 3 inputs | — | ✓ | 6 |
 | `sc-icon-tile` | CUSTOM | ready | — | 3 inputs | — | ✓ | — |
 | `sc-impact-preview-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-custom-modal sc-button | ✓ | 1 |
-| `sc-inline-rename-cell` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | — | ✓ | 2 |
+| `sc-inline-rename-cell` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | — | ✓ | 4 |
 | `sc-inputgroup` | STANDARD | ready | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
 | `sc-inputnumber` | EXTENDED | ready | primeng/inputtext | 18 inputs | sc-field-label sc-field-msg | ✓ | 20 |
 | `sc-inputtags` | EXTENDED | experimental (sin maestro en el Kit) | primeng/inputtags | 18 inputs | sc-field-label sc-field-msg | ✓ | 2 |

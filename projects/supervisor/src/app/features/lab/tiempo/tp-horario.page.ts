@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, linkedSignal, type OnInit, signal, type TemplateRef, viewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ScButtonComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScBadgeComponent, ScButtonComponent, ScInlineRenameCellComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -10,6 +11,7 @@ import { BreadcrumbService } from '@core/services';
 
 import { ahoraEn, diaDeLaSemana, type Horario, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
+import { ChannelIconComponent } from '@shared/components';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
@@ -25,6 +27,10 @@ import { T } from './tp-textos';
 import { contarUso } from './tp-usos';
 
 type Borrador = Omit<Horario, 'id'>;
+/** Lo que se escribe en la cabecera, con el renombrado en el sitio del DS. */
+type Texto = 'name' | 'description';
+/** Lo más larga que es una descripción: una línea bajo el nombre. */
+const MAX_DESCRIPCION = 160;
 
 /** Un horario nuevo empieza sin ningún día abierto: la semana enseña una fila sin días para irlos marcando. */
 const VACIO: Borrador = {
@@ -49,7 +55,7 @@ const LISTA = '/lab/tiempo';
  */
 @Component({
   selector: 'sc-tp-horario',
-  imports: [ScButtonComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
+  imports: [ChannelIconComponent, ScBadgeComponent, ScButtonComponent, ScIconComponent, ScInlineRenameCellComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
   templateUrl: './tp-horario.page.html',
   // Hojas globales repartidas por dueño: cada una cabe en el presupuesto de estilos por componente.
   styleUrls: ['./tp-base.scss', './tp-piezas.scss', './tp-capas.scss', './tp-semana.scss', './tp-dias.scss', './tp-cierre.scss'],
@@ -65,6 +71,8 @@ export class TpHorarioPage implements OnInit {
   private readonly avisos = inject(TpAvisos);
 
   protected readonly tipos = TIPOS_DE_USO;
+  /** El icono del DS de cada tipo de sitio; WhatsApp lleva su logo (`sc-channel-icon`), que Material no tiene. */
+  protected readonly simbolos: Readonly<Record<keyof typeof TIPOS_DE_USO, string | null>> = { servicio: 'call', grupo: 'group', whatsapp: null, calendario: 'calendar_month' };
   /** La semana se edita en una lista de siete días; `?variante=columna` enseña la versión anterior (días que comparten horas y mapa), para comparar. */
   protected readonly columna = this.route.snapshot.queryParamMap.get('variante') === 'columna';
   protected readonly sitios = sitios;
@@ -115,7 +123,7 @@ export class TpHorarioPage implements OnInit {
   protected readonly ahoraTexto = computed(() => {
     const e = this.estado();
     if (e.clave === 'inactive') return null;
-    return { abierto: e.clave === 'open', titulo: e.clave === 'open' ? 'abierto' : 'cerrado', detalle: enFrase(e.detalle) };
+    return { abierto: e.clave === 'open', detalle: enFrase(e.detalle) };
   });
   /**
    * Las horas a la semana, con hacia dónde se movieron: la cifra entra desde abajo si sube y desde arriba si baja. La
@@ -165,6 +173,8 @@ export class TpHorarioPage implements OnInit {
     if (raw === null || raw === 'nuevo' || raw === 'crear') {
       this.desdeCopia();
       this.sucio.markPristine();
+      // Al crear (o duplicar), el nombre empieza abierto y elegido entero: es lo primero que se escribe.
+      this.editar('name');
       return;
     }
     const h = this.store.items().find((x) => x.id === Number(raw));
@@ -206,6 +216,58 @@ export class TpHorarioPage implements OnInit {
     setTimeout(() => document.querySelector<HTMLElement>('#tp-dia-0')?.focus());
   }
 
+  /* ── El nombre y la descripción, con el renombrado en el sitio del DS ─────────────────────────────────────────── */
+
+  /** Lo que está abierto en su campo, si algo; lo de antes de abrirlo, para que Esc lo devuelva. */
+  protected readonly editando = signal<Texto | null>(null);
+  private antesDeEditar = '';
+
+  protected editar(campo: Texto): void {
+    this.antesDeEditar = this.form()[campo] ?? '';
+    this.editando.set(campo);
+    // El campo del DS se enfoca al abrirse, pero elige el texto antes de tenerlo (su valor llega un instante después):
+    // se elige aquí, para que escribir lo cambie entero como promete.
+    setTimeout(() => document.querySelector<HTMLInputElement>(`[data-texto="${campo}"] sc-inline-rename-cell input`)?.select());
+  }
+
+  /** Lo escrito cuenta mientras se escribe: «Guardar» y su motivo lo ven sin esperar a Intro. */
+  protected enVivo(campo: Texto, e: Event): void {
+    if (this.editando() !== campo) return;
+    const valor = (e.target as HTMLInputElement).value;
+    this.update(campo, campo === 'description' ? valor.slice(0, MAX_DESCRIPCION) : valor);
+  }
+
+  /** Intro o ✓: se queda lo escrito (sin espacios a los lados) y el foco vuelve al texto. */
+  protected cerrarEdicion(campo: Texto, valor: string): void {
+    this.dejar(campo, valor);
+    this.enfocarTexto(campo);
+  }
+
+  /** Esc o ×: vuelve lo de antes de abrirlo. */
+  protected cancelarEdicion(campo: Texto): void {
+    this.dejar(campo, this.antesDeEditar);
+    this.enfocarTexto(campo);
+  }
+
+  /** Salir del campo con el ratón o con Tab se queda con lo escrito; un nombre vacío no vale y vuelve el de antes. */
+  protected salir(campo: Texto, e: FocusEvent): void {
+    // Solo cuenta salir del campo: el texto que lo abre también pierde el foco al irse, y eso no es salir.
+    if (this.editando() !== campo || !(e.target as HTMLElement).closest('sc-inline-rename-cell')) return;
+    if ((e.currentTarget as HTMLElement).contains(e.relatedTarget as Node | null)) return;
+    const escrito = (this.form()[campo] ?? '').trim();
+    this.dejar(campo, campo === 'name' && !escrito && this.modo() === 'editar' ? this.antesDeEditar : escrito);
+  }
+
+  private dejar(campo: Texto, valor: string): void {
+    const limpio = valor.trim().slice(0, campo === 'description' ? MAX_DESCRIPCION : undefined);
+    if ((this.form()[campo] ?? '') !== limpio) this.update(campo, limpio);
+    this.editando.set(null);
+  }
+
+  private enfocarTexto(campo: Texto): void {
+    setTimeout(() => document.querySelector<HTMLElement>(`.tp-cierre__editable[data-campo="${campo}"]`)?.focus());
+  }
+
   protected update<K extends keyof Borrador>(key: K, value: Borrador[K]): void {
     this.apuntar(key);
     this.form.update((f) => ({ ...f, [key]: value }));
@@ -223,7 +285,7 @@ export class TpHorarioPage implements OnInit {
   private apuntar(key: keyof Borrador): void {
     if (this.enGesto) return;
     const ahora = Date.now();
-    const seguido = this.ultimoCambio?.key === key && key === 'name' && ahora - this.ultimoCambio.t < 1500;
+    const seguido = this.ultimoCambio?.key === key && (key === 'name' || key === 'description') && ahora - this.ultimoCambio.t < 1500;
     this.ultimoCambio = { key, t: ahora };
     if (seguido) return;
     this.pasado.update((p) => [...p.slice(-49), this.form()]);

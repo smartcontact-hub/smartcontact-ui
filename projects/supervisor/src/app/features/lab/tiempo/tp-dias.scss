@@ -13,8 +13,11 @@
   --tp-franja-fondo: color-mix(in oklch, var(--tp-si) 10%, var(--tp-surface));
 
   display: grid;
-  /* Las horas, en una columna de ancho fijo: añadir una pausa no estrecha la barra. */
-  grid-template-columns: max-content minmax(0, 1fr) 26.5rem;
+  /*
+   * Las horas, en una columna de ancho fijo: añadir una pausa no estrecha la barra. Cabe la fila más ancha, dos franjas con
+   * el aire entre ellas y «Quitar pausa».
+   */
+  grid-template-columns: max-content minmax(0, 1fr) 29rem;
   column-gap: var(--s-3);
   row-gap: var(--s-1-5);
 }
@@ -161,10 +164,13 @@
   border-radius: var(--r-full);
   cursor: pointer;
 }
-/* Hoy, sin palabra: el día en una pastilla del color de la raya de ahora, que se leen juntas. */
+/*
+ * Hoy, sin palabra: el día en una pastilla clara del color de la raya de ahora, que se leen juntas. Clara y no rellena:
+ * el azul lleno es del foco y de lo elegido, y un «Vie» relleno se leía como algo elegido.
+ */
 .tp-dias__dia-nombre.is-hoy {
-  background: var(--tp-accent);
-  color: #fff;
+  background: var(--sc-bg-info-subtle);
+  color: var(--sc-text-info);
 }
 .tp-dias .tp-sem__ahora {
   /* La raya es fina, pero la zona que saca su tooltip («Ahora, 7:57») es más ancha: se encuentra sin apuntar fino. */
@@ -193,10 +199,12 @@
     box-shadow: 0 0 0 2px var(--tp-surface);
   }
 }
-/* Los días que cambiaría «¿También…?»: su nombre, con el aro de lo elegido. */
-.tp-dias__fila.is-ofrecido .tp-dias__dia {
-  box-shadow: 0 0 0 2px var(--tp-accent);
-  color: var(--tp-accent-ink);
+/*
+ * Los días que cambiaría «¿También…?»: su pista, teñida del azul claro de la ayuda, sin aro. El aro es del foco: con
+ * cuatro aros a la vez no se sabía dónde estaba uno.
+ */
+.tp-dias__fila.is-ofrecido .tp-sem__pista:not(.is-cerrada) {
+  background-color: var(--sc-bg-info-subtle);
 }
 .tp-dias__pista.is-cerrada {
   background: var(--tp-hatch), var(--tp-muted);
@@ -231,10 +239,11 @@
 
 /* ── Las horas: cada franja en su caja, del verde de su barra; se escriben donde se leen ────────────────────────── */
 
+/* Entre franjas, el doble de aire que dentro (7 · 14 · 28): cada par de horas se lee como una pieza. */
 .tp-dias__horas {
   display: flex;
   align-items: center;
-  gap: var(--s-3);
+  gap: var(--sc-spacing-2);
   min-inline-size: 0;
   padding-inline-start: var(--s-2);
 }
@@ -255,12 +264,19 @@
 .tp-dias__hora {
   inline-size: 4rem;
 }
-/* Escribir en una franja la resalta entera, con su barra: se edita la franja, no una hora suelta. Elegir su barra, igual. */
-.tp-dias__franja:focus-within,
-.tp-dias__franja.is-elegida {
-  box-shadow: 0 0 0 2px var(--tp-accent);
+/*
+ * Un solo aro a la vez, el del foco. Escribir en una hora lleva el aro del campo del DS y nada más: su barra se queda
+ * entera y las demás del día se apagan, para ver qué barra se está escribiendo sin otro aro. Una barra elegida con un
+ * clic lleva el suyo (`is-elegida`), que es su foco: el contorno del navegador sobra.
+ */
+.tp-dias .tp-sem__barra {
+  transition-property: opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
 }
-/* La barra elegida ya lleva su aro (`is-elegida`): el contorno del foco sobra. */
+.tp-dias__fila.has-foco .tp-sem__barra:not(.is-enlazada) {
+  opacity: 0.35;
+}
 .tp-dias .tp-sem__barra:focus {
   outline: none;
 }
@@ -268,26 +284,28 @@
   background: color-mix(in oklch, var(--tp-si) 45%, transparent);
 }
 /*
- * La × de una franja: en la esquina de su caja, como al quitar una etiqueta. Aparece al pasar por la caja o al llegar con
- * el teclado; se pulsa en un aro de 1,5rem aunque se vea más pequeña.
+ * La × de una franja: en el aire que la separa de la siguiente, a su altura, no en su esquina, donde se montaba sobre el
+ * aro del campo con el foco. Aparece al pasar por la franja o al llegar con el teclado; se pulsa en un aro de 1,5rem
+ * aunque se vea más pequeña. El icono es la X del DS (quitar).
  */
 .tp-dias__borrar {
   position: absolute;
   z-index: 2;
-  inset-block-start: -0.375rem;
-  inset-inline-end: -0.375rem;
+  inset-block-start: 50%;
+  inset-inline-end: calc(-0.5 * (var(--sc-spacing-2) + 1rem));
   display: grid;
   place-items: center;
   inline-size: 1rem;
   block-size: 1rem;
   padding: 0;
   border: 0;
-  border-radius: var(--r-full);
-  background: var(--tp-surface);
-  box-shadow: var(--tp-ring);
-  color: var(--tp-ink-3);
+  border-radius: var(--sc-radius-full);
+  background: transparent;
+  font-size: var(--sc-font-size-caption);
+  color: var(--sc-icon-secondary);
   cursor: pointer;
   opacity: 0;
+  translate: 0 -50%;
   transition-property: opacity, background-color, color;
   transition-duration: 120ms;
   transition-timing-function: ease-out;
@@ -302,23 +320,24 @@
     opacity: 1;
   }
   &:hover {
-    background: var(--tp-danger-soft);
-    color: var(--tp-danger-ink);
+    background: var(--sc-bg-danger-subtle);
+    color: var(--sc-text-danger);
   }
   &:focus-visible {
-    outline: 2px solid var(--tp-accent);
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
     outline-offset: 1px;
   }
-  /* En la esquina de la derecha: su tooltip se abre hacia dentro. */
-  &[data-tip]::after {
-    inset-inline-start: auto;
-    inset-inline-end: 0;
-    translate: 0 0.125rem;
-  }
-  &[data-tip]:hover::after,
-  &[data-tip]:focus-visible::after {
-    translate: 0 0;
-  }
+}
+/* En la lista de «+N», las franjas van una debajo de otra: la × va al final de la suya, dentro de la lista. */
+.tp-dias__mas-pop .tp-dias__franja {
+  padding-inline-end: calc(1rem + var(--s-3));
+}
+.tp-dias__mas-pop .tp-dias__borrar {
+  inset-inline-end: 0;
+}
+/* El «+» de la franja nueva al pasar: el de añadir del DS, a la talla del texto pequeño. */
+.tp-dias .tp-sem__nueva {
+  font-size: var(--sc-font-size-caption);
 }
 .tp-dias.is-arrastrando .tp-dias__borrar {
   visibility: hidden;
@@ -360,25 +379,6 @@
  * enseña el día entero: cada franja con sus horas y, entre ellas, cada pausa con su «Quitar». Si abajo no cabe (la barra
  * de guardar tapa), se abre hacia arriba: lo decide `orientar()` al llegar.
  */
-/* «+N»: el mismo que en la tabla de la lista, neutro y con su borde; las franjas ya no van en caja verde. */
-.tp-mas__btn.tp-dias__mas-btn {
-  block-size: 1.75rem;
-  padding-inline: var(--s-2);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-surface);
-  box-shadow: none;
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
-  color: var(--sc-text-primary);
-
-  .tp-mas:hover > &,
-  .tp-mas:focus-within > & {
-    border-color: var(--sc-border-strong);
-    background: var(--sc-bg-secondary-subtle);
-  }
-}
 .tp-mas__pop.tp-dias__mas-pop {
   inset-inline: auto 0;
   align-items: stretch;

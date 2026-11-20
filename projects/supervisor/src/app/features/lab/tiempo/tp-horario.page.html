@@ -32,23 +32,31 @@
       <div class="tp-cierre__quien">
         <div class="tp-cierre__linea">
           <div class="tp-cierre__id">
-            <input
-              class="tp-inline tp-head__name tp-cierre__nombre t-display"
-              [attr.aria-label]="t.nombreHorario"
-              [placeholder]="t.ejemploHorario"
-              [value]="form().name"
-              [autofocus]="modo() === 'crear'"
-              (input)="update('name', $any($event.target).value)"
-            />
-            <!-- La descripción, bajo el nombre y con su mismo trato: parece texto hasta que la tocas. -->
-            <input
-              class="tp-inline tp-cierre__desc"
-              [attr.aria-label]="t.descripcion"
-              [placeholder]="t.anadeDescripcion"
-              [value]="form().description ?? ''"
-              maxlength="160"
-              (input)="update('description', $any($event.target).value)"
-            />
+            <!--
+              El nombre y su descripción, con el renombrado en el sitio del DS (`sc-inline-rename-cell`): se leen como
+              texto, con su lápiz; un clic los abre en su campo. Intro o ✓ lo deja, Esc o × vuelve a lo de antes, y salir del
+              campo se queda con lo escrito (lo escrito cuenta ya mientras se escribe: «Guardar» y su motivo lo ven).
+            -->
+            <h1 class="tp-cierre__nombre sc-text-title-semibold" data-texto="name" (input)="enVivo('name', $event)" (focusout)="salir('name', $event)">
+              @if (editando() === 'name') {
+                <sc-inline-rename-cell [initialValue]="form().name" [placeholder]="t.ejemploHorario" [ariaLabel]="t.nombreHorario" (commit)="cerrarEdicion('name', $event)" (cancelled)="cancelarEdicion('name')" />
+              } @else {
+                <button type="button" class="tp-cierre__editable" data-campo="name" [class.is-vacio]="!form().name" [attr.aria-label]="t.cambiarNombre(form().name)" (click)="editar('name')">
+                  <span class="tp-cierre__editable-texto">{{ form().name || t.ejemploHorario }}</span>
+                  <sc-icon class="tp-cierre__lapiz" name="edit" size="inherit" [weight]="600" aria-hidden="true" />
+                </button>
+              }
+            </h1>
+            <p class="tp-cierre__desc sc-text-body-regular" data-texto="description" (input)="enVivo('description', $event)" (focusout)="salir('description', $event)">
+              @if (editando() === 'description') {
+                <sc-inline-rename-cell [initialValue]="form().description ?? ''" [placeholder]="t.anadeDescripcion" [ariaLabel]="t.descripcion" (commit)="cerrarEdicion('description', $event)" (cancelled)="cancelarEdicion('description')" />
+              } @else {
+                <button type="button" class="tp-cierre__editable" data-campo="description" [class.is-vacio]="!form().description" [attr.aria-label]="t.cambiarDescripcion(form().description ?? '')" (click)="editar('description')">
+                  <span class="tp-cierre__editable-texto">{{ form().description || t.anadeDescripcion }}</span>
+                  <sc-icon class="tp-cierre__lapiz" name="edit" size="inherit" aria-hidden="true" />
+                </button>
+              }
+            </p>
             <!--
               Las horas, por grupos de días, como en la tabla de la lista: el día en su etiqueta del DS y sus horas
               separadas por comas. En dos líneas como mucho; lo que no cabe, en «+N», que enseña el resto al pasar.
@@ -65,7 +73,7 @@
                 <li class="tp-cierre__grupo tp-cierre__grupo--cerrado">Cerrado toda la semana</li>
               }
               <li class="tp-mas" data-mas (pointerenter)="orientar($event)" (focusin)="orientar($event)">
-                <button type="button" class="tp-mas__btn" [attr.aria-label]="verResumen()">+{{ resumenFuera() }}</button>
+                <button type="button" class="tp-mas__btn" [attr.aria-label]="verResumen()"><sc-badge variant="secondary" size="xl" [label]="'+' + resumenFuera()" /></button>
                 <span class="tp-mas__pop">
                   @for (g of resumen().slice(resumen().length - resumenFuera()); track g.dias) {
                     <span class="tp-cierre__grupo">
@@ -81,9 +89,11 @@
           </div>
           <div class="tp-cierre__props">
             @if (ahoraTexto(); as a) {
-              <span class="tp-cierre__ahora t-num">
-                <span class="tp-dot" [class.tp-dot--open]="a.abierto"></span>
-                <span>Ahora <strong>{{ a.titulo }}</strong>, {{ a.detalle }}</span>
+              <!-- Lo de ahora, con la pieza de la columna «Ahora» de la lista: la etiqueta del DS y su detalle, sin punto. -->
+              <span class="tp-cierre__ahora">
+                <span class="tp-cierre__ahora-tit sc-text-caption-regular">Ahora</span>
+                <sc-tag [severity]="a.abierto ? 'success' : 'secondary'" [value]="(a.abierto ? 'repositories.horarios.open' : 'repositories.horarios.closed') | translate" />
+                <span class="tp-cierre__ahora-detalle sc-text-caption-regular t-num">{{ a.detalle }}</span>
               </span>
             }
             <!-- La zona, con el desplegable del DS que usa la ficha de horario: con buscador, que son cientos. -->
@@ -115,7 +125,7 @@
         </h2>
         @if (nUsos() === 0) {
           <p class="tp-cierre__libre">
-            <sc-tp-icono nombre="check" [tam]="14" />
+            <sc-icon name="check" size="inherit" />
             {{ modo() === 'crear' ? 'Aún no se aplica en ningún sitio' : 'No se aplica en ningún sitio' }}: puedes cambiarlo sin afectar a nadie.
           </p>
         } @else {
@@ -123,20 +133,28 @@
           <ul class="tp-cierre__usos" role="list" [scCabe]="1" (scCabeFuera)="usosFuera.set($event)">
             @for (u of usosPlanos(); track u.tipo + u.nombre + u.detalle) {
               <li class="tp-cierre__usa">
-                <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'" [attr.data-tip]="tipos[u.tipo].uno">
-                  <sc-tp-icono [nombre]="tipos[u.tipo].icono" [tam]="14" />
+                <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'" [pTooltip]="tipos[u.tipo].uno" tooltipPosition="top">
+                  @if (simbolos[u.tipo]; as simbolo) {
+                    <sc-icon [name]="simbolo" [size]="14" />
+                  } @else {
+                    <sc-channel-icon channel="whatsapp" />
+                  }
                 </span>
                 <span class="tp-cierre__usa-nombre">{{ u.nombre }}</span>
                 <span class="tp-cierre__usa-detalle">{{ u.detalle }}</span>
               </li>
             }
             <li class="tp-mas" data-mas>
-              <button type="button" class="tp-mas__btn" [attr.aria-label]="verUsos()">+{{ usosFuera() }}</button>
+              <button type="button" class="tp-mas__btn" [attr.aria-label]="verUsos()"><sc-badge variant="secondary" size="xl" [label]="'+' + usosFuera()" /></button>
               <span class="tp-mas__pop tp-mas__pop--lista">
                 @for (u of usosPlanos().slice(usosPlanos().length - usosFuera()); track u.tipo + u.nombre + u.detalle) {
                   <span class="tp-cierre__usa tp-cierre__usa--suelto">
                     <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'">
-                      <sc-tp-icono [nombre]="tipos[u.tipo].icono" [tam]="14" />
+                      @if (simbolos[u.tipo]; as simbolo) {
+                    <sc-icon [name]="simbolo" [size]="14" />
+                  } @else {
+                    <sc-channel-icon channel="whatsapp" />
+                  }
                     </span>
                     <span class="tp-cierre__usa-nombre">{{ u.nombre }}</span>
                     <span class="tp-cierre__usa-detalle">{{ u.detalle }}</span>
@@ -146,8 +164,8 @@
             </li>
           </ul>
           <!-- El aviso, callado en su icono: la barra de guardar ya dice «Afecta a N sitios» en cuanto cambias algo. -->
-          <span class="tp-cierre__usos-nota" role="note" tabindex="0" [attr.aria-label]="avisoUsos()" [attr.data-tip]="avisoUsos()">
-            <sc-tp-icono nombre="info" [tam]="14" />
+          <span class="tp-cierre__usos-nota" role="note" tabindex="0" [attr.aria-label]="avisoUsos()" [pTooltip]="avisoUsos()" tooltipPosition="top" tooltipEvent="both">
+            <sc-icon name="info" [size]="14" />
           </span>
         }
       </section>

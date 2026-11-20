@@ -119,7 +119,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **5 props nativas no expuestas**: `fluid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
-### `sc-badge` · 6 usos · primeng/badge
+### `sc-badge` · 11 usos · primeng/badge
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
@@ -183,7 +183,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-inline-rename-cell` · 2 usos · —
+### `sc-inline-rename-cell` · 4 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

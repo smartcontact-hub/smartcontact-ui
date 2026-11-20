@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostL
 
 import { type Franja, type Semana, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 import {
+  ScBadgeComponent,
   ScButtonComponent,
   ScDatepickerComponent,
   ScMessageComponent,
@@ -10,9 +11,9 @@ import {
   ScTagComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 import { TooltipModule } from 'primeng/tooltip';
 
-import { TpIconoComponent } from './tp-icono.component';
 import { CORTOS, horaCorta, LETRAS, NOMBRES, trozosDelDia } from './tp-modelo';
 import { PROBLEMA } from './tp-semana.component';
 import { contarUso } from './tp-usos';
@@ -113,7 +114,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
  */
 @Component({
   selector: 'sc-tp-dias',
-  imports: [NgTemplateOutlet, ScButtonComponent, ScDatepickerComponent, ScMessageComponent, ScSelectComponent, ScTagComponent, ScToggleSwitchComponent, TooltipModule, TpIconoComponent],
+  imports: [NgTemplateOutlet, ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, ScMessageComponent, ScSelectComponent, ScTagComponent, ScToggleSwitchComponent, ScIconComponent, TooltipModule],
   template: `
     <div class="tp-dias" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null" role="group" aria-label="La semana, día a día">
       <!-- La ayuda: arriba, donde se empieza a leer, y una sola cosa a la vez. -->
@@ -191,6 +192,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
           [class.is-abierto]="f.abierto"
           [class.is-mal]="f.mal"
           [class.is-ofrecido]="f.ofrecido"
+          [class.has-foco]="foco()?.dia === f.dia"
           [class.is-baja]="baja()?.dia === f.dia"
           [style.--k]="f.lejos"
           [style.--salto]="baja()?.dia === f.dia ? 'calc(' + baja()!.filas + ' * ' + pasoDeFila + ')' : null"
@@ -222,7 +224,8 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                 [class.is-arrastre]="t.arrastre"
                 [class.is-movible]="t.movible"
                 [class.is-viva]="t.viva"
-                [class.is-elegida]="(foco()?.dia === f.dia && foco()?.j === t.j) || (elegida()?.dia === f.dia && elegida()?.j === t.j)"
+                [class.is-elegida]="elegida()?.dia === f.dia && elegida()?.j === t.j"
+                [class.is-enlazada]="foco()?.dia === f.dia && foco()?.j === t.j"
                 [style.left.%]="pos(t.desde)"
                 [style.width.%]="pos(t.hasta) - pos(t.desde)"
                 [attr.tabindex]="t.j >= 0 ? -1 : null"
@@ -248,7 +251,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
             @if (guia(); as g) {
               @if (g.dia === f.dia && !arrastre()) {
                 <span class="tp-sem__nueva" aria-hidden="true" [style.left.%]="pos(g.min)" [style.width.%]="pos(g.hasta) - pos(g.min)">
-                  <sc-tp-icono nombre="plus" [tam]="12" />
+                  <sc-icon name="add" size="inherit" [weight]="600" />
                 </span>
                 <span class="tp-sem__cursor t-num" aria-hidden="true" [style.left.%]="pos(g.min)">
                   <span class="tp-sem__cursor-hora">{{ hora(g.min) }}</span>
@@ -290,7 +293,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                 <!-- Lo que no cabe: «+N» enseña el día entero al pasar, al llegar con el teclado o al pulsar su barra. -->
                 <span class="tp-mas tp-dias__mas" (pointerenter)="orientar($event)" (focusin)="orientar($event)">
                   <button type="button" class="tp-mas__btn tp-dias__mas-btn" [attr.aria-label]="'Ver el ' + nombres[f.dia] + ' entero: ' + f.franjas.length + ' franjas'">
-                    +{{ f.franjas.length - aLaVista }}
+                    <sc-badge variant="secondary" size="xl" [label]="'+' + (f.franjas.length - aLaVista)" />
                   </button>
                   <span class="tp-mas__pop tp-dias__mas-pop">
                     <span class="tp-dias__mas-tit">{{ capital(nombres[f.dia]) }}, {{ f.franjas.length }} franjas</span>
@@ -391,7 +394,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
             tooltipEvent="both"
             (click)="quitarFranja(dia, j)"
           >
-            <sc-tp-icono nombre="x" [tam]="10" />
+            <sc-icon name="close" size="inherit" [weight]="600" />
           </button>
         }
       </span>

@@ -120,7 +120,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 6,
+      "usedInSupervisor": 11,
       "cuando": "Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/badge/sc-badge.component.ts"
@@ -1187,7 +1187,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 2,
+      "usedInSupervisor": 4,
       "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/inline-rename-cell/sc-inline-rename-cell.component.ts"

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, type TemplateRef, viewChild, ViewEncapsulation } from '@angular/core';
-import { ScTagComponent, type ScColumnCellContext } from '@smartcontact-hub/components';
+import { ScBadgeComponent, ScTagComponent, type ScColumnCellContext } from '@smartcontact-hub/components';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { RepoListPageComponent } from '@features/admin/repositories/components/repo-list-page.component';
@@ -24,7 +24,7 @@ const POR_DIA = 4;
  */
 @Component({
   selector: 'sc-tp-lista',
-  imports: [RepoListPageComponent, ScTagComponent, TooltipModule],
+  imports: [RepoListPageComponent, ScBadgeComponent, ScTagComponent, TooltipModule],
   template: `
     <sc-repo-list-page [config]="config" [store]="store" [cellTemplates]="celdas()" />
 
@@ -42,7 +42,7 @@ const POR_DIA = 4;
               </span>
             }
             @if (gs.length > aLaVista) {
-              <span class="tl-sched__mas sc-text-caption-semibold">+{{ gs.length - aLaVista }}</span>
+              <sc-badge class="tl-sched__mas" variant="secondary" size="xl" [label]="'+' + (gs.length - aLaVista)" />
             }
           </span>
           <ng-template #tip>
@@ -76,7 +76,7 @@ const POR_DIA = 4;
               <sc-tag variant="label" [labelColor]="tipos[x.tipo].color" [value]="x.nombre" [pTooltip]="tipos[x.tipo].uno + ': ' + x.detalle" tooltipPosition="top" />
             }
             @if (u.length > aLaVista) {
-              <sc-tag class="tl-mas" variant="label" labelColor="gray" [value]="'+' + (u.length - aLaVista)" [pTooltip]="restoDeUsos(u)" tooltipPosition="top" />
+              <sc-badge class="tl-mas" variant="secondary" size="xl" [label]="'+' + (u.length - aLaVista)" [pTooltip]="restoDeUsos(u)" tooltipPosition="top" />
             }
           </span>
         }
@@ -111,14 +111,9 @@ const POR_DIA = 4;
       color: var(--sc-text-secondary);
       font-variant-numeric: tabular-nums;
     }
+    /* «+N», el badge numérico del DS, como en el editor: no encoge. */
     .tl-sched__mas {
       flex: none;
-      padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
-      border: 1px solid var(--sc-border-default);
-      border-radius: var(--sc-radius-full);
-      background: var(--sc-bg-surface);
-      color: var(--sc-text-primary);
-      font-variant-numeric: tabular-nums;
     }
     .tl-sched:focus-visible {
       outline: 2px solid var(--sc-border-focus);
@@ -165,7 +160,7 @@ const POR_DIA = 4;
       min-inline-size: 0;
       flex: 0 1 auto;
     }
-    .tl-usos > sc-tag.tl-mas {
+    .tl-usos > sc-badge.tl-mas {
       flex: none;
     }
   `,

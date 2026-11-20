@@ -13,6 +13,8 @@ export const T = {
   nombreLista: 'Nombre de la lista',
   descripcion: 'Descripción',
   anadeDescripcion: 'Añade una descripción',
+  cambiarNombre: (n: string): string => (n ? `Cambiar el nombre: ${n}` : 'Escribir el nombre del horario'),
+  cambiarDescripcion: (d: string): string => (d ? `Cambiar la descripción: ${d}` : 'Añadir una descripción'),
   zona: 'Zona horaria',
   activo: 'Activo',
   activa: 'Activa',

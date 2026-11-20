@@ -44,19 +44,71 @@
   gap: var(--s-1);
   min-inline-size: 0;
 }
-/* El campo sobresale lo que sus márgenes negativos le quitan a la caja: sin esto, un nombre más ancho que sus horas se corta. */
+/*
+ * El nombre y la descripción: texto con su lápiz, que abre el renombrado en el sitio del DS. El botón sobresale lo que su
+ * relleno le quita a la caja, para que el texto quede alineado con las horas de debajo.
+ */
 .tp-cierre__nombre,
 .tp-cierre__desc {
-  align-self: flex-start;
-  max-inline-size: calc(100% + 2 * var(--s-2));
+  display: flex;
+  margin: 0;
+  min-inline-size: 0;
+  max-inline-size: calc(100% + 2 * var(--s-1));
+  margin-inline: calc(-1 * var(--s-1));
+
+  > sc-inline-rename-cell {
+    flex: 1;
+    min-inline-size: 20rem;
+  }
 }
-/* La descripción, un paso por debajo del nombre: se lee como su subtítulo y crece con lo que se escribe. */
 .tp-cierre__desc {
-  field-sizing: content;
-  min-inline-size: 16ch;
-  font-size: var(--t-14);
-  line-height: var(--sc-line-height-body-2);
-  color: var(--tp-ink-2);
+  color: var(--sc-text-secondary);
+}
+.tp-cierre__editable {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  min-inline-size: 0;
+  padding: 0 var(--s-1);
+  border: 0;
+  border-radius: var(--sc-radius-100);
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: text;
+  transition-property: background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    background: var(--sc-bg-secondary-hover);
+  }
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+  &.is-vacio {
+    color: var(--sc-text-subtle);
+  }
+}
+.tp-cierre__editable-texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* El lápiz dice que se puede cambiar: callado en reposo, entero al pasar o al llegar con el teclado. */
+.tp-cierre__lapiz {
+  flex: none;
+  color: var(--sc-icon-secondary);
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+
+  .tp-cierre__editable:hover > &,
+  .tp-cierre__editable:focus-visible > &,
+  .tp-cierre__editable.is-vacio > & {
+    opacity: 1;
+  }
 }
 .tp-cierre__props {
   position: relative;
@@ -139,34 +191,20 @@
   position: relative;
   display: inline-flex;
 }
+/* El disparador es el badge numérico del DS (`sc-badge` secondary): el botón no pone caja propia, solo el foco. */
 .tp-mas__btn {
   display: inline-flex;
   align-items: center;
-  block-size: 1.375rem;
-  padding-inline: var(--s-1-5);
+  padding: 0;
   border: 0;
-  border-radius: var(--r-xs);
+  border-radius: var(--sc-radius-200);
   background: transparent;
-  box-shadow: inset 0 0 0 1px var(--tp-hair-strong);
   font: inherit;
-  font-size: var(--t-12);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
-  font-variant-numeric: tabular-nums;
-  color: var(--tp-ink-2);
   cursor: default;
-  transition-property: background-color, color;
-  transition-duration: 150ms;
-  transition-timing-function: ease-out;
 
-  .tp-mas:hover > &,
-  .tp-mas:focus-within > & {
-    background: var(--tp-muted);
-    color: var(--tp-ink);
-  }
   &:focus-visible {
-    outline: 2px solid var(--tp-accent);
-    outline-offset: 1px;
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
   }
 }
 .tp-mas__pop {
@@ -226,17 +264,16 @@
     translate: none;
   }
 }
+/* Lo de ahora, como la columna «Ahora» de la lista: la etiqueta del DS y su detalle en una línea. */
 .tp-cierre__ahora {
   display: inline-flex;
   flex-basis: 100%;
   align-items: center;
-  gap: var(--s-1-5);
-  color: var(--tp-ink-3);
-
-  strong {
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--tp-ink);
-  }
+  gap: var(--s-1);
+}
+.tp-cierre__ahora-tit,
+.tp-cierre__ahora-detalle {
+  color: var(--sc-text-secondary);
 }
 /* La zona, con el desplegable del DS: ancho para «America/Argentina/Buenos Aires» sin moverse al cambiar. */
 .tp-cierre__zona {

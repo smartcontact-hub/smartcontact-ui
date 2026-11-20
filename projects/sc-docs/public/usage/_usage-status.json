@@ -605,7 +605,7 @@
     },
     {
       "selector": "sc-inline-rename-cell",
-      "usedInSupervisor": 2
+      "usedInSupervisor": 4
     },
     {
       "selector": "sc-inputtags",
