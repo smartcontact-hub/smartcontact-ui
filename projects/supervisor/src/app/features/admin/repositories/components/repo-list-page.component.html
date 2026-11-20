@@ -139,7 +139,11 @@
             @for (d of c.cell.days; track $index) {
               <div class="sched-tip__fila">
                 <span>{{ d.name }}</span>
-                <span [class.sched-tip__cerrado]="d.closed || d.text === '—'">{{ d.text }}</span>
+                <span class="sched-tip__horas" [class.sched-tip__cerrado]="d.closed || d.lines[0] === '—'">
+                  @for (l of d.lines; track $index) {
+                    <span>{{ l }}</span>
+                  }
+                </span>
               </div>
             }
           </div>

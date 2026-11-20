@@ -56,7 +56,7 @@ export interface ScheduleGroup {
 export interface ScheduleCell {
   readonly groups: readonly ScheduleGroup[];
   /** El detalle por día, para el tooltip. */
-  readonly days: readonly { readonly name: string; readonly text: string; readonly closed: boolean }[];
+  readonly days: readonly { readonly name: string; readonly lines: readonly string[]; readonly closed: boolean }[];
 }
 
 export interface RepoStatusEntry {

@@ -114,8 +114,8 @@ export class HorariosPageComponent {
           days: diasLargos.map((name, i) => {
             const fr = h.week[i] ?? [];
             return fr.length > 0
-              ? { name, text: fr.map(textoDeFranja).join(', '), closed: false }
-              : { name, text: cerrados.has(i) ? cerrado : '—', closed: cerrados.has(i) };
+              ? { name, lines: fr.map(textoDeFranja), closed: false }
+              : { name, lines: [cerrados.has(i) ? cerrado : '—'], closed: cerrados.has(i) };
           }),
         };
       },

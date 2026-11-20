@@ -133,6 +133,16 @@
   white-space: nowrap;
 }
 
+.sched-tip__fila {
+  align-items: baseline;
+}
+
+.sched-tip__horas {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .sched-tip__cerrado {
   opacity: 0.6;
   font-style: italic;

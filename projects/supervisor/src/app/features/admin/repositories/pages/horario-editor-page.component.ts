@@ -231,6 +231,18 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   /** El color de cada sitio, una regla única: los grupos, en azul (info); los calendarios, en ámbar (warning). Icono y etiquetas lo comparten. */
   protected readonly tonoDeUso = computed<'info' | 'warning'>(() => (this.usoVista() === 'grupos' ? 'info' : 'warning'));
 
+  /** El color de cada etiqueta: WhatsApp en verde, Email en gris, Voz en azul; los ámbitos de calendario, en ámbar. */
+  protected tonoDeEtiqueta(etiqueta: string): 'success' | 'secondary' | 'info' | 'warning' {
+    if (this.usoVista() === 'calendarios') return 'warning';
+    const porCanal: Record<string, 'success' | 'secondary' | 'info' | 'warning'> = {
+      WhatsApp: 'success',
+      Email: 'secondary',
+      Voz: 'info',
+      'Web Chat': 'warning',
+    };
+    return porCanal[etiqueta] ?? 'secondary';
+  }
+
   protected readonly iconoDeUso = computed(() => ICONO_DE_USO[this.usoVista()]);
   protected readonly usoNada = computed(() => (this.lang(), this.translate.instant(`repositories.horarios.uses_none_${CLAVE_DE_USO[this.usoVista()]}`) as string));
 
