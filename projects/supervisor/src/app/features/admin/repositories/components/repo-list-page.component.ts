@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  ElementRef,
   inject,
   input,
   signal,
@@ -26,6 +28,7 @@ import { CeldaVaciaComponent, ListPageComponent } from '@shared/components';
 import {
   type ColumnDef,
   type GroupRef,
+  ScBadgeComponent as BadgeComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
   type ScColumnCellContext,
   type ScColumnDef,
@@ -57,6 +60,7 @@ import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado'
     EmptyStateComponent,
     ButtonComponent,
     CeldaVaciaComponent,
+    BadgeComponent,
     GroupPopoverComponent,
     ClickOutsideDirective,
     IconComponent,
@@ -84,8 +88,15 @@ export class RepoListPageComponent<T extends RepoEntity> {
   /** CTA + panel inline proyectados a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  /** El ancho de la lista, para adaptar la tabla (columnas que se esconden y horarios que se acortan) al estrechar la ventana. */
+  protected readonly ancho = signal(Number.POSITIVE_INFINITY);
+
   constructor() {
     useTopbarActions(this.topbarActions);
+    const observador = new ResizeObserver(([e]) => this.ancho.set(e.contentRect.width));
+    observador.observe(this.host.nativeElement);
+    inject(DestroyRef).onDestroy(() => observador.disconnect());
   }
 
   protected readonly plusIcon = 'add';
@@ -168,10 +179,11 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected readonly columns = computed<readonly ScColumnDef<T>[]>(() => {
     this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     const cell = this.cellTpl();
-    return this.config().columns.map((c) => ({
+    return this.config().columns.filter((c) => !c.hideBelow || this.ancho() >= c.hideBelow).map((c) => ({
       field: c.key,
       header: this.translate.instant(c.labelKey),
-      width: c.width,
+      // Con poco ancho, la celda del horario (un solo grupo) también se estrecha.
+      width: c.kind === 'schedule' && this.ancho() < 760 ? '220px' : c.width,
       /* La columna del nombre es la cabecera de su fila también con ancho propio (Intenciones, Reglas IA…), DD-194. */
       rowHeader: c.emphasis,
       sortable: c.sortable,
@@ -285,7 +297,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
     const column = this.config().columns.find((c) => c.key === field);
     if (column?.kind !== 'schedule' || !column.schedule) return null;
     const cell = column.schedule(item);
-    const max = column.scheduleMax ?? 2;
+    // Con poco ancho cabe un solo grupo en la celda; el resto, tras el «+N».
+    const max = this.ancho() < 760 ? 1 : (column.scheduleMax ?? 2);
     return { cell, visibles: cell.groups.slice(0, max), resto: cell.groups.slice(max) };
   }
 

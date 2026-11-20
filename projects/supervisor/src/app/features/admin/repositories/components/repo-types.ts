@@ -40,6 +40,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly uses?: (item: T) => readonly UseEntry[];
   /** Para `kind === 'schedule'`: cuántos grupos se ven en la celda; el resto, tras un «+N». */
   readonly scheduleMax?: number;
+  /** La columna se oculta cuando la lista mide menos de estos píxeles de ancho (la tabla se adapta al estrechar la ventana). */
+  readonly hideBelow?: number;
   /** Una celda sin dato dice «—» (`sc-celda-vacia`, DD-197) en vez de quedarse en blanco. */
   readonly emptyDash?: boolean;
   /** La cabecera ordena de menor a mayor y al revés: las cifras, por su valor; las fechas, por día; el texto, por su letra. */
@@ -63,7 +65,6 @@ export interface ScheduleCell {
 
 export interface UseEntry {
   readonly label: string;
-  readonly icon: string;
   readonly tone: 'info' | 'warning';
   readonly names: readonly string[];
 }

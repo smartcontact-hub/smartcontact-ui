@@ -158,7 +158,7 @@
 .uso {
   display: inline-flex;
   align-items: center;
-  gap: var(--sc-spacing-0-25);
+  gap: var(--sc-spacing-0-5);
   color: var(--sc-text-primary);
   cursor: default;
 
@@ -167,11 +167,6 @@
     outline-offset: 2px;
     border-radius: var(--sc-radius-sm);
   }
-}
-
-.uso__cifra {
-  color: var(--sc-text-secondary);
-  font-variant-numeric: tabular-nums;
 }
 
 .uso-tip {

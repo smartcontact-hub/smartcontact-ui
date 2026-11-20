@@ -8,7 +8,7 @@ import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.componen
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoPageConfig, ScheduleCell, UseEntry } from '../components/repo-types';
 import { HorarioUsoService } from '../state/horario-uso.service';
-import { CLAVE_DE_USO, ICONO_DE_USO, usosDelHorario } from '../state/horario-usos';
+import { CLAVE_DE_USO, usosDelHorario } from '../state/horario-usos';
 import { FestivosStore } from '../state/festivos.store';
 import { ahoraEn, estadoEn, gruposDeLaSemana, MINUTOS_DEL_DIA, resumenDeLaSemana, textoDeFranja } from '../state/horarios.core.mjs';
 import { type Horario, HorariosStore } from '../state/horarios.store';
@@ -28,7 +28,7 @@ interface Datos {
 const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   // Sin ancho: es la columna que crece.
   { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true, sortable: true },
-  { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (i) => i.description, sortable: true },
+  { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (i) => i.description, sortable: true, hideBelow: 1000 },
   {
     key: 'week',
     // El horario dibujado: grupos de días con su franja y su barra de 24 h; el detalle por día, en el tooltip.
@@ -47,6 +47,7 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
     // Uso: los sitios donde se usa (Grupos, Calendarios), cada uno con su cifra y, al pasar el ratón, sus nombres.
     accessor: d.uso,
     uses: d.usos,
+    hideBelow: 880,
     sortable: true,
   },
 ];
@@ -132,7 +133,6 @@ export class HorariosPageComponent {
         this.lang();
         return usosDelHorario(h.id, this.groupsStore.groups()).map((u) => ({
           label: this.translate.instant(`repositories.horarios.uses.${CLAVE_DE_USO[u.tipo]}`) as string,
-          icon: ICONO_DE_USO[u.tipo],
           tone: u.tipo === 'grupos' ? ('info' as const) : ('warning' as const),
           names: u.items.map((i) => i.nombre),
         }));
