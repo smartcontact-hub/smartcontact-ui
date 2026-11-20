@@ -33,7 +33,7 @@ export const T = {
   cerrar: 'Cerrar',
   quitar: (n: string): string => `Quitar ${n}`,
   filtrarExcepciones: 'Filtrar excepciones',
-  ejemploHorario: 'Perú día',
+  ejemploHorario: 'Escribe el nombre del horario',
   aplicadoEn: 'Dónde se aplica este horario',
   ejemploLista: 'Festivos de mi oficina',
   ejemploPeriodo: 'Verano',
