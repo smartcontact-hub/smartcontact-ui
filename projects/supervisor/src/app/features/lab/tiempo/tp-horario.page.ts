@@ -1,13 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, linkedSignal, type OnInit, signal, type TemplateRef, viewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { ScBadgeComponent, ScButtonComponent, ScInlineRenameCellComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  ScAlertModalComponent,
+  ScBadgeComponent,
+  ScButtonComponent,
+  ScDynamicDialogService,
+  ScInlineRenameCellComponent,
+  ScSectionCardComponent,
+  ScSelectComponent,
+  ScTagComponent,
+} from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { pruebaEnCurso } from '@core/prueba/prueba-arranque';
-import { BreadcrumbService } from '@core/services';
+import { BreadcrumbService, DiscardDialogService, ResultadoAccionService } from '@core/services';
 
 import { ahoraEn, diaDeLaSemana, type Horario, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
@@ -18,10 +27,9 @@ import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { estadoDeHorario } from '../horarios/lab-horarios-estado';
 import { AplicadoEn, sitios, TIPOS_DE_USO } from './tp-aplicado';
 import { TpDiasComponent } from './tp-dias.component';
-import { TpIconoComponent } from './tp-icono.component';
 import { descripcionDe, horas, minutosDeSemana, resumenDe, soloSemana } from './tp-modelo';
 import { TpCabeDirective } from './tp-cabe.directive';
-import { TpAvisos, TpAvisosComponent, TpModalComponent } from './tp-piezas';
+import { TpAvisosComponent } from './tp-piezas';
 import { TpSemanaComponent } from './tp-semana.component';
 import { T } from './tp-textos';
 import { contarUso } from './tp-usos';
@@ -55,7 +63,7 @@ const LISTA = '/lab/tiempo';
  */
 @Component({
   selector: 'sc-tp-horario',
-  imports: [ChannelIconComponent, ScBadgeComponent, ScButtonComponent, ScIconComponent, ScInlineRenameCellComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
+  imports: [ChannelIconComponent, ScBadgeComponent, ScButtonComponent, ScIconComponent, ScInlineRenameCellComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpSemanaComponent],
   templateUrl: './tp-horario.page.html',
   // Hojas globales repartidas por dueño: cada una cabe en el presupuesto de estilos por componente.
   styleUrls: ['./tp-base.scss', './tp-piezas.scss', './tp-capas.scss', './tp-semana.scss', './tp-dias.scss', './tp-cierre.scss'],
@@ -68,7 +76,12 @@ export class TpHorarioPage implements OnInit {
   private readonly router = inject(Router);
   private readonly store = inject(HorariosStore);
   private readonly aplicado = inject(AplicadoEn);
-  private readonly avisos = inject(TpAvisos);
+  /** El resultado de guardar o crear, en el toast del sistema (DD-211 §5), el mismo en toda la app. */
+  private readonly resultado = inject(ResultadoAccionService);
+  private readonly translate = inject(TranslateService);
+  /** Los avisos del Supervisor: `sc-alert-modal` (DD-241), abierto como lo abren los devs. */
+  private readonly dialogos = inject(ScDynamicDialogService);
+  private readonly descartar = inject(DiscardDialogService);
 
   protected readonly tipos = TIPOS_DE_USO;
   /** El icono del DS de cada tipo de sitio; WhatsApp lleva su logo (`sc-channel-icon`), que Material no tiene. */
@@ -155,6 +168,13 @@ export class TpHorarioPage implements OnInit {
   protected readonly usosPlanos = computed(() => this.usos().flatMap((g) => g.usos));
   protected readonly usosFuera = signal(0);
   protected readonly verUsos = computed(() => `Ver ${this.usosFuera()} sitios más`);
+  /** Los sitios que no caben, en una frase para el lector (el tooltip no se lee). */
+  protected readonly restoDeUsos = computed(() =>
+    this.usosPlanos()
+      .slice(this.usosPlanos().length - this.usosFuera())
+      .map((u) => `${u.nombre}, ${this.tipos[u.tipo].uno.toLowerCase()}`)
+      .join('; '),
+  );
   protected readonly avisoUsos = computed(() => `Si lo cambias, cambia en ${this.nUsos() === 1 ? 'ese sitio' : `los ${this.nUsos()}`}`);
 
   /** Un horario que no abre ningún día no se guarda: no serviría para nada. */
@@ -198,20 +218,11 @@ export class TpHorarioPage implements OnInit {
     this.form.set({ ...datos, name: nombreDeCopia(origen.name, this.store.items().map((h) => h.name)) });
   }
 
-  /** La lista de «+N» de la cabecera se abre hacia la izquierda si hacia la derecha se saldría del lienzo. */
-  protected orientar(e: Event): void {
-    const mas = e.currentTarget as HTMLElement;
-    const pop = mas.querySelector<HTMLElement>('.tp-mas__pop');
-    const lienzo = mas.closest<HTMLElement>('.tp-lienzo');
-    if (!pop || !lienzo) return;
-    mas.classList.toggle('tp-mas--fin', mas.getBoundingClientRect().left + pop.offsetWidth > lienzo.getBoundingClientRect().right);
-  }
-
   /** Al crear: todos los días cerrados otra vez, como al empezar. Es un paso más de deshacer. */
   protected vaciarSemana(): void {
     if (this.sinDias()) return;
     this.update('week', VACIO.week);
-    this.avisos.decir('Semana vacía. ⌘Z la devuelve.');
+    this.resultado.contar('Semana vaciada: ⌘Z la devuelve');
     // El botón se apaga con la semana vacía: el foco pasa al lunes, que es por donde se vuelve a empezar.
     setTimeout(() => document.querySelector<HTMLElement>('#tp-dia-0')?.focus());
   }
@@ -334,9 +345,8 @@ export class TpHorarioPage implements OnInit {
 
   /* ── Guardar: si se usa en algún sitio, se dice antes ─────────────────────────────────────────────────────────── */
 
+  /** Con el aviso de guardar abierto, ⌘S no guarda por detrás. */
   protected readonly confirmando = signal(false);
-  /** La salida que espera a que se confirme el guardado (Guardar y salir con el horario en uso). */
-  private trasGuardar: ((v: boolean) => void) | null = null;
 
   private borrador(): Borrador {
     const f = this.form();
@@ -344,55 +354,77 @@ export class TpHorarioPage implements OnInit {
   }
 
   protected save(): void {
-    if (!this.puedeGuardar()) return;
+    if (!this.puedeGuardar() || this.confirmando()) return;
     if (this.modo() === 'editar' && this.nUsos() > 0) {
-      this.confirmando.set(true);
+      void this.preguntarGuardado();
       return;
     }
     this.guardar();
   }
 
+  /**
+   * Guardar un horario que se usa lo pregunta antes, con el aviso del Supervisor (`sc-alert-modal` `info` en blanco, como
+   * al salir de la ficha de horario hacia Festivos): a cuántos sitios afecta y cuáles. El tercer botón, a la izquierda,
+   * guarda los cambios como un horario nuevo y deja este como estaba.
+   */
+  private preguntarGuardado(): Promise<void> {
+    this.confirmando.set(true);
+    const nombres = this.usosPlanos().map((u) => u.nombre);
+    const lista = nombres.length > 3 ? `${nombres.slice(0, 3).join(', ')} y ${nombres.length - 3} más` : enLista(nombres);
+    return new Promise((hecho) => {
+      const ref = this.dialogos.open<ScAlertModalComponent, unknown, Record<string, unknown>, 'action' | 'tertiary' | 'closed'>(ScAlertModalComponent, {
+        // El diálogo de PrimeNG que lo envuelve toma el ancho del texto sin partir: con un mensaje largo crece más que
+        // el aviso (que se para en su máximo) y lo deja descentrado. Con el mismo ancho que el aviso, queda centrado.
+        width: 'var(--sc-alert-modal-max-width)',
+        inputValues: {
+          variant: 'info',
+          surface: 'plain',
+          title: `¿Guardar los cambios en ${sitios(this.nUsos())}?`,
+          message: escapar(`Se aplica en ${lista}. Todos pasan a usar las horas nuevas en cuanto guardes.`),
+          actionLabel: this.translate.instant('common.save'),
+          secondaryActionLabel: this.translate.instant('common.cancel'),
+          tertiaryActionLabel: 'Guardar como copia',
+          closeRequested: () => ref.close('closed'),
+          actionRequested: () => ref.close('action'),
+          tertiaryActionRequested: () => ref.close('tertiary'),
+        },
+      });
+      ref.onClose.subscribe((r) => {
+        this.confirmando.set(false);
+        if (r === 'action') this.guardar();
+        if (r === 'tertiary') this.guardarComoCopia();
+        hecho();
+      });
+    });
+  }
+
   protected guardar(): void {
-    this.confirmando.set(false);
     const draft = this.borrador();
     if (this.modo() === 'crear') {
       const creado = this.store.addItem(draft);
       this.sucio.markPristine();
-      void this.router.navigateByUrl(`${LISTA}/horario/${creado.id}`, { replaceUrl: true }).then(() => this.avisos.decir(`«${creado.name}» creado`));
+      void this.router
+        .navigateByUrl(`${LISTA}/horario/${creado.id}`, { replaceUrl: true })
+        .then(() => this.resultado.contar(this.translate.instant('repositories.horarios.toasts.created', { name: creado.name })));
       return;
     }
     this.store.updateItem(this.horarioId()!, draft);
     this.form.set(draft);
     this.sucio.markPristine();
     this.olvidar();
-    this.avisos.decir(this.nUsos() > 0 ? `Cambios guardados en ${sitios(this.nUsos())}` : 'Cambios guardados');
-    this.salirTrasGuardar(true);
+    this.resultado.contar(this.translate.instant('repositories.horarios.toasts.updated', { name: draft.name }));
   }
 
   /** Los cambios, en un horario nuevo que no se aplica en ningún sitio; el original queda como estaba. */
   protected guardarComoCopia(): void {
-    this.confirmando.set(false);
-    const original = this.store.items().find((h) => h.id === this.horarioId());
     const draft = this.borrador();
     const copia = this.store.addItem({ ...draft, name: nombreDeCopia(draft.name, this.store.items().map((h) => h.name)) });
     this.form.set(this.sucio.pristineValue());
     this.sucio.markPristine();
     this.olvidar();
-    this.salirTrasGuardar(false);
     void this.router
       .navigateByUrl(`${LISTA}/horario/${copia.id}`)
-      .then(() => this.avisos.decir(`«${copia.name}» creado. «${original?.name ?? draft.name}» sigue como estaba`));
-  }
-
-  protected cancelarGuardar(): void {
-    this.confirmando.set(false);
-    this.salirTrasGuardar(false);
-  }
-
-  private salirTrasGuardar(v: boolean): void {
-    const ok = this.trasGuardar;
-    this.trasGuardar = null;
-    ok?.(v);
+      .then(() => this.resultado.contar(this.translate.instant('repositories.horarios.toasts.created', { name: copia.name })));
   }
 
   protected discard(): void {
@@ -404,35 +436,18 @@ export class TpHorarioPage implements OnInit {
     void this.router.navigateByUrl(LISTA);
   }
 
-  /* ── Salir con cambios: lo pregunta la ruta (`tpSalirGuard`) ────────────────────────────────────────────────────── */
-
-  protected readonly saliendo = signal<((v: boolean) => void) | null>(null);
+  /* ── Salir con cambios: lo pregunta la ruta (`tpSalirGuard`), con el aviso de descartar de todas las fichas ──────── */
 
   puedeSalir(): boolean | Promise<boolean> {
     if (!this.dirty() || this.modo() === 'crear') return true;
-    return new Promise((ok) => this.saliendo.set(ok));
-  }
-
-  protected responderSalida(v: 'seguir' | 'descartar' | 'guardar'): void {
-    const ok = this.saliendo();
-    this.saliendo.set(null);
-    if (!ok) return;
-    if (v === 'guardar' && this.nUsos() > 0) {
-      // Guardar y salir pasa por la misma confirmación: el aviso de a quién afecta no se salta.
-      this.trasGuardar = ok;
-      this.confirmando.set(true);
-      return;
-    }
-    if (v === 'guardar') this.save();
-    if (v === 'descartar') this.discard();
-    ok(v !== 'seguir');
+    return this.descartar.confirm();
   }
 
   /* ── Teclado ──────────────────────────────────────────────────────────────────────────────────────────────────── */
 
   @HostListener('document:keydown', ['$event'])
   protected tecla(e: KeyboardEvent): void {
-    if (!(e.metaKey || e.ctrlKey) || this.confirmando() || this.saliendo()) return;
+    if (!(e.metaKey || e.ctrlKey) || this.confirmando()) return;
     const k = e.key.toLowerCase();
     if (k === 's') {
       e.preventDefault();
@@ -465,4 +480,14 @@ function enFrase(detalle: string): string {
   const dia = !cuando ? '' : cuando === 'mañana' ? 'mañana ' : `${DIA_ENTERO[cuando] ?? `el ${cuando}`} `;
   if ((h === 0 || h === 24) && mm === '00') return `${verbo} ${cuando === 'mañana' ? '' : dia}a medianoche`;
   return `${verbo} ${dia}${h === 1 ? 'a la' : 'a las'} ${h}:${mm}`;
+}
+
+/** «A, B y C»: una lista corta, como se dice. */
+function enLista(nombres: readonly string[]): string {
+  return nombres.length < 2 ? (nombres[0] ?? '') : `${nombres.slice(0, -1).join(', ')} y ${nombres[nombres.length - 1]}`;
+}
+
+/** El mensaje del aviso va como HTML (`innerHTML`): los nombres de los sitios, escapados. */
+function escapar(texto: string): string {
+  return texto.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }

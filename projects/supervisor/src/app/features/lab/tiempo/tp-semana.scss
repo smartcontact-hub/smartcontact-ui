@@ -7,7 +7,8 @@
 /* ── Semana: siete líneas de 24 h, en verde y rojo ──────────────────────────────────────────────────────────────── */
 
 .tp,
-.tp-capa {
+.tp-capa,
+.tp-globo {
   /* Se atiende: un verde que lleva texto blanco encima (4,6:1). No se atiende: un rojo lavado que no grita. */
   --tp-si: #16834a;
   --tp-si-borde: #0f6b3b;
@@ -15,7 +16,8 @@
   --tp-no-raya: color-mix(in oklch, var(--tp-danger) 22%, var(--tp-surface));
 }
 .sc-dark .tp,
-.sc-dark .tp-capa {
+.sc-dark .tp-capa,
+.sc-dark .tp-globo {
   --tp-si: #1f9d5a;
   --tp-si-borde: #2bb36a;
   --tp-no: color-mix(in oklch, var(--tp-danger) 18%, var(--tp-surface));

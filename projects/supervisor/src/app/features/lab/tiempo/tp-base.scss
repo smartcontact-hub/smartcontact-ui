@@ -12,7 +12,8 @@
 /* ── Tokens ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
 .tp,
-.tp-capa {
+.tp-capa,
+.tp-globo {
   /* El suelo de toda la plataforma (`--sc-bg-canvas`: blanco en claro); las cajas se separan por su borde. */
   --tp-canvas: var(--sc-bg-canvas);
   --tp-surface: #ffffff;
@@ -109,7 +110,8 @@
 }
 
 .sc-dark .tp,
-.sc-dark .tp-capa {
+.sc-dark .tp-capa,
+.sc-dark .tp-globo {
   --tp-canvas: var(--sc-bg-canvas);
   --tp-surface: #12131a;
   --tp-subtle: #15161e;

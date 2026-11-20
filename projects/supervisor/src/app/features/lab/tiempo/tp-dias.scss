@@ -375,24 +375,30 @@
 }
 
 /*
- * «+N»: un día con más franjas de las que caben al lado de su barra. Va del verde de las cajas (son franjas) y al pasar
- * enseña el día entero: cada franja con sus horas y, entre ellas, cada pausa con su «Quitar». Si abajo no cabe (la barra
- * de guardar tapa), se abre hacia arriba: lo decide `orientar()` al llegar.
+ * «+N»: un día con más franjas de las que caben al lado de su barra. Al pulsarlo, el globo de PrimeNG enseña el día
+ * entero: cada franja con sus horas y, entre ellas, cada pausa con su «Quitar». PrimeNG lo coloca (abajo o arriba).
  */
-.tp-mas__pop.tp-dias__mas-pop {
-  inset-inline: auto 0;
+.tp-dias__mas-lista {
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
   gap: var(--s-1);
-  max-inline-size: none;
-  padding: var(--s-2);
 }
-.tp-dias__mas--arriba > .tp-mas__pop.tp-dias__mas-pop {
-  inset-block: auto calc(100% + var(--s-2));
-  translate: 0 0.25rem;
-
-  &::before {
-    inset-block: 100% auto;
-  }
+/*
+ * Un día con muchas franjas no trepa por encima de la barra de arriba: la lista se queda en un alto que cabe abajo o
+ * arriba de la fila y lo demás se desplaza dentro (Intro a una hora de abajo la trae a la vista). El borde de aire
+ * deja ver entero el aro de foco de las cajas de los extremos.
+ */
+.tp-dias__mas-cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-1);
+  max-block-size: min(22rem, 45vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--s-0-5);
+  margin: calc(-1 * var(--s-0-5));
 }
 .tp-dias__mas-tit {
   padding: var(--s-0-5) var(--s-1) var(--s-1);
@@ -414,10 +420,6 @@
   .tp-btn {
     color: var(--tp-ink-3);
   }
-}
-/* Mientras se arrastra, ninguna lista tapa las barras. */
-.tp-dias.is-arrastrando .tp-mas__pop {
-  visibility: hidden;
 }
 
 /*

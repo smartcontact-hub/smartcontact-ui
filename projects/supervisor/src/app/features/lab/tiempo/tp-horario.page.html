@@ -59,7 +59,8 @@
             </p>
             <!--
               Las horas, por grupos de días, como en la tabla de la lista: el día en su etiqueta del DS y sus horas
-              separadas por comas. En dos líneas como mucho; lo que no cabe, en «+N», que enseña el resto al pasar.
+              separadas por comas. En dos líneas como mucho; lo que no cabe, en «+N», que enseña el resto en el tooltip del DS
+              (al pasar o al llegar con el teclado), como la columna «Grupos» de las listas.
             -->
             <ul class="tp-cierre__resumen t-num" [scCabe]="2" (scCabeFuera)="resumenFuera.set($event)" [attr.aria-label]="descripcion()" role="list">
               @for (g of resumen(); track g.dias) {
@@ -72,18 +73,22 @@
               } @empty {
                 <li class="tp-cierre__grupo tp-cierre__grupo--cerrado">Cerrado toda la semana</li>
               }
-              <li class="tp-mas" data-mas (pointerenter)="orientar($event)" (focusin)="orientar($event)">
-                <button type="button" class="tp-mas__btn" [attr.aria-label]="verResumen()"><sc-badge variant="secondary" size="xl" [label]="'+' + resumenFuera()" /></button>
-                <span class="tp-mas__pop">
-                  @for (g of resumen().slice(resumen().length - resumenFuera()); track g.dias) {
-                    <span class="tp-cierre__grupo">
-                      <sc-tag severity="info" [value]="g.dias" />
-                      @for (h of g.horas; track $index; let ultima = $last) {
-                        <span class="tp-cierre__grupo-horas">{{ h }}{{ ultima ? '' : ',' }}</span>
-                      }
-                    </span>
-                  }
-                </span>
+              <li class="tp-mas" data-mas>
+                <button type="button" class="tp-mas__btn" [attr.aria-label]="verResumen()" [pTooltip]="restoResumen" tooltipPosition="top" tooltipEvent="both" tooltipStyleClass="tp-cierre__globo">
+                  <sc-badge variant="secondary" size="xl" [label]="'+' + resumenFuera()" />
+                </button>
+                <ng-template #restoResumen>
+                  <span class="tp-cierre__tip">
+                    @for (g of resumen().slice(resumen().length - resumenFuera()); track g.dias) {
+                      <span class="tp-cierre__tip-clave">{{ g.dias }}</span>
+                      <span>
+                        @for (f of g.horas; track $index; let ultima = $last) {
+                          <span class="tp-cierre__tip-franja">{{ f }}</span>{{ ultima ? '' : ', ' }}
+                        }
+                      </span>
+                    }
+                  </span>
+                </ng-template>
               </li>
             </ul>
           </div>
@@ -129,7 +134,7 @@
             {{ modo() === 'crear' ? 'Aún no se aplica en ningún sitio' : 'No se aplica en ningún sitio' }}: puedes cambiarlo sin afectar a nadie.
           </p>
         } @else {
-          <!-- Una línea de sitios; los que no caben, en «+N», con su tipo y su detalle al pasar. -->
+          <!-- Una línea de sitios; los que no caben, en «+N», con su tipo y su detalle en el tooltip del DS. -->
           <ul class="tp-cierre__usos" role="list" [scCabe]="1" (scCabeFuera)="usosFuera.set($event)">
             @for (u of usosPlanos(); track u.tipo + u.nombre + u.detalle) {
               <li class="tp-cierre__usa">
@@ -145,22 +150,19 @@
               </li>
             }
             <li class="tp-mas" data-mas>
-              <button type="button" class="tp-mas__btn" [attr.aria-label]="verUsos()"><sc-badge variant="secondary" size="xl" [label]="'+' + usosFuera()" /></button>
-              <span class="tp-mas__pop tp-mas__pop--lista">
-                @for (u of usosPlanos().slice(usosPlanos().length - usosFuera()); track u.tipo + u.nombre + u.detalle) {
-                  <span class="tp-cierre__usa tp-cierre__usa--suelto">
-                    <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'">
-                      @if (simbolos[u.tipo]; as simbolo) {
-                    <sc-icon [name]="simbolo" [size]="14" />
-                  } @else {
-                    <sc-channel-icon channel="whatsapp" />
+              <button type="button" class="tp-mas__btn" [attr.aria-label]="verUsos()" [attr.aria-describedby]="'tp-usos-resto'" [pTooltip]="restoUsos" tooltipPosition="top" tooltipEvent="both" tooltipStyleClass="tp-cierre__globo">
+                <sc-badge variant="secondary" size="xl" [label]="'+' + usosFuera()" />
+              </button>
+              <!-- Los sitios que no caben, para el lector: los dice después de la cifra (un texto `hidden` vale como descripción). -->
+              <span id="tp-usos-resto" hidden>{{ restoDeUsos() }}</span>
+              <ng-template #restoUsos>
+                <span class="tp-cierre__tip">
+                  @for (u of usosPlanos().slice(usosPlanos().length - usosFuera()); track u.tipo + u.nombre + u.detalle) {
+                    <span class="tp-cierre__tip-clave">{{ u.nombre }}</span>
+                    <span>{{ tipos[u.tipo].uno }}, {{ u.detalle }}</span>
                   }
-                    </span>
-                    <span class="tp-cierre__usa-nombre">{{ u.nombre }}</span>
-                    <span class="tp-cierre__usa-detalle">{{ u.detalle }}</span>
-                  </span>
-                }
-              </span>
+                </span>
+              </ng-template>
             </li>
           </ul>
           <!-- El aviso, callado en su icono: la barra de guardar ya dice «Afecta a N sitios» en cuanto cambias algo. -->
@@ -208,53 +210,8 @@
     </div>
   </div>
 
-  <!-- Guardar: aparece cuando hay algo que guardar -->
-  <!-- Guardar un horario que se usa: una sola confirmación que dice a quién afecta -->
-  @if (confirmando()) {
-    <sc-tp-modal [titulo]="'Este cambio afecta a ' + sitios(nUsos())" subtitulo="Todos pasarán a usar las horas nuevas en cuanto guardes." icono="alert" ancho="30rem" (cerrar)="cancelarGuardar()">
-      <div class="tp-afecta">
-        @for (g of usos(); track g.tipo) {
-          <div class="tp-afecta__grupo">
-            <span class="tp-afecta__tipo t-micro t-3">
-              <sc-tp-icono [nombre]="tipos[g.tipo].icono" [tam]="12" />
-              {{ g.titulo }}
-            </span>
-            <span class="tp-afecta__nombres t-small">
-              @for (u of g.usos; track u.nombre + u.detalle; let ultimo = $last) {
-                <span class="t-strong">{{ u.nombre }}</span>
-                @if (!ultimo) {
-                  <span class="t-3">, </span>
-                }
-              }
-            </span>
-          </div>
-        }
-        <p class="tp-afecta__cambio t-small t-2">
-          Queda así: <span class="t-strong t-num">{{ descripcion() }}</span>
-        </p>
-      </div>
-      <div tpPie class="tp-modal__acciones">
-        <button type="button" class="tp-btn tp-btn--ghost" (click)="cancelarGuardar()">Cancelar</button>
-        <span class="tp-spacer"></span>
-        <button type="button" class="tp-btn" data-tip="Un horario nuevo con estos cambios; este queda como estaba" (click)="guardarComoCopia()">
-          <sc-tp-icono nombre="copy" [tam]="14" />
-          Guardar como copia
-        </button>
-        <button type="button" class="tp-btn tp-btn--primary" (click)="guardar()">Guardar</button>
-      </div>
-    </sc-tp-modal>
+  <!-- Los avisos del mapa de la versión anterior (`?variante=columna`); los de la lista salen en el toast del sistema. -->
+  @if (columna) {
+    <sc-tp-avisos />
   }
-
-  @if (saliendo()) {
-    <sc-tp-modal titulo="¿Salir sin guardar?" subtitulo="Hay cambios en este horario que aún no están guardados." icono="alert" ancho="28rem" (cerrar)="responderSalida('seguir')">
-      <div tpPie class="tp-modal__acciones">
-        <button type="button" class="tp-btn tp-btn--ghost" (click)="responderSalida('descartar')">Descartar</button>
-        <span class="tp-spacer"></span>
-        <button type="button" class="tp-btn" (click)="responderSalida('seguir')">Seguir editando</button>
-        <button type="button" class="tp-btn tp-btn--primary" [disabled]="!puedeGuardar()" (click)="responderSalida('guardar')">Guardar y salir</button>
-      </div>
-    </sc-tp-modal>
-  }
-
-  <sc-tp-avisos />
 </div>

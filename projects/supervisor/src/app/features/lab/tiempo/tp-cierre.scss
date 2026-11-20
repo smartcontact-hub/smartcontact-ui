@@ -184,8 +184,8 @@
 }
 
 /*
- * «+N»: lo que no cabe en su línea, contado. Al pasar (un instante después, para que no salte al cruzarlo) o al llegar
- * con el teclado, enseña el resto; se queda abierto mientras el puntero va hacia él (el puente de ::before).
+ * «+N»: lo que no cabe en su línea, contado. En la cabecera y en «Aplicado en» el resto sale en el tooltip del DS (al
+ * pasar o al llegar con el teclado); en un día, en el globo de PrimeNG al pulsarlo.
  */
 .tp-mas {
   position: relative;
@@ -207,62 +207,24 @@
     outline-offset: var(--sc-focus-ring-offset);
   }
 }
-.tp-mas__pop {
-  position: absolute;
-  z-index: 40;
-  inset-block-start: calc(100% + var(--s-2));
-  inset-inline-start: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--s-2);
-  inline-size: max-content;
-  max-inline-size: 26rem;
-  padding: var(--s-3);
-  border-radius: var(--r-md);
-  background: var(--tp-surface);
-  box-shadow: var(--tp-pop);
-  visibility: hidden;
-  opacity: 0;
-  translate: 0 -0.25rem;
-  transition-property: opacity, translate, visibility;
-  transition-duration: 120ms, 120ms, 0s;
-  transition-timing-function: ease-out;
-  transition-delay: 180ms, 180ms, 300ms;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: 100%;
-    block-size: var(--s-2);
-  }
-  .tp-mas:hover > & {
-    visibility: visible;
-    opacity: 1;
-    translate: 0 0;
-    transition-delay: 120ms;
-  }
-  .tp-mas:focus-within > & {
-    visibility: visible;
-    opacity: 1;
-    translate: 0 0;
-    transition-delay: 0s;
-  }
+/* El resto, en el tooltip del DS: cada grupo o sitio en su línea, la clave a la izquierda. */
+.tp-cierre__tip {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  font-variant-numeric: tabular-nums;
 }
-/* La de los sitios va al final de su línea: se abre hacia dentro. */
-.tp-mas__pop--lista,
-.tp-mas--fin > .tp-mas__pop {
-  inset-inline: auto 0;
+.tp-cierre__tip-clave {
+  font-weight: var(--sc-font-weight-semibold);
+  white-space: nowrap;
 }
-/* Una lista de «+N» escondida (para su transición) sigue ocupando sitio: que no saque una barra de desplazamiento. */
-.tp-cierre .tp-lienzo {
-  overflow-x: hidden;
+/* Una franja no se parte por su guion: el salto de línea va entre franjas. */
+.tp-cierre__tip-franja {
+  white-space: nowrap;
 }
-@media (prefers-reduced-motion: reduce) {
-  .tp-mas__pop {
-    translate: none;
-  }
+/* El globo del DS es estrecho para una semana con horas: este, algo más ancho, como el de la lista (cuelga del body). */
+.tp-cierre__globo {
+  max-inline-size: 20rem;
 }
 /* Lo de ahora, como la columna «Ahora» de la lista: la etiqueta del DS y su detalle en una línea. */
 .tp-cierre__ahora {
@@ -408,12 +370,8 @@
 .tp-cierre .tp-cierre__semana .section-card {
   overflow: visible;
 }
-/* Con la lista de «+N» de un día abierta hacia arriba, la semana pasa por encima de la cabecera: la lista no queda debajo. */
 .tp-cierre__semana {
   position: relative;
-}
-.tp-cierre__semana:has(.tp-mas:hover, .tp-mas:focus-within) {
-  z-index: 3;
 }
 /* El aire lo ponen la sección y `.sub-section`, como en el resto de fichas. */
 .tp-cierre__semana-cuerpo {

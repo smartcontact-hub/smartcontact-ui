@@ -12,6 +12,7 @@ import {
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
+import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { CORTOS, horaCorta, LETRAS, NOMBRES, trozosDelDia } from './tp-modelo';
@@ -114,7 +115,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
  */
 @Component({
   selector: 'sc-tp-dias',
-  imports: [NgTemplateOutlet, ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, ScMessageComponent, ScSelectComponent, ScTagComponent, ScToggleSwitchComponent, ScIconComponent, TooltipModule],
+  imports: [NgTemplateOutlet, ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, ScMessageComponent, ScSelectComponent, ScTagComponent, ScToggleSwitchComponent, ScIconComponent, PopoverModule, TooltipModule],
   template: `
     <div class="tp-dias" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null" role="group" aria-label="La semana, día a día">
       <!-- La ayuda: arriba, donde se empieza a leer, y una sola cosa a la vez. -->
@@ -290,23 +291,45 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                 }
               }
               @if (f.franjas.length > aLaVista) {
-                <!-- Lo que no cabe: «+N» enseña el día entero al pasar, al llegar con el teclado o al pulsar su barra. -->
-                <span class="tp-mas tp-dias__mas" (pointerenter)="orientar($event)" (focusin)="orientar($event)">
-                  <button type="button" class="tp-mas__btn tp-dias__mas-btn" [attr.aria-label]="'Ver el ' + nombres[f.dia] + ' entero: ' + f.franjas.length + ' franjas'">
+                <!--
+                  Lo que no cabe: «+N» abre el día entero en el globo de PrimeNG (\`p-popover\`, como «Columnas» de las listas): al
+                  pulsarlo, o al ir con Intro a una hora que solo está ahí. Dentro, cada franja con sus horas y, entre ellas,
+                  cada pausa con su «Quitar». Cuelga del body: \`tp-globo\` le da las medidas y los colores de la pantalla.
+                -->
+                <span class="tp-mas tp-dias__mas">
+                  <button
+                    type="button"
+                    class="tp-mas__btn tp-dias__mas-btn"
+                    aria-haspopup="dialog"
+                    [attr.aria-expanded]="masAbierto() === f.dia"
+                    [attr.aria-label]="'Ver el ' + nombres[f.dia] + ' entero: ' + f.franjas.length + ' franjas'"
+                    (click)="masDe.toggle($event)"
+                  >
                     <sc-badge variant="secondary" size="xl" [label]="'+' + (f.franjas.length - aLaVista)" />
                   </button>
-                  <span class="tp-mas__pop tp-dias__mas-pop">
-                    <span class="tp-dias__mas-tit">{{ capital(nombres[f.dia]) }}, {{ f.franjas.length }} franjas</span>
-                    @for (fr of f.franjas; track $index; let j = $index) {
-                      @if (j > 0) {
-                        <span class="tp-dias__mas-pausa t-num">
-                          <span>Pausa de {{ hora(f.franjas[j - 1][1]) }} a {{ hora(fr[0]) }}</span>
-                          <sc-button size="sm" variant="secondary" appearance="text" label="Quitar" [ariaLabel]="'Quitar la pausa de ' + hora(f.franjas[j - 1][1]) + ' a ' + hora(fr[0])" (clicked)="quitarPausa(f.dia, j)" />
-                        </span>
+                  <p-popover #masDe appendTo="body" styleClass="tp-globo tp-dias__mas-pop" (onShow)="masAbierto.set(f.dia)" (onHide)="cerrarMas(f.dia)">
+                    <div
+                      class="tp-dias__mas-lista"
+                      role="group"
+                      [attr.aria-label]="capital(nombres[f.dia])"
+                      [attr.data-dia-lista]="f.dia"
+                      (focusin)="enfocar($event, f.dia)"
+                      (focusout)="foco.set(null)"
+                    >
+                      <span class="tp-dias__mas-tit">{{ capital(nombres[f.dia]) }}, {{ f.franjas.length }} franjas</span>
+                      <div class="tp-dias__mas-cuerpo">
+                      @for (fr of f.franjas; track $index; let j = $index) {
+                        @if (j > 0) {
+                          <span class="tp-dias__mas-pausa t-num">
+                            <span>Pausa de {{ hora(f.franjas[j - 1][1]) }} a {{ hora(fr[0]) }}</span>
+                            <sc-button size="sm" variant="secondary" appearance="text" label="Quitar" [ariaLabel]="'Quitar la pausa de ' + hora(f.franjas[j - 1][1]) + ' a ' + hora(fr[0])" (clicked)="quitarPausa(f.dia, j)" />
+                          </span>
+                        }
+                        <ng-container [ngTemplateOutlet]="caja" [ngTemplateOutletContext]="{ $implicit: fr, dia: f.dia, j, n: f.franjas.length }" />
                       }
-                      <ng-container [ngTemplateOutlet]="caja" [ngTemplateOutletContext]="{ $implicit: fr, dia: f.dia, j, n: f.franjas.length }" />
-                    }
-                  </span>
+                      </div>
+                    </div>
+                  </p-popover>
                 </span>
               } @else if (f.franjas.length > 1 && f.unible) {
                 <!--
@@ -437,6 +460,8 @@ export class TpDiasComponent {
   private ultimoMinuto = 0;
   /** La franja cuyas horas se están escribiendo: su caja y su barra se resaltan juntas. */
   protected readonly foco = signal<{ dia: number; j: number } | null>(null);
+  /** El día cuya lista de «+N» está abierta, para `aria-expanded`. */
+  protected readonly masAbierto = signal<number | null>(null);
   protected readonly oferta = signal<Oferta | null>(null);
   /** Lo que pasó solo y conviene decir (dos franjas que se tocaban y ahora son una), hasta el siguiente cambio. */
   protected readonly aviso = signal<string | null>(null);
@@ -911,15 +936,44 @@ export class TpDiasComponent {
   }
 
   /**
-   * Lleva el cursor a una hora de una franja. Si esa franja solo está en la lista de «+N», primero se enfoca «+N», que la
-   * abre (una lista escondida no se puede enfocar), y luego la hora.
+   * Lleva el cursor a una hora de una franja. Si esa franja solo está en la lista de «+N», primero la abre (el globo cuelga
+   * del body y solo existe abierto) y luego enfoca la hora.
    */
   private enfocarCaja(dia: number, j: number, lado: number): void {
     const fila = this.host.nativeElement.querySelector<HTMLElement>(`.tp-dias__fila[data-dia="${dia}"]`);
-    const caja = fila?.querySelector<HTMLElement>(`[data-franja="${j}"]`);
-    if (!fila || !caja) return;
-    if (caja.closest('.tp-mas__pop')) fila.querySelector<HTMLElement>('.tp-dias__mas-btn')?.focus();
-    caja.querySelectorAll('input')[lado]?.focus();
+    const enFila = fila?.querySelector<HTMLElement>(`.tp-dias__horas > [data-franja="${j}"]`);
+    if (enFila) {
+      enFila.querySelectorAll('input')[lado]?.focus();
+      return;
+    }
+    const enLista = (): HTMLElement | null => document.querySelector<HTMLElement>(`[data-dia-lista="${dia}"] [data-franja="${j}"]`);
+    if (!enLista()) fila?.querySelector<HTMLElement>('.tp-dias__mas-btn')?.click();
+    // El globo se pinta un poco después del clic: se espera a que esté (unos fotogramas como mucho).
+    const ir = (intentos: number): void => {
+      const caja = enLista();
+      if (caja) caja.querySelectorAll('input')[lado]?.focus();
+      else if (intentos > 0) setTimeout(() => ir(intentos - 1), 30);
+    };
+    setTimeout(() => ir(10));
+  }
+
+  /** Al cerrarse el «+N», el foco que se quedaba dentro vuelve a su botón (si se pulsó fuera, se queda donde se pulsó). */
+  protected cerrarMas(dia: number): void {
+    this.masAbierto.set(null);
+    const activo = document.activeElement;
+    if (activo && activo !== document.body && !activo.closest('.tp-dias__mas-pop')) return;
+    this.host.nativeElement.querySelector<HTMLElement>(`.tp-dias__fila[data-dia="${dia}"] .tp-dias__mas-btn`)?.focus();
+  }
+
+  /**
+   * Esc con el reloj de una hora abierto dentro del «+N» cierra solo el reloj, y el siguiente, el globo: el globo de
+   * PrimeNG escucha Esc en el document y se cerraría a la vez. Si el reloj estaba abierto (su panel sigue en el body
+   * mientras se va), aquí, en el body, se para antes de llegar al document.
+   */
+  @HostListener('body:keydown.escape', ['$event'])
+  protected escEnGlobo(e: Event): void {
+    if (this.masAbierto() === null || !document.querySelector('.p-datepicker-panel')) return;
+    if ((e.target as HTMLElement | null)?.closest('.tp-dias__mas-lista, .p-datepicker-panel')) e.stopPropagation();
   }
 
   /* ── Arrastrar ────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -995,19 +1049,6 @@ export class TpDiasComponent {
     this.corte.set(null);
     this.cambiarDia(c.dia, [...fs.slice(0, c.j), [f[0], c.desde], [c.hasta, f[1]], ...fs.slice(c.j + 1)]);
     this.aviso.set(`Pausa de ${horaCorta(c.desde)} a ${horaCorta(c.hasta)}. Sus bordes se arrastran y sus horas se escriben.`);
-  }
-
-  /**
-   * La lista de «+N» se abre hacia abajo si cabe en la ventana y, si no, hacia arriba: se mide al llegar a ella, porque
-   * depende de dónde esté la fila en la pantalla.
-   */
-  protected orientar(e: Event): void {
-    const el = e.currentTarget as HTMLElement;
-    const pop = el.querySelector<HTMLElement>('.tp-mas__pop');
-    if (!pop) return;
-    const r = el.getBoundingClientRect();
-    const abajo = window.innerHeight - r.bottom - 8;
-    el.classList.toggle('tp-dias__mas--arriba', abajo < pop.offsetHeight && r.top > abajo);
   }
 
   /** Elige una franja: la barra se queda con el foco (para ⌫ e Intro) y, si cabe, ya enseña su pausa. */
