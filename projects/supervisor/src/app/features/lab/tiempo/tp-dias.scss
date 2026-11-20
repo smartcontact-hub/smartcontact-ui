@@ -328,9 +328,14 @@
   border-color: color-mix(in oklch, var(--tp-accent) 40%, transparent);
   background: var(--tp-surface);
 }
-/* Escribir en una franja la resalta entera, con su barra: se edita la franja, no una hora suelta. */
-.tp-dias__franja:focus-within {
+/* Escribir en una franja la resalta entera, con su barra: se edita la franja, no una hora suelta. Elegir su barra, igual. */
+.tp-dias__franja:focus-within,
+.tp-dias__franja.is-elegida {
   box-shadow: 0 0 0 2px var(--tp-accent);
+}
+/* La barra elegida ya lleva su aro (`is-elegida`): el contorno del foco sobra. */
+.tp-dias .tp-sem__barra:focus {
+  outline: none;
 }
 .tp-dias__horas .tp-hora[aria-invalid='true'] {
   border-color: var(--tp-danger);

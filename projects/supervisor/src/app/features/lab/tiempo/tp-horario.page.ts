@@ -165,6 +165,15 @@ export class TpHorarioPage implements OnInit {
     this.form.set({ ...datos, name: nombreDeCopia(origen.name, this.store.items().map((h) => h.name)) });
   }
 
+  /** Al crear: todos los días cerrados otra vez, como al empezar. Es un paso más de deshacer. */
+  protected vaciarSemana(): void {
+    if (this.sinDias()) return;
+    this.update('week', VACIO.week);
+    this.avisos.decir('Semana vacía. ⌘Z la devuelve.');
+    // El botón se apaga con la semana vacía: el foco pasa al lunes, que es por donde se vuelve a empezar.
+    setTimeout(() => document.querySelector<HTMLElement>('.tp-dias__fila[data-dia="0"] .tp-dias__dia')?.focus());
+  }
+
   protected update<K extends keyof Borrador>(key: K, value: Borrador[K]): void {
     this.apuntar(key);
     this.form.update((f) => ({ ...f, [key]: value }));

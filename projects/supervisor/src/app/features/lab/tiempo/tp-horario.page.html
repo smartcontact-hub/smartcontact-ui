@@ -142,6 +142,13 @@
               a la semana
             </span>
           </div>
+          <!-- Al crear, vaciar la semana para empezar de cero: solo el icono, a la derecha; ⌘Z la devuelve. -->
+          @if (modo() === 'crear') {
+            <span class="tp-spacer"></span>
+            <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm tp-cierre__vaciar" [attr.aria-label]="t.vaciarSemana" [attr.data-tip]="t.vaciarSemana" [disabled]="sinDias()" (click)="vaciarSemana()">
+              <sc-tp-icono nombre="reiniciar" [tam]="16" />
+            </button>
+          }
         </header>
         <div class="tp-cierre__semana-cuerpo">
           @if (columna) {

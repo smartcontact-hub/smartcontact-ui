@@ -387,6 +387,16 @@
   flex-direction: column;
   gap: var(--s-3);
 }
+/* «Vaciar la semana», al borde de la tarjeta: su tooltip se abre hacia dentro. */
+.tp-cierre__vaciar[data-tip]::after {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  translate: 0 0.125rem;
+}
+.tp-cierre__vaciar[data-tip]:hover::after,
+.tp-cierre__vaciar[data-tip]:focus-visible::after {
+  translate: 0 0;
+}
 /* Con la lista de «+N» de un día abierta hacia arriba, la semana pasa por encima de la cabecera: la lista no queda debajo. */
 .tp-cierre__semana:has(.tp-mas:hover, .tp-mas:focus-within) {
   z-index: 3;

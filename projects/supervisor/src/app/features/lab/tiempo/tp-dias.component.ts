@@ -190,10 +190,16 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                 [class.is-arrastre]="t.arrastre"
                 [class.is-movible]="t.movible"
                 [class.is-viva]="t.viva"
-                [class.is-elegida]="foco()?.dia === f.dia && foco()?.j === t.j"
+                [class.is-elegida]="(foco()?.dia === f.dia && foco()?.j === t.j) || (elegida()?.dia === f.dia && elegida()?.j === t.j)"
                 [style.left.%]="pos(t.desde)"
                 [style.width.%]="pos(t.hasta) - pos(t.desde)"
+                [attr.tabindex]="t.j >= 0 ? -1 : null"
+                [attr.role]="t.j >= 0 ? 'button' : null"
+                [attr.aria-pressed]="t.j >= 0 ? elegida()?.dia === f.dia && elegida()?.j === t.j : null"
+                [attr.aria-label]="t.j >= 0 ? capital(nombres[f.dia]) + ', de ' + t.texto.replace('–', ' a ') : null"
                 (pointerdown)="t.movible && empezar($event, f.dia, t.j, 'mover')"
+                (keydown)="teclaBarra($event, f.dia, t.j)"
+                (blur)="soltarEleccion(f.dia, t.j)"
               >
                 @if (t.viva) {
                   <span class="tp-sem__globo t-num" aria-hidden="true">{{ t.texto }}</span>
@@ -278,7 +284,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                   Pausa
                 </button>
               } @else if (f.pausa !== -1) {
-                <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa" data-tip="De 14:00 a 15:00, o pulsa en la barra donde la quieras" (click)="pausa(f.dia)">
+                <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa" data-tip="De 14:00 a 15:00, o elige la barra y pulsa donde la quieras" (click)="pausa(f.dia)">
                   <sc-tp-icono nombre="plus" [tam]="14" />
                   Pausa
                 </button>
@@ -293,7 +299,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
 
     <!-- Una franja, en su caja: sus dos horas, que se escriben, y «+1» o «24 h» si toca. -->
     <ng-template #caja let-fr let-dia="dia" let-j="j" let-n="n">
-      <span class="tp-dias__franja" [attr.data-franja]="j">
+      <span class="tp-dias__franja" [attr.data-franja]="j" [class.is-elegida]="elegida()?.dia === dia && elegida()?.j === j">
         <sc-tp-hora [valor]="fr[0]" [etiqueta]="etiqueta(dia, j, n) + ', abre'" (cambio)="ponerHora(dia, j, 0, $event)" />
         <span class="tp-franja__a" aria-hidden="true"></span>
         <sc-tp-hora [valor]="fr[1]" fin [etiqueta]="etiqueta(dia, j, n) + ', cierra'" (cambio)="ponerHora(dia, j, 1, $event)" />
@@ -343,6 +349,13 @@ export class TpDiasComponent {
   protected readonly guia = signal<{ dia: number; min: number; hasta: number } | null>(null);
   /** Al pasar por una barra: dónde iría una pausa de una hora con un clic. */
   protected readonly corte = signal<{ dia: number; j: number; desde: number; hasta: number } | null>(null);
+  /**
+   * La franja elegida con un clic en su barra: se resalta con su caja, ⌫ la quita, Intro lleva a sus horas y otro clic
+   * en ella pone una pausa donde se ve. Se suelta con Esc, al arrastrar o al pulsar en otro sitio.
+   */
+  protected readonly elegida = signal<{ dia: number; j: number } | null>(null);
+  /** Dónde estaba el puntero sobre la pista: al elegir una barra, su pausa se enseña sin esperar a que se mueva. */
+  private ultimoMinuto = 0;
   /** La franja cuyas horas se están escribiendo: su caja y su barra se resaltan juntas. */
   protected readonly foco = signal<{ dia: number; j: number } | null>(null);
   protected readonly oferta = signal<Oferta | null>(null);
@@ -374,10 +387,18 @@ export class TpDiasComponent {
   }
 
   constructor() {
-    // Una semana que no salió de aquí (⌘Z, ⇧⌘Z) deja sin sentido la pregunta y el aviso de lo último que se hizo.
+    // Una semana que no salió de aquí (⌘Z, ⇧⌘Z) deja sin sentido la pregunta y el aviso de lo último que se hizo, y pasa
+    // a ser la de ahora: ⌘Z devuelve la semana de antes, la MISMA, y sin esto `actual()` seguiría con la deshecha.
     effect(() => {
-      if (this.semana() !== this.local)
+      const s = this.semana();
+      if (s !== this.local)
         untracked(() => {
+          this.entrada = s;
+          this.local = s;
+          // Vaciada desde fuera, los días ya no se siguen: los que se abran después empiezan su propia cadena.
+          if (s.every((d) => !d.length)) this.sigue.clear();
+          this.elegida.set(null);
+          this.corte.set(null);
           this.oferta.set(null);
           this.aviso.set(null);
         });
@@ -404,8 +425,15 @@ export class TpDiasComponent {
     }
     const a = this.aviso();
     if (a) return { texto: a, icono: 'check', tono: 'aviso' };
+    const el = this.elegida();
+    const f = el ? this.semana()[el.dia]?.[el.j] : undefined;
+    if (el && f) {
+      const que = `${capital(NOMBRES[el.dia])}, de ${horaCorta(f[0])} a ${horaCorta(f[1])}`;
+      const pausa = partible(f) ? ' y otro clic en la barra pone una pausa donde la ves' : '';
+      return { texto: `${que}: ⌫ la quita, Intro escribe sus horas${pausa}.`, icono: 'info', tono: 'guia' };
+    }
     if (this.vacia()) return { texto: 'Activa un día para abrirlo. Los siguientes copian sus horas.', icono: 'info', tono: 'guia' };
-    return { texto: 'Arrastra o escribe las horas. Para una pausa, pulsa en la barra donde la quieras.', icono: 'info', tono: 'neutro' };
+    return { texto: 'Arrastra o escribe las horas. Pulsa en una barra para elegirla: luego puedes quitarla o partirla con una pausa.', icono: 'info', tono: 'neutro' };
   });
 
   /* ── Las horas que se ven ─────────────────────────────────────────────────────────────────────────────────────── */
@@ -801,6 +829,7 @@ export class TpDiasComponent {
     const pista = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const m = this.minutoEn(e, pista);
     const barra = (e.target as HTMLElement).closest<HTMLElement>('.tp-sem__barra');
+    this.ultimoMinuto = m;
     this.apuntarCorte(dia, m, barra && !(e.target as HTMLElement).closest('.tp-sem__asa') ? Number(barra.dataset['j']) : -1);
     const h = this.hueco(dia, Math.min(m, 1440 - PASO));
     if (!h || barra) {
@@ -818,9 +847,11 @@ export class TpDiasComponent {
 
   /** Una pausa de una hora que empieza en el puntero, con un cuarto de hora como poco a cada lado; si no cabe, nada. */
   private apuntarCorte(dia: number, m: number, j: number): void {
-    const f = j >= 0 ? this.actual()[dia]?.[j] : undefined;
+    // Solo en la barra elegida: un clic en una barra la elige; el segundo, en la elegida, pone la pausa.
+    const el = this.elegida();
+    const f = j >= 0 && el?.dia === dia && el.j === j ? this.actual()[dia]?.[j] : undefined;
     let c: { dia: number; j: number; desde: number; hasta: number } | null = null;
-    if (f && !cruza(f) && f[1] - f[0] >= PAUSA + 2 * PASO) {
+    if (f && partible(f)) {
       const desde = Math.min(f[1] - PASO - PAUSA, Math.max(f[0] + PASO, Math.round(m / PASO) * PASO));
       c = { dia, j, desde, hasta: desde + PAUSA };
     }
@@ -852,6 +883,60 @@ export class TpDiasComponent {
     const suelo = document.querySelector('.tp-savebar[data-visible="true"]')?.getBoundingClientRect().top ?? window.innerHeight;
     const abajo = suelo - r.bottom - 8;
     el.classList.toggle('tp-dias__mas--arriba', abajo < pop.offsetHeight && r.top > abajo);
+  }
+
+  /** Elige una franja: la barra se queda con el foco (para ⌫ e Intro) y, si cabe, ya enseña su pausa. */
+  private elegir(dia: number, j: number): void {
+    this.aviso.set(null);
+    this.elegida.set({ dia, j });
+    this.apuntarCorte(dia, this.ultimoMinuto, j);
+    this.host.nativeElement.querySelector<HTMLElement>(`.tp-dias__fila[data-dia="${dia}"] .tp-sem__barra[data-j="${j}"]`)?.focus();
+  }
+
+  /** Pulsar fuera de la barra elegida la suelta: el foco no siempre se va (la pista no lo coge al pintar). */
+  @HostListener('document:pointerdown', ['$event'])
+  protected pulsarFuera(e: PointerEvent): void {
+    const el = this.elegida();
+    if (!el) return;
+    const barra = (e.target as HTMLElement | null)?.closest<HTMLElement>('.tp-sem__barra');
+    const fila = barra?.closest<HTMLElement>('.tp-dias__fila');
+    if (barra && fila?.dataset['dia'] === String(el.dia) && barra.dataset['j'] === String(el.j)) return;
+    this.elegida.set(null);
+    this.corte.set(null);
+    const activo = document.activeElement as HTMLElement | null;
+    if (activo?.matches('.tp-sem__barra')) activo.blur();
+  }
+
+  protected soltarEleccion(dia: number, j: number): void {
+    const el = this.elegida();
+    if (el?.dia === dia && el.j === j) {
+      this.elegida.set(null);
+      this.corte.set(null);
+    }
+  }
+
+  /** Con una barra elegida: ⌫ (o Supr) la quita, y si era la única el día queda cerrado; Intro lleva a sus horas. */
+  protected teclaBarra(e: KeyboardEvent, dia: number, j: number): void {
+    const el = this.elegida();
+    if (j < 0 || el?.dia !== dia || el.j !== j) return;
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault();
+      this.elegida.set(null);
+      this.corte.set(null);
+      if (this.actual()[dia].length > 1) {
+        this.quitarFranja(dia, j);
+        setTimeout(() => this.enfocarCaja(dia, Math.max(0, j - 1), 1));
+        return;
+      }
+      this.alternar(dia);
+      this.aviso.set(`${capital(this.nombreCon(dia))} queda cerrado. ⌘Z lo deshace.`);
+      setTimeout(() => this.host.nativeElement.querySelector<HTMLElement>(`.tp-dias__fila[data-dia="${dia}"] .tp-dias__dia`)?.focus());
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      this.elegida.set(null);
+      this.corte.set(null);
+      this.enfocarCaja(dia, j, 0);
+    }
   }
 
   protected enfocar(e: FocusEvent, dia: number): void {
@@ -907,6 +992,7 @@ export class TpDiasComponent {
     if (!a) return;
     if (!a.movido && Math.abs(e.clientX - a.x0) < 3) return;
     if (!a.movido) {
+      this.elegida.set(null);
       a = { ...a, movido: true };
       this.arrastre.set(a);
     }
@@ -936,12 +1022,15 @@ export class TpDiasComponent {
     const a = this.arrastre();
     if (!a) return;
     if (a.lado === 'mover' && !a.movido) {
-      // Un clic en una barra, sin arrastrarla: la pausa que se veía al pasar; si no cabe, a sus horas, que ahí se escriben.
+      // Un clic en una barra, sin arrastrarla, la elige; en la ya elegida, pone la pausa que se veía al pasar.
       this.arrastre.set(null);
       this.gesto.emit(false);
       const c = this.corte();
-      if (c?.dia === a.dia && c.j === a.franja) this.cortar(c);
-      else this.enfocarCaja(a.dia, a.franja, 0);
+      const el = this.elegida();
+      if (el?.dia === a.dia && el.j === a.franja && c?.dia === a.dia && c.j === a.franja) {
+        this.elegida.set(null);
+        this.cortar(c);
+      } else this.elegir(a.dia, a.franja);
       return;
     }
     if (a.lado === 'pintar' && !a.movido) {
@@ -974,6 +1063,12 @@ export class TpDiasComponent {
   protected cancelar(): void {
     const a = this.arrastre();
     if (!a) {
+      if (this.elegida()) {
+        this.elegida.set(null);
+        this.corte.set(null);
+        (document.activeElement as HTMLElement | null)?.blur();
+        return;
+      }
       this.oferta.set(null);
       return;
     }
@@ -995,6 +1090,11 @@ function ajuste(s: Semana): Rango {
     if (hasta - desde < 600 && desde > 0) desde -= 60;
   }
   return { desde, hasta };
+}
+
+/** Si se puede partir con una pausa de una hora y un cuarto de hora a cada lado: no pasa de medianoche y dura 1 h 30 o más. */
+function partible(f: Franja): boolean {
+  return !cruza(f) && f[1] - f[0] >= PAUSA + 2 * PASO;
 }
 
 /** Si cabe una pausa de una hora con una hora a cada lado: solo en un día de una franja que no pase de medianoche. */
