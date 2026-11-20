@@ -217,23 +217,33 @@ const BOTONES: Record<Accion, BotonDeAccion> = {
                 </button>
               }
             </div>
+            @if (tramo.dias.length === 0) {
+              <span class="tp-tramo__guia t-micro">
+                <sc-tp-icono nombre="arrow-left" [tam]="12" />
+                Marca los días que abren con estas horas
+              </span>
+            }
             <span class="tp-spacer"></span>
             <div class="tp-tramo__acc">
               <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-tramo__24" [attr.aria-pressed]="es24(tramo)" (click)="poner24(i)">24 h</button>
-              <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm" [attr.aria-label]="t.quitarTramo(i)" data-tip="Cerrar estos días" (click)="quitar(i)">
-                <sc-tp-icono nombre="x" [tam]="14" />
-              </button>
+              @if (tramo.dias.length > 0) {
+                <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm" [attr.aria-label]="t.quitarTramo(i)" data-tip="Cerrar estos días" (click)="quitar(i)">
+                  <sc-tp-icono nombre="x" [tam]="14" />
+                </button>
+              }
             </div>
           </li>
         }
       </ol>
 
       <div class="tp-sem__pie">
-        <button type="button" class="tp-btn tp-btn--sm" [disabled]="cerrados().length === 0" (click)="anadir()">
+        <button type="button" class="tp-btn tp-btn--sm" [disabled]="cerrados().length === 0 || vacia()" (click)="anadir()">
           <sc-tp-icono nombre="plus" [tam]="14" />
           Días con otro horario
         </button>
-        @if (cerrados().length > 0 && cerrados().length < 7) {
+        @if (vacia()) {
+          <span class="t-micro t-3">Primero, los días de la fila de arriba</span>
+        } @else if (cerrados().length > 0 && cerrados().length < 7) {
           <span class="t-micro t-3">Cerrado {{ cerradosTexto() }}</span>
         }
       </div>
@@ -528,8 +538,12 @@ export class TpSemanaComponent {
   protected readonly tramos = computed<Tramo[]>(() => {
     const s = this.semana();
     if (s !== this.ultima) this.borrador = tramosDe(s);
+    // Sin ningún día abierto (un horario nuevo, o al cerrarlo todo), queda una fila sin días: se van marcando y nada salta.
+    if (!this.borrador.length) this.borrador = [{ dias: [], franjas: [[540, 1080]] }];
     return this.borrador;
   });
+  /** Ningún día abre todavía: la semana enseña cómo empezar. */
+  protected readonly vacia = computed(() => this.tramos().every((t) => t.dias.length === 0));
   /** Los tramos de ahora mismo, aunque la semana que acabamos de emitir aún no haya vuelto por la entrada. */
   private vivos(): Tramo[] {
     this.tramos();
@@ -561,6 +575,7 @@ export class TpSemanaComponent {
   protected readonly ayuda = computed(() => {
     if (this.guia()?.corte) return 'Pulsa la barra para fijar la raya y ver qué puedes hacer; Supr quita la franja entera';
     if (this.seleccion().length) return 'Pulsa en otro punto de la barra para mover la raya; Esc suelta lo elegido';
+    if (this.vacia()) return 'Ningún día abre todavía: márcalos en la fila de arriba o arrastra sobre uno aquí';
     if (PORTAPAPELES()) return 'Pasa por un día o pulsa su letra, y ⌘V pega lo copiado';
     return 'Arrastra sobre el rojo para añadir horas; pulsa una barra o un día para copiarlo';
   });
@@ -1275,7 +1290,13 @@ export class TpSemanaComponent {
     let tramo: number;
     let franja: number;
     let tramos: Tramo[];
-    if (i === -1) {
+    const sinDias = antes.findIndex((t) => t.dias.length === 0);
+    if (i === -1 && sinDias !== -1) {
+      // La fila sin días (la de un horario nuevo) se estrena con este día: así no sale otra fila y el mapa no salta.
+      tramos = antes.map((t, k) => (k === sinDias ? { dias: [dia], franjas: [nueva] } : t));
+      tramo = sinDias;
+      franja = 0;
+    } else if (i === -1) {
       tramos = [...antes, { dias: [dia], franjas: [nueva] }];
       tramo = tramos.length - 1;
       franja = 0;

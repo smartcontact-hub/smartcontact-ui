@@ -726,6 +726,15 @@
   align-self: flex-start;
   color: var(--tp-ink-3);
 }
+/* La fila de un horario nuevo, aún sin días: dice qué hacer, al lado de las bolitas. */
+.tp-tramo__guia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  align-self: center;
+  color: var(--tp-accent-ink);
+  font-weight: 520;
+}
 .tp-sem__pie {
   display: flex;
   flex-wrap: wrap;

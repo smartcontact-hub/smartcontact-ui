@@ -18,13 +18,13 @@ import { contarUso } from './tp-usos';
 
 type Borrador = Omit<Horario, 'id'>;
 
-const LABORABLE = [[540, 1080]] as const;
+/** Un horario nuevo empieza sin ningún día abierto: la semana enseña una fila sin días para irlos marcando. */
 const VACIO: Borrador = {
   name: '',
   timezone: 'Europe/Madrid',
   description: '',
   status: 'active',
-  week: [LABORABLE, LABORABLE, LABORABLE, LABORABLE, LABORABLE, [], []],
+  week: [[], [], [], [], [], [], []],
   periods: [],
   specials: [],
   holidayCalendarIds: [],
@@ -94,8 +94,14 @@ export class TpHorarioPage implements OnInit {
   protected readonly usos = computed(() => this.aplicado.agrupados(this.horarioId()));
   protected readonly nUsos = computed(() => this.usos().reduce((n, g) => n + g.usos.length, 0));
 
-  protected readonly puedeGuardar = computed(() => !!this.form().name.trim() && !this.faltaSemana() && (this.modo() === 'crear' || this.dirty()));
-  protected readonly motivo = computed(() => (!this.form().name.trim() ? 'Ponle un nombre' : this.faltaSemana() ? 'Revisa la semana' : ''));
+  /** Un horario que no abre ningún día no se guarda: no serviría para nada. */
+  protected readonly sinDias = computed(() => this.form().week.every((d) => !d?.length));
+  protected readonly puedeGuardar = computed(
+    () => !!this.form().name.trim() && !this.faltaSemana() && !this.sinDias() && (this.modo() === 'crear' || this.dirty()),
+  );
+  protected readonly motivo = computed(() =>
+    !this.form().name.trim() ? 'Ponle un nombre' : this.sinDias() ? 'Abre al menos un día' : this.faltaSemana() ? 'Revisa la semana' : '',
+  );
 
   /* ── Carga ────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
