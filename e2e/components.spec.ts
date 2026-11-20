@@ -1961,11 +1961,15 @@ test.describe('sc-inline-rename-cell', () => {
     await gotoPage(page, 'inlinerenamecell');
     await expect(page.getByTestId('rename-value')).toHaveText('Valor: Equipo de Soporte');
 
-    // entra a modo edición → autofocus en el input con el valor sembrado.
+    // entra a modo edición → autofocus en el input con el valor sembrado y seleccionado entero: lo que se
+    // teclea lo sustituye. Con teclas de verdad y no con `fill()`, que vacía el campo antes de escribir y por
+    // eso no veía que la selección se perdía (lo tecleado se pegaba detrás del nombre).
     await page.getByTestId('start-edit').click();
     const input = page.getByTestId('sc-inline-rename').locator('input');
     await expect(input).toBeFocused();
     await expect(input).toHaveValue('Equipo de Soporte');
+    await page.keyboard.type('Soporte VIP');
+    await expect(input).toHaveValue('Soporte VIP');
 
     // vacío / solo-espacios deshabilita el commit.
     await input.fill('   ');

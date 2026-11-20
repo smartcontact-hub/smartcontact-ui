@@ -3,8 +3,8 @@
     #input
     type="text"
     class="rename__input"
-    [ngModel]="value()"
-    (ngModelChange)="value.set($event)"
+    [value]="value()"
+    (input)="onInput($event)"
     (keydown)="onKey($event)"
     [placeholder]="placeholder()"
     [attr.aria-label]="ariaLabel() || ('sc.inlineRenameCell.defaultAriaLabel' | translate)"
