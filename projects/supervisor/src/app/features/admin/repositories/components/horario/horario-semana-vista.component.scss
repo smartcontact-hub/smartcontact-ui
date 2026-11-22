@@ -1,6 +1,7 @@
 :host {
   display: block;
   min-inline-size: 0;
+  container-type: inline-size;
 }
 
 /* Los radios, concéntricos: el de la pista es el de la barra más el hueco que deja alrededor (2 px arriba y abajo). */
@@ -19,22 +20,21 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Las tres columnas de la rejilla (día · línea · horas) las comparten el eje y las filas. */
+/* Una rejilla de cuatro columnas (día · línea · horas · franjas): la línea se lleva lo que sobra y las dos últimas miden lo que
+ * necesite la fila más ancha, así las franjas y la línea no dejan huecos entre sí. El eje y las filas la comparten. */
 .sv__rejilla {
   --col-dia: var(--sc-spacing-2-5);
-  --col-horas: var(--sc-spacing-3-5, 3.25rem);
-    --col-franjas: 31rem;
 
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-  container-type: inline-size;
+  display: grid;
+  grid-template-columns: var(--col-dia) minmax(0, 1fr) auto auto;
+  column-gap: var(--sc-spacing-0-5);
+  row-gap: var(--sc-spacing-0-25);
 }
 
 .sv__ejes {
   position: relative;
   block-size: var(--sc-spacing-1-5);
-  margin-inline: var(--col-dia) calc(var(--col-franjas) + var(--col-horas));
+  grid-column: 2;
   color: var(--sc-text-secondary);
   font-size: var(--sc-font-size-caption);
   font-variant-numeric: tabular-nums;
@@ -69,9 +69,7 @@
 }
 
 .sv__filas {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-25);
+  display: contents;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -79,14 +77,15 @@
 
 .fila {
   display: grid;
-  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-franjas) var(--col-horas);
-  column-gap: var(--sc-spacing-0-5);
+  grid-column: 1 / -1;
+  /* Las columnas son las de la rejilla de arriba: así las filas se alinean entre sí y con el eje. */
+  grid-template-columns: subgrid;
   align-items: center;
 }
 
 /* Las franjas, en la columna de al lado del mapa; con poco ancho (contenedor de menos de 44 rem), debajo de él. */
 .fila__franjas {
-  grid-column: 3;
+  grid-column: 4;
   grid-row: 1;
   display: flex;
   align-items: center;
@@ -95,14 +94,15 @@
 }
 
 .fila__horas {
-  grid-column: 4;
+  grid-column: 3;
   white-space: nowrap;
+  text-align: end;
+  padding-inline-end: var(--sc-spacing-0-5);
 }
 
 @container (max-width: 44rem) {
-  .sv__ejes,
-  .fila {
-    --col-franjas: 0px;
+  .sv__rejilla {
+    grid-template-columns: var(--col-dia) minmax(0, 1fr) auto;
   }
 
   .fila__franjas {

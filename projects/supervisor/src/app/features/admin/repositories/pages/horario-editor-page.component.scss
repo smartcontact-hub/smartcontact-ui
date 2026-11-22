@@ -6,55 +6,37 @@
   background: var(--sc-bg-canvas);
 }
 
-/* General (en horizontal) arriba a la izquierda y «Dónde se usa» a su derecha; debajo, el horario a todo el ancho, que es lo que más
- * necesita. Los contenedores son transparentes (`display: contents`) para colocar cada tarjeta en la rejilla. */
+/* Una sola columna: la tarjeta General (identidad y dónde se usa, lado a lado) y debajo el horario, a todo el ancho. */
 .horario {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Identidad a la izquierda y dónde se usa a la derecha, sin huecos: las dos columnas parten de arriba. */
+.general {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 24rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   column-gap: var(--sc-spacing-2);
-  align-items: start;
+  align-items: stretch;
 
   @media (max-width: 1099px) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-.horario__reglas,
-.horario__resultado {
-  display: contents;
-}
-
-.horario__reglas > sc-section-card:first-child {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.horario__reglas > sc-section-card:last-child {
-  grid-column: 1 / -1;
-  grid-row: 2;
-}
-
-.horario__resultado > sc-section-card {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-@media (max-width: 1099px) {
-  .horario__reglas > sc-section-card:first-child,
-  .horario__reglas > sc-section-card:last-child,
-  .horario__resultado > sc-section-card {
-    grid-column: 1;
-    grid-row: auto;
-  }
-}
-
 /* General en horizontal: nombre, descripción y zona horaria en una fila (con poco ancho, apilados). */
 .bloque {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: var(--sc-spacing-1);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
 
-  @media (max-width: 899px) {
+  /* La descripción, a todo el ancho. */
+  > :nth-child(2) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  @media (max-width: 599px) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -142,7 +124,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-125);
-  max-block-size: 12rem;
+  max-block-size: 7.5rem;
   margin: 0;
   padding: 0;
   overflow-y: auto;

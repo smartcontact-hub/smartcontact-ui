@@ -30,7 +30,8 @@
       <div class="horario__reglas">
         <!-- General, en horizontal: nombre, descripción y zona horaria en una fila, sobre el horario. -->
         <sc-section-card titleKey="repositories.horarios.section_general" surface="subtle" icon="tune">
-          <sc-subsection>
+          <div class="general">
+          <sc-subsection titleKey="repositories.horarios.section_identity">
             <div class="bloque">
               <sc-inputtext
                 inputId="horario-name"
@@ -63,35 +64,7 @@
               />
             </div>
           </sc-subsection>
-        </sc-section-card>
-
-        <!-- Un solo bloque con las dos formas de editar el horario, que se cambian con los botones de arriba: «Semana» (se arrastra sobre
-             las horas) y «Franjas» (se escriben las horas de cada día y se copian). Las dos editan lo mismo. -->
-        <sc-section-card
-          anchorId="horario-semana"
-          titleKey="repositories.horarios.section_schedule"
-          surface="subtle"
-          icon="date_range"
-        >
-          <sc-subsection>
-            <!-- Una sola vista: el mapa de la semana (se arrastra sobre las horas) y, bajo cada día, sus franjas para escribir las horas. -->
-            <sc-horario-semana-vista
-              [semana]="form().week"
-              [cerrados]="form().closedDays ?? []"
-              [zona]="form().timezone"
-              [falta]="faltaDeSemana()"
-              (semanaChange)="ponerSemana($event)"
-              (cierreChange)="cerrarDia($event.dia, $event.cerrado)"
-            />
-          </sc-subsection>
-        </sc-section-card>
-      </div>
-
-      <!-- A la derecha: dónde se usa. -->
-      <div class="horario__resultado">
-        <!-- Dónde se usa este horario: grupos y calendarios, cada uno con su icono y su cifra, que se cambian con los botones. -->
-        <sc-section-card titleKey="repositories.horarios.section_uses" surface="subtle" icon="link">
-          <sc-subsection>
+          <sc-subsection titleKey="repositories.horarios.section_uses">
             <div class="vistas">
               <sc-selectbutton
                 size="sm"
@@ -131,6 +104,28 @@
                 }
               </ul>
             }
+          </sc-subsection>
+          </div>
+        </sc-section-card>
+
+        <!-- Un solo bloque con las dos formas de editar el horario, que se cambian con los botones de arriba: «Semana» (se arrastra sobre
+             las horas) y «Franjas» (se escriben las horas de cada día y se copian). Las dos editan lo mismo. -->
+        <sc-section-card
+          anchorId="horario-semana"
+          titleKey="repositories.horarios.section_schedule"
+          surface="subtle"
+          icon="date_range"
+        >
+          <sc-subsection>
+            <!-- Una sola vista: el mapa de la semana (se arrastra sobre las horas) y, bajo cada día, sus franjas para escribir las horas. -->
+            <sc-horario-semana-vista
+              [semana]="form().week"
+              [cerrados]="form().closedDays ?? []"
+              [zona]="form().timezone"
+              [falta]="faltaDeSemana()"
+              (semanaChange)="ponerSemana($event)"
+              (cierreChange)="cerrarDia($event.dia, $event.cerrado)"
+            />
           </sc-subsection>
         </sc-section-card>
       </div>
