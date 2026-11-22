@@ -1,7 +1,9 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScButtonComponent, ScDatepickerComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { cruzaMedianoche, type Franja, MINUTOS_DEL_DIA } from '../../state/horarios.core.mjs';
 
@@ -25,9 +27,9 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
  */
 @Component({
   selector: 'sc-horario-franjas',
-  imports: [TooltipModule, ScButtonComponent, ScDatepickerComponent, ScTagComponent, TranslateModule],
+  imports: [NgTemplateOutlet, PopoverModule, TooltipModule, ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, ScTagComponent, TranslateModule],
   template: `
-    @for (fila of filas(); track $index) {
+    <ng-template #filaTpl let-fila let-i="i">
       <div class="franjas__fila">
         <!-- pieza nueva: DD-252, la hora de una franja es un sc-datepicker timeOnly (catálogo §6: una hora → sc-datepicker), repetido por franja como los controles de una condición de regla. -->
         <sc-datepicker
@@ -38,7 +40,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
           [showIcon]="false"
           [ariaLabel]="('repositories.horarios.slot_start_aria' | translate: { day: etiqueta() })"
           [value]="fila.inicio"
-          (valueChange)="cambiar($index, 0, $event)"
+          (valueChange)="cambiar(i, 0, $event)"
         />
         <span class="franjas__guion" aria-hidden="true">–</span>
         <sc-datepicker
@@ -49,23 +51,40 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
           [showIcon]="false"
           [ariaLabel]="('repositories.horarios.slot_end_aria' | translate: { day: etiqueta() })"
           [value]="fila.fin"
-          (valueChange)="cambiar($index, 1, $event)"
+          (valueChange)="cambiar(i, 1, $event)"
         />
         @if (fila.noche) {
           <sc-tag severity="secondary" [value]="'repositories.horarios.next_day' | translate" />
         }
         <!-- Quitar una franja: la papelera, que elimina algo que existe. -->
         @if (fila.quitable) {
-        <sc-button
-          variant="secondary"
-          appearance="text"
-          size="sm"
-          icon="delete"
-          [ariaLabel]="'repositories.horarios.slot_remove_aria' | translate: { day: etiqueta() }"
-          (clicked)="quitar($index)"
-        />
+          <sc-button
+            variant="secondary"
+            appearance="text"
+            size="sm"
+            icon="delete"
+            [ariaLabel]="'repositories.horarios.slot_remove_aria' | translate: { day: etiqueta() }"
+            (clicked)="quitar(i)"
+          />
         }
       </div>
+    </ng-template>
+
+    @for (fila of visibles(); track $index) {
+      <ng-container *ngTemplateOutlet="filaTpl; context: { $implicit: fila, i: $index }" />
+    }
+    <!-- Las que pasan de las visibles, tras un badge con su número; al pulsarlo se abren para editarlas. -->
+    @if (extras().length > 0) {
+      <button type="button" class="franjas__extra" [attr.aria-label]="'+' + extras().length" (click)="masFranjas.toggle($event)">
+        <sc-badge [label]="'+' + extras().length" variant="secondary" size="lg" />
+      </button>
+      <p-popover #masFranjas>
+        <div class="franjas__resto">
+          @for (fila of extras(); track $index) {
+            <ng-container *ngTemplateOutlet="filaTpl; context: { $implicit: fila, i: visibles().length + $index }" />
+          }
+        </div>
+      </p-popover>
     }
     <sc-button
       class="franjas__mas"
@@ -88,6 +107,8 @@ export class HorarioFranjasComponent {
   readonly etiqueta = input('');
   /** Sin franjas, enseña una fila con las dos horas vacías para empezar a rellenar (la franja existe al poner las dos). */
   readonly conVacia = input(false);
+  /** Cuántas filas se ven; las demás, tras un badge «+N». `0` = todas. */
+  readonly maxVisibles = input(0);
   readonly franjasChange = output<readonly Franja[]>();
 
   /** Filas a medio rellenar: sin franjas hay siempre una; un «+» añade otra. Con las dos horas puestas, la fila pasa a ser una franja. */
@@ -109,6 +130,15 @@ export class HorarioFranjasComponent {
       ...reales,
       ...extra.map((b) => ({ inicio: b[0], fin: b[1], noche: false, borrador: true, quitable: f.length > 0 || extra.length > 1 })),
     ];
+  });
+
+  protected readonly visibles = computed(() => {
+    const max = this.maxVisibles();
+    return max > 0 ? this.filas().slice(0, max) : this.filas();
+  });
+  protected readonly extras = computed(() => {
+    const max = this.maxVisibles();
+    return max > 0 ? this.filas().slice(max) : [];
   });
 
   private borradoresActuales(): (readonly [Date | null, Date | null])[] {

@@ -6,10 +6,11 @@
   background: var(--sc-bg-canvas);
 }
 
-/* El horario (lo que más ocupa) a la izquierda y a su derecha una sola tarjeta: general (identidad) y dónde se usa. */
+/* General (en horizontal) arriba a la izquierda y «Dónde se usa» a su derecha; debajo, el horario a todo el ancho, que es lo que más
+ * necesita. Los contenedores son transparentes (`display: contents`) para colocar cada tarjeta en la rejilla. */
 .horario {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 2fr);
+  grid-template-columns: minmax(0, 1fr) 24rem;
   column-gap: var(--sc-spacing-2);
   align-items: start;
 
@@ -20,7 +21,42 @@
 
 .horario__reglas,
 .horario__resultado {
-  min-inline-size: 0;
+  display: contents;
+}
+
+.horario__reglas > sc-section-card:first-child {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.horario__reglas > sc-section-card:last-child {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.horario__resultado > sc-section-card {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+@media (max-width: 1099px) {
+  .horario__reglas > sc-section-card:first-child,
+  .horario__reglas > sc-section-card:last-child,
+  .horario__resultado > sc-section-card {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+/* General en horizontal: nombre, descripción y zona horaria en una fila (con poco ancho, apilados). */
+.bloque {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: var(--sc-spacing-1);
+
+  @media (max-width: 899px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* Igual que en las fichas de grupo y de agente. */

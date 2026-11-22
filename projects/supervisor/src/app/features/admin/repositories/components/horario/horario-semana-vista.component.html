@@ -65,7 +65,7 @@
           <!-- Las franjas al lado del mapa (con poco ancho, debajo). -->
           <span class="fila__franjas">
             @if (!d.cerrado) {
-              <sc-horario-franjas class="semana__franjas" [franjas]="d.franjas" [conVacia]="true" [etiqueta]="d.nombre" (franjasChange)="ponerDia(d.indice, $event)" />
+              <sc-horario-franjas class="semana__franjas" [franjas]="d.franjas" [conVacia]="true" [maxVisibles]="2" [etiqueta]="d.nombre" (franjasChange)="ponerDia(d.indice, $event)" />
             }
             <!-- El día cerrado se marca a propósito (un día sin tramos puede estar solo sin configurar) y solo se ofrece sin tramos. -->
             @if (d.marcado || d.barras.length === 0) {

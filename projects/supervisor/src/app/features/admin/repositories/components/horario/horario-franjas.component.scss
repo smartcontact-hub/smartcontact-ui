@@ -35,7 +35,26 @@
  * «Añadir franja» al final, para que cada día ocupe una sola línea. Fuera (la fecha especial), una columna como siempre. */
 :host(.semana__franjas) {
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
+}
+
+.franjas__extra {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-full);
+  }
+}
+
+.franjas__resto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
 }
