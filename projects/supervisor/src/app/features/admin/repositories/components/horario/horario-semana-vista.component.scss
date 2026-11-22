@@ -23,7 +23,7 @@
 .sv__rejilla {
   --col-dia: var(--sc-spacing-2-5);
   --col-horas: var(--sc-spacing-3);
-    --col-franjas: 19.5rem;
+    --col-franjas: 23rem;
 
   display: flex;
   flex-direction: column;
@@ -96,33 +96,6 @@
 
 .fila__horas {
   grid-column: 4;
-}
-
-.copiar {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--sc-spacing-2-5);
-  block-size: var(--sc-spacing-2-5);
-  padding: 0;
-  border: 0;
-  border-radius: var(--sc-radius-md);
-  background: transparent;
-  color: var(--sc-text-secondary);
-  cursor: pointer;
-  transition-property: background-color, color;
-  transition-duration: 150ms;
-
-  &:hover {
-    background: var(--sc-bg-hover);
-    color: var(--sc-text-primary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 1px;
-  }
 }
 
 @container (max-width: 44rem) {
@@ -405,4 +378,15 @@
   gap: var(--sc-spacing-0-5);
   color: var(--sc-text-secondary);
   cursor: pointer;
+}
+
+/* La sugerencia de repetir el horario de un día en los demás: una línea con el aviso y sus botones. */
+.sv__repetir {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-info-subtle);
 }

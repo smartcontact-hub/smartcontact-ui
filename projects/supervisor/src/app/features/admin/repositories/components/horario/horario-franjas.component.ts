@@ -9,6 +9,10 @@ interface Fila {
   readonly inicio: Date | null;
   readonly fin: Date | null;
   readonly noche: boolean;
+  /** Una fila a medio rellenar (todavía no es una franja). */
+  readonly borrador: boolean;
+  /** Se puede quitar: las franjas y los borradores que sobran; el único campo vacío de un día no. */
+  readonly quitable: boolean;
 }
 
 const aHora = (minutos: number): Date => new Date(2000, 0, 1, Math.floor((minutos % MINUTOS_DEL_DIA) / 60), minutos % 60);
@@ -51,7 +55,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
           <sc-tag severity="secondary" [value]="'repositories.horarios.next_day' | translate" />
         }
         <!-- Quitar una franja: la papelera, que elimina algo que existe. -->
-        @if (franjas().length > 0) {
+        @if (fila.quitable) {
         <sc-button
           variant="secondary"
           appearance="text"
@@ -63,7 +67,6 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
         }
       </div>
     }
-    @if (franjas().length > 0 || !conVacia()) {
     <sc-button
       class="franjas__mas"
       variant="secondary"
@@ -75,7 +78,6 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
       tooltipPosition="top"
       (clicked)="anadir()"
     />
-    }
   `,
   styleUrl: './horario-franjas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,18 +90,37 @@ export class HorarioFranjasComponent {
   readonly conVacia = input(false);
   readonly franjasChange = output<readonly Franja[]>();
 
-  private readonly borrador = signal<readonly [Date | null, Date | null]>([null, null]);
+  /** Filas a medio rellenar: sin franjas hay siempre una; un «+» añade otra. Con las dos horas puestas, la fila pasa a ser una franja. */
+  private readonly borradores = signal<readonly (readonly [Date | null, Date | null])[]>([]);
 
   protected readonly filas = computed<readonly Fila[]>(() => {
     const f = this.franjas();
-    if (f.length === 0 && this.conVacia()) return [{ inicio: this.borrador()[0], fin: this.borrador()[1], noche: false }];
-    return f.map((x) => ({ inicio: aHora(x[0]), fin: aHora(x[1]), noche: cruzaMedianoche(x) && x[1] !== 0 }));
+    const reales = f.map((x) => ({
+      inicio: aHora(x[0]),
+      fin: aHora(x[1]),
+      noche: cruzaMedianoche(x) && x[1] !== 0,
+      borrador: false,
+      quitable: true,
+    }));
+    if (!this.conVacia()) return reales;
+    const bs = this.borradores();
+    const extra = bs.length > 0 ? bs : f.length === 0 ? [[null, null] as const] : [];
+    return [
+      ...reales,
+      ...extra.map((b) => ({ inicio: b[0], fin: b[1], noche: false, borrador: true, quitable: f.length > 0 || extra.length > 1 })),
+    ];
   });
 
+  private borradoresActuales(): (readonly [Date | null, Date | null])[] {
+    const bs = this.borradores();
+    return bs.length > 0 ? [...bs] : [[null, null]];
+  }
+
   protected cambiar(indice: number, extremo: 0 | 1, hora: Date | null): void {
-    // Un campo vaciado no cambia la franja: se quita con su ×.
+    // Un campo vaciado no cambia la franja: se quita con su papelera.
     if (!hora) return;
-    if (this.franjas().length === 0) return this.rellenarBorrador(extremo, hora);
+    const n = this.franjas().length;
+    if (indice >= n) return this.rellenarBorrador(indice - n, extremo, hora);
     const minutos = aMinutos(hora);
     this.franjasChange.emit(
       this.franjas().map((f, i): Franja => {
@@ -110,20 +131,31 @@ export class HorarioFranjasComponent {
     );
   }
 
-  /** La fila vacía guarda lo que se va poniendo; con las dos horas, pasa a ser una franja. */
-  private rellenarBorrador(extremo: 0 | 1, hora: Date): void {
-    const [a, b] = this.borrador();
+  /** Una fila vacía guarda lo que se va poniendo; con las dos horas, pasa a ser una franja. */
+  private rellenarBorrador(k: number, extremo: 0 | 1, hora: Date): void {
+    const bs = this.borradoresActuales();
+    const [a, b] = bs[k] ?? [null, null];
     const nuevo: readonly [Date | null, Date | null] = extremo === 0 ? [hora, b] : [a, hora];
     if (nuevo[0] && nuevo[1]) {
-      this.borrador.set([null, null]);
+      bs.splice(k, 1);
+      this.borradores.set(bs);
       const fin = aMinutos(nuevo[1]);
-      this.franjasChange.emit([[aMinutos(nuevo[0]), fin === 0 ? MINUTOS_DEL_DIA : fin]]);
+      const franja: Franja = [aMinutos(nuevo[0]), fin === 0 ? MINUTOS_DEL_DIA : fin];
+      this.franjasChange.emit([...this.franjas(), franja].sort((x, y) => x[0] - y[0]));
     } else {
-      this.borrador.set(nuevo);
+      bs[k] = nuevo;
+      this.borradores.set(bs);
     }
   }
 
   protected quitar(indice: number): void {
+    const n = this.franjas().length;
+    if (indice >= n) {
+      const bs = this.borradoresActuales();
+      bs.splice(indice - n, 1);
+      this.borradores.set(bs);
+      return;
+    }
     this.franjasChange.emit(this.franjas().filter((_, i) => i !== indice));
   }
 
@@ -131,7 +163,11 @@ export class HorarioFranjasComponent {
   protected anadir(): void {
     const actuales = this.franjas();
     const ultima = actuales[actuales.length - 1];
-    if (!ultima) return this.franjasChange.emit([[540, 1080]]);
+    // Sin franjas todavía: otra fila vacía junto a la que ya hay.
+    if (!ultima) {
+      this.borradores.set([...this.borradoresActuales(), [null, null]]);
+      return;
+    }
     const tope = cruzaMedianoche(ultima) ? MINUTOS_DEL_DIA : ultima[1];
     const inicio = Math.min(tope + 60, MINUTOS_DEL_DIA - 60);
     this.franjasChange.emit([...actuales, [inicio, Math.min(inicio + 120, MINUTOS_DEL_DIA)]]);

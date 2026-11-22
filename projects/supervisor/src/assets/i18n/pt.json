@@ -1521,6 +1521,9 @@
       "days_open": "Dias atendidos",
       "no_days_open": "Nenhum dia é atendido ainda.",
       "sv": {
+        "repeat_prompt": "{{day}} já tem horário. Repetir nos dias que faltam?",
+        "repeat_weekdays": "De segunda a sexta",
+        "repeat_all": "Todos os dias",
         "copy_down": "Copiar os períodos de {{day}} para os dias abaixo",
         "now": "Hora atual",
         "mark_closed": "Marcar o dia como fechado",

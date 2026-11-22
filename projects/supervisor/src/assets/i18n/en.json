@@ -1521,6 +1521,9 @@
       "days_open": "Days served",
       "no_days_open": "No day is served yet.",
       "sv": {
+        "repeat_prompt": "{{day}} already has hours. Repeat them on the empty days?",
+        "repeat_weekdays": "Monday to Friday",
+        "repeat_all": "Every day",
         "copy_down": "Copy {{day}} slots to the days below",
         "now": "Current time",
         "mark_closed": "Mark the day as closed",

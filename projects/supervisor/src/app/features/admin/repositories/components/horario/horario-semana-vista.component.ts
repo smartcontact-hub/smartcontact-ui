@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScToggleSwitchComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScToggleSwitchComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { LanguageService } from '@core/services/language.service';
@@ -56,7 +56,7 @@ interface Arrastre {
  */
 @Component({
   selector: 'sc-horario-semana-vista',
-  imports: [HorarioFranjasComponent, ScIconComponent, ScToggleSwitchComponent, TooltipModule, TranslateModule],
+  imports: [HorarioFranjasComponent, ScButtonComponent, ScIconComponent, ScToggleSwitchComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-semana-vista.component.html',
   styleUrl: './horario-semana-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -94,10 +94,28 @@ export class HorarioSemanaVistaComponent {
     this.semanaChange.emit(this.semana().map((f, i) => (i === dia ? franjas : f)));
   }
 
-  /** Copia las franjas de un día a todos los de abajo (hasta el domingo); los que estaban cerrados se abren. */
-  protected copiarAbajo(dia: number): void {
-    const origen = this.semana()[dia] ?? [];
-    this.semanaChange.emit(this.semana().map((f, i) => (i > dia ? origen.map((x): Franja => [x[0], x[1]]) : f)));
+  /** El primer día con franjas y los días que siguen sin configurar (ni cerrados): a ellos se puede repetir su horario. */
+  protected readonly sugerencia = computed(() => {
+    this.lang();
+    const semana = this.semana();
+    const cerrados = new Set(this.cerrados());
+    const origen = semana.findIndex((f) => f.length > 0);
+    if (origen < 0) return null;
+    const vacios = semana.map((f, i) => (i !== origen && f.length === 0 && !cerrados.has(i) ? i : -1)).filter((i) => i >= 0);
+    if (vacios.length === 0) return null;
+    const largo = new Intl.DateTimeFormat(this.language.locale(), { weekday: 'long' });
+    return {
+      origen,
+      nombre: largo.format(aFecha(sumarDias(this.lunes(), origen))),
+      todos: vacios,
+      laborables: vacios.filter((i) => i <= 4),
+    };
+  });
+
+  /** Repite las franjas de un día en los días indicados. */
+  protected repetir(origen: number, destinos: readonly number[]): void {
+    const franjas = this.semana()[origen] ?? [];
+    this.semanaChange.emit(this.semana().map((f, i) => (destinos.includes(i) ? franjas.map((x): Franja => [x[0], x[1]]) : f)));
   }
 
   protected alternarCierre(dia: number, cerrado: boolean): void {

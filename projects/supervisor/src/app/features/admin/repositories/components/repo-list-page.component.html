@@ -134,7 +134,7 @@
           @for (g of c.visibles; track $index) {
             <span class="sched__grupo">
               <span class="sched__linea">
-                <sc-tag severity="info" [value]="g.label" />
+                <sc-badge [label]="g.label" variant="info" size="lg" />
                 <span class="sched__texto sc-text-caption-regular">{{ g.text }}</span>
               </span>
               <span class="sched__barra" aria-hidden="true">
