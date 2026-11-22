@@ -1521,6 +1521,10 @@
       "days_open": "Days served",
       "no_days_open": "No day is served yet.",
       "sv": {
+        "repeat_title": "Repeat hours",
+        "repeat_prompt_weekdays": "{{day}} already has hours. Repeat them from Monday to Friday?",
+        "repeat_yes": "Repeat",
+        "repeat_no": "No",
         "repeat_prompt": "{{day}} already has hours. Repeat them on the empty days?",
         "repeat_weekdays": "Monday to Friday",
         "repeat_all": "Every day",

@@ -1521,6 +1521,10 @@
       "days_open": "Días que se atienden",
       "no_days_open": "Ningún día se atiende todavía.",
       "sv": {
+        "repeat_title": "Repetir horario",
+        "repeat_prompt_weekdays": "{{day}} ya tiene horario. ¿Lo repites de lunes a viernes?",
+        "repeat_yes": "Repetir",
+        "repeat_no": "No",
         "repeat_prompt": "{{day}} ya tiene horario. ¿Lo repites en los días que faltan?",
         "repeat_weekdays": "De lunes a viernes",
         "repeat_all": "Todos los días",

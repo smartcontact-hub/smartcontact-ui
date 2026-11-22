@@ -1521,6 +1521,10 @@
       "days_open": "Jours assurés",
       "no_days_open": "Aucun jour n'est encore assuré.",
       "sv": {
+        "repeat_title": "Répéter les horaires",
+        "repeat_prompt_weekdays": "{{day}} a déjà des horaires. Les répéter du lundi au vendredi ?",
+        "repeat_yes": "Répéter",
+        "repeat_no": "Non",
         "repeat_prompt": "{{day}} a déjà des horaires. Les répéter sur les jours vides ?",
         "repeat_weekdays": "Du lundi au vendredi",
         "repeat_all": "Tous les jours",

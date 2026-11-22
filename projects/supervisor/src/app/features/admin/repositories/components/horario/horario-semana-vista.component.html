@@ -1,15 +1,5 @@
 <div class="sv">
-  @if (sugerencia(); as sug) {
-    <!-- Con un día ya hecho, se ofrece repetirlo en los que siguen vacíos, sin ir de uno en uno (no pisa nada). -->
-    <div class="sv__repetir" role="group">
-      <span class="sc-text-body-regular">{{ 'repositories.horarios.sv.repeat_prompt' | translate: { day: sug.nombre } }}</span>
-      @if (sug.laborables.length > 0) {
-        <sc-button variant="secondary" size="sm" [label]="'repositories.horarios.sv.repeat_weekdays' | translate" (clicked)="repetir(sug.origen, sug.laborables)" />
-      }
-      <sc-button variant="secondary" size="sm" [label]="'repositories.horarios.sv.repeat_all' | translate" (clicked)="repetir(sug.origen, sug.todos)" />
-    </div>
-  }
-  <div class="sv__rejilla">
+    <div class="sv__rejilla">
     <div class="sv__ejes" aria-hidden="true">
       @for (m of marcas; track m) {
         <span class="sv__marca sc-text-caption-regular" [style.left.%]="(m / 24) * 100" [class.sv__marca--ini]="m === 0" [class.sv__marca--fin]="m === 24" [class.sv__marca--mayor]="m % 6 === 0" [class.sv__marca--impar]="m % 2 === 1">{{ m }}</span>
@@ -71,7 +61,7 @@
               ></span>
             }
           </span>
-          <span class="fila__horas sc-text-body-semibold">{{ d.minutos > 0 ? d.horas : '' }}</span>
+          <span class="fila__horas sc-text-caption-semibold">{{ d.minutos > 0 ? d.horas : '' }}</span>
           <!-- Las franjas al lado del mapa (con poco ancho, debajo). -->
           <span class="fila__franjas">
             @if (!d.cerrado) {

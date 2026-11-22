@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, signal, untracked } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScButtonComponent, ScToggleSwitchComponent } from '@smartcontact-hub/components';
+import { ScConfirmService, ScToggleSwitchComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { LanguageService } from '@core/services/language.service';
@@ -56,7 +56,7 @@ interface Arrastre {
  */
 @Component({
   selector: 'sc-horario-semana-vista',
-  imports: [HorarioFranjasComponent, ScButtonComponent, ScIconComponent, ScToggleSwitchComponent, TooltipModule, TranslateModule],
+  imports: [HorarioFranjasComponent, ScIconComponent, ScToggleSwitchComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-semana-vista.component.html',
   styleUrl: './horario-semana-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,8 +65,19 @@ export class HorarioSemanaVistaComponent {
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
+  private readonly confirm = inject(ScConfirmService);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  /** ¿Tenía la semana alguna franja la última vez? `null` hasta la primera lectura: al abrir un horario ya hecho no se pregunta nada. */
+  private teniaFranjas: boolean | null = null;
 
   constructor() {
+    // Al poner la primera franja de una semana vacía, se pregunta (globo del DS pegado a ese día) si se repite en los demás.
+    effect(() => {
+      const tiene = this.semana().some((f) => f.length > 0);
+      const antes = this.teniaFranjas;
+      this.teniaFranjas = tiene;
+      if (antes === false && tiene) untracked(() => setTimeout(() => void this.preguntarRepetir(), 0));
+    });
     const id = setInterval(() => this.ahora.set(Date.now()), 60_000);
     inject(DestroyRef).onDestroy(() => clearInterval(id));
   }
@@ -111,6 +122,24 @@ export class HorarioSemanaVistaComponent {
       laborables: vacios.filter((i) => i <= 4),
     };
   });
+
+  /** El globo de confirmación del DS: ¿repetir el horario del día en los demás? De lunes a viernes si hay días laborables vacíos; si no, en los que falten. */
+  private async preguntarRepetir(): Promise<void> {
+    const sug = this.sugerencia();
+    if (!sug) return;
+    const destinos = sug.laborables.length > 0 ? sug.laborables : sug.todos;
+    const celdas = this.host.nativeElement.querySelectorAll('.fila__franjas');
+    const clave = sug.laborables.length > 0 ? 'repeat_prompt_weekdays' : 'repeat_prompt';
+    const acepta = await this.confirm.request({
+      title: this.translate.instant('repositories.horarios.sv.repeat_title') as string,
+      body: this.translate.instant(`repositories.horarios.sv.${clave}`, { day: sug.nombre.charAt(0).toUpperCase() + sug.nombre.slice(1) }) as string,
+      acceptLabel: this.translate.instant('repositories.horarios.sv.repeat_yes') as string,
+      rejectLabel: this.translate.instant('repositories.horarios.sv.repeat_no') as string,
+      icon: 'content_copy',
+      target: celdas[sug.origen] ?? null,
+    });
+    if (acepta) this.repetir(sug.origen, destinos);
+  }
 
   /** Repite las franjas de un día en los días indicados. */
   protected repetir(origen: number, destinos: readonly number[]): void {

@@ -90,21 +90,15 @@
 }
 
 .sched__mas {
-  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-75);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-surface);
-  color: var(--sc-text-primary);
-  font-variant-numeric: tabular-nums;
+  padding: 0;
+  border: 0;
+  background: transparent;
   cursor: pointer;
-
-  &:hover {
-    background: var(--sc-bg-hover);
-  }
 
   &:focus-visible {
     outline: 2px solid var(--sc-border-focus);
-    outline-offset: 1px;
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-full);
   }
 }
 

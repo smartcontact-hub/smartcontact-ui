@@ -13,13 +13,18 @@
 
 /* Cada tramo (las dos horas y su ✕) sobre un fondito, para que se vea que son una sola unidad y no cuatro campos sueltos. */
 :host(.semana__franjas) .franjas__fila {
-  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
-  border-radius: var(--sc-radius-md);
-  background: var(--sc-bg-hover);
+  padding: 0;
 }
 
 .franjas__hora {
-  inline-size: var(--sc-spacing-5);
+  inline-size: calc(var(--sc-spacing-4) + var(--sc-spacing-0-5));
+
+  /* Los campos de hora, con un fondo propio (gris del DS) y sin tanto aire a los lados. */
+  ::ng-deep .p-inputtext {
+    padding-inline: var(--sc-spacing-0-5);
+    background: var(--sc-bg-hover);
+    text-align: center;
+  }
 }
 
 .franjas__guion {
