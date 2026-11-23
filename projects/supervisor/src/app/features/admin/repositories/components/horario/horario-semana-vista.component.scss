@@ -20,13 +20,15 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Una rejilla de cuatro columnas (día · línea · horas · franjas): la línea se lleva lo que sobra y las dos últimas miden lo que
- * necesite la fila más ancha, así las franjas y la línea no dejan huecos entre sí. El eje y las filas la comparten. */
+/* Una rejilla de cuatro columnas (día · línea · horas · franjas) de medidas fijas: la línea mide siempre lo mismo se añadan las
+ * franjas que se añadan (caben dos y el resto va tras un badge). El eje y las filas la comparten. */
 .sv__rejilla {
   --col-dia: var(--sc-spacing-2-5);
+  --col-horas: 3.25rem;
+  --col-franjas: 27rem;
 
   display: grid;
-  grid-template-columns: var(--col-dia) minmax(0, 1fr) auto auto;
+  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-horas) var(--col-franjas);
   column-gap: var(--sc-spacing-0-5);
   row-gap: var(--sc-spacing-0-25);
 }
@@ -102,7 +104,7 @@
 
 @container (max-width: 44rem) {
   .sv__rejilla {
-    grid-template-columns: var(--col-dia) minmax(0, 1fr) auto;
+    grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-horas);
   }
 
   .fila__franjas {
