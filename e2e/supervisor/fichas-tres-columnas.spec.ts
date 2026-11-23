@@ -21,7 +21,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   6. Por debajo de 1340: el nombre sigue encima del índice, y el resumen pasa a una franja encima del contenido, en
  *      su columna.
  *   7. Un nombre que no cabe en 235 salta a una segunda línea, sin cortarse; uno que no cabe en dos, se corta en la
- *      segunda. Al pulsarlo para editarlo (el campo es de una línea), lo de debajo no se mueve.
+ *      segunda.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -166,10 +166,8 @@ const nombrar = async (page: Page, nombre: string) => {
   await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill(nombre);
   await expect(page.locator('main#main-content h1')).toContainText(nombre.slice(0, 12));
   await fuentes(page);
-  // El texto del título: el del Inplace al editar, el del propio `h1` en el alta.
   return page.evaluate(() => {
-    const h1 = document.querySelector('main#main-content h1')!;
-    const texto = (h1.querySelector('.name-inplace__text') ?? h1) as HTMLElement;
+    const texto = document.querySelector<HTMLElement>('main#main-content h1')!;
     const lineas = Math.round(texto.getBoundingClientRect().height / parseFloat(getComputedStyle(texto).lineHeight));
     return { lineas, cortado: texto.scrollHeight > texto.clientHeight + 1 };
   });
@@ -187,56 +185,3 @@ for (const ruta of ['admin/grupos/crear', 'admin/grupos/editar/11']) {
     expect(enorme, 'en dos líneas, cortado al final de la segunda').toEqual({ lineas: 2, cortado: true });
   });
 }
-
-test('al pulsar un nombre de dos líneas para editarlo, lo de debajo no se mueve', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11');
-  expect((await nombrar(page, 'Atención al cliente Madrid Norte')).lineas, 'el nombre, en dos líneas').toBe(2);
-  const arribaDelIndice = () => page.locator('.page__rail sc-form-section-nav').evaluate((el) => el.getBoundingClientRect().top);
-  const antes = await arribaDelIndice();
-  // El campo es de una línea: sin conservar el alto del título, el índice subía 24 px.
-  await page.locator('.name-inplace .p-inplace-display').click();
-  await expect(page.locator('.name-inplace__input')).toBeFocused();
-  expect(await arribaDelIndice(), 'editando, el índice donde estaba').toBe(antes);
-  await page.keyboard.press('Escape');
-  await expect(page.locator('.name-inplace__input')).toHaveCount(0);
-  expect(await arribaDelIndice(), 'al cerrar, también').toBe(antes);
-});
-
-test('al editar el nombre, el campo no tapa la línea de datos', async ({ page }) => {
-  for (const ruta of ['admin/grupos/editar/11', 'admin/agentes/editar/1']) {
-    await goto(page, ruta);
-    await fuentes(page);
-    await page.locator('.name-inplace .p-inplace-display').click();
-    const campo = page.locator('.name-inplace__input');
-    await expect(campo, ruta).toBeFocused();
-    // Lo que se pinta: el texto y la tinta de cada icono. La caja de fuente de un glifo es más alta que su tinta
-    // (desde DD-209 la extensión lleva el suyo), así que un rango sobre toda la línea la daba por tapada sin estarlo.
-    const m = await page.evaluate(() => {
-      const meta = document.querySelector('.headline__meta')!;
-      const arriba: number[] = [];
-      const paseo = document.createTreeWalker(meta, NodeFilter.SHOW_TEXT);
-      for (let t = paseo.nextNode(); t; t = paseo.nextNode()) {
-        if (!t.textContent?.trim() || t.parentElement?.closest('.sc-icon')) continue;
-        const rango = document.createRange();
-        rango.selectNodeContents(t);
-        arriba.push(rango.getBoundingClientRect().top);
-      }
-      const ctx = document.createElement('canvas').getContext('2d')!;
-      meta.querySelectorAll('.sc-icon').forEach((el) => {
-        const cs = getComputedStyle(el);
-        const s = cs.scale === 'none' ? 1 : parseFloat(cs.scale);
-        ctx.font = `${cs.fontSize} ${cs.fontFamily}`;
-        const tinta = ctx.measureText((el.textContent ?? '').trim());
-        const caja = el.getBoundingClientRect();
-        arriba.push(caja.y + caja.height / 2 - ((tinta.actualBoundingBoxAscent + tinta.actualBoundingBoxDescent) / 2) * s);
-      });
-      return {
-        campo: document.querySelector('.name-inplace__input')!.getBoundingClientRect().bottom,
-        datos: Math.min(...arriba),
-      };
-    });
-    // Con 0 entre los dos, el borde del campo caía en y=109 y el texto de los datos empezaba en 102,75.
-    expect(m.campo, `${ruta}: el campo acaba antes que la línea de datos`).toBeLessThanOrEqual(m.datos);
-    await page.keyboard.press('Escape');
-  }
-});

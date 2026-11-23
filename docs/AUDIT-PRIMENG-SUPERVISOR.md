@@ -39,7 +39,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **51 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepSecond`, `tabindex`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-button` · 188 usos · primeng/button, primeng/tooltip
+### `sc-button` · 187 usos · primeng/button, primeng/tooltip
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
@@ -222,9 +222,9 @@ Expone todo lo que PrimeNG documenta.
 ## El catálogo de PrimeNG que NO envolvemos
 
 Aura tematiza **97 componentes**. Envolvemos **35**,
-**13** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
+**12** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
 una pieza nuestra hecha a mano.
-Quedan **48** que existen, están tematizados y funcionan — simplemente nadie los ha
+Quedan **49** que existen, están tematizados y funcionan — simplemente nadie los ha
 traído todavía.
 
 ⚠️ **«Sin envolver» NO quiere decir «descartado»**: quiere decir que la decisión no se ha tomado.
@@ -232,13 +232,13 @@ Si necesitas uno, envolverlo es más barato (y sale mejor) que construirlo a man
 su comportamiento, su accesibilidad y su movimiento ya resueltos. Cuando se decida que uno NO se
 quiere, el sitio de esa decisión es `docs/DECISIONS.md`, y entonces se puede anotar aquí.
 
-`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `dataview` · `dock` · `fieldset` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `password` · `picklist` · `ripple` · `scrollpanel` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `timeline` · `togglebutton` · `tree` · `treeselect` · `virtualscroller`
+`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `dataview` · `dock` · `fieldset` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inplace` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `password` · `picklist` · `ripple` · `scrollpanel` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `timeline` · `togglebutton` · `tree` · `treeselect` · `virtualscroller`
 
 ### Usados en NATIVO, sin wrapper
 
 Entraron por la vía de DD-113: el nativo tal cual, adaptado solo con tokens. No hay nada que envolver.
 
-`contextmenu` · `editor` · `inplace` · `listbox` · `menu` · `metergroup` · `rating` · `scrollarea` · `sidebar` · `slider` · `tieredmenu` · `toolbar` · `treetable`
+`contextmenu` · `editor` · `listbox` · `menu` · `metergroup` · `rating` · `scrollarea` · `sidebar` · `slider` · `tieredmenu` · `toolbar` · `treetable`
 
 ### Cubiertos por una pieza nuestra
 

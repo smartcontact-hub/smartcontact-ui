@@ -11,10 +11,11 @@ el puente formal Figma ↔ código; hoy ese puente en este repo es solo convenci
 (`Smart-Contact-Design-System`): los 24 anteriores más `group-summary`, `summary-status`, `channel-icon`,
 `fileupload`, `drawer`, `fact-row`, `icon-tile`, y los masters aparte del botón grande y pequeño (`button-large`,
 `button-small`), y los de uso suelto en las apps: `badge`, `avatar`, `radiobutton`, `password`, `panel`,
-`inputgroup`, `datepicker`, `confirmdialog`, `tabs`, `skeleton`, y tres masters que diseño confirmó como los de su componente (2026-10-22):
-`KPI Metric Card` (página Testing, `13864:202`) como `sc-summary-kpi`, `inplace` (`340:12980`, el genérico de PrimeNG)
-como `sc-name-inplace` y `popover` (`605:37190`, el genérico) como `sc-group-popover`. Las maquetas del Supervisor usan instancias de esa librería, así
-que los mapeos les valen.
+`inputgroup`, `datepicker`, `confirmdialog`, `tabs`, `skeleton`, y dos masters que diseño confirmó como los de su componente (2026-10-22):
+`KPI Metric Card` (página Testing, `13864:202`) como `sc-summary-kpi` y `popover` (`605:37190`, el genérico) como `sc-group-popover`.
+Las maquetas del Supervisor usan instancias de esa librería, así que los mapeos les valen. El de `inplace` (`340:12980`) con
+`sc-name-inplace` se quitó con su componente (DD-258): hasta que se despublique (`figma connect unpublish`, con token), Dev
+Mode puede seguir enseñándolo.
 
 Cada plantilla lleva en la cabecera `// source=` (ruta del componente en el repo) y `// component=` (su clase), que
 Figma enseña junto al snippet. Si mueves o renombras un componente, actualiza esas dos líneas.

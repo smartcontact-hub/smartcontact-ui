@@ -4,9 +4,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
  * TRES ALINEACIONES DE LAS FICHAS DE GRUPO Y AGENTE (barrido de consistencia del 2026-10-20, medido a 1440 en claro):
- *   1. El nombre editable: el campo empieza en la vertical del título (antes sobresalía 9,75 por la izquierda), mide lo
- *      que pide el nombre con un mínimo (antes, 167 siempre), y el tooltip del nombre entero solo sale si el nombre se
- *      corta: ni con uno que cabe ni encima del campo al editar (antes, en los dos).
+ *   1. El tooltip del nombre entero solo sale si el nombre se corta, no con uno que cabe. Desde DD-258 el nombre es
+ *      texto también al editar (antes se pulsaba para escribirlo en su sitio, y el campo tenía sus propias medidas).
  *   2. Las cabeceras de las dos tablas de asignación miden lo mismo: el filtro de «Agente» estiraba la del grupo a 38,5
  *      contra los 32,7 de la del agente.
  *   3. «Ver detalle», bajo la tipificación: su texto, en la vertical del campo y de su etiqueta (antes, 8 a la derecha).
@@ -24,65 +23,15 @@ const fuentes = (page: Page) => page.evaluate(() => document.fonts.ready.then(()
 /** Al pie de la ventana, en medio: la esquina de arriba a la izquierda es el sidebar. */
 const salir = async (page: Page) => page.mouse.move(720, 896);
 
-/** El campo del nombre: dónde empieza, cuánto mide, y lo que ocupa su texto frente al hueco que le deja su relleno. */
-const medirCampo = (page: Page) =>
-  page.evaluate(() => {
-    const campo = document.querySelector<HTMLInputElement>('.name-inplace__input')!;
-    const caja = campo.getBoundingClientRect();
-    const cs = getComputedStyle(campo);
-    const ctx = document.createElement('canvas').getContext('2d')!;
-    ctx.font = cs.font;
-    return {
-      x: caja.x,
-      ancho: caja.width,
-      minimo: parseFloat(cs.minInlineSize),
-      titulo: document.querySelector('.headline__name')!.getBoundingClientRect().x,
-      texto: ctx.measureText(campo.value).width,
-      desborda: campo.scrollWidth > campo.clientWidth,
-      hueco:
-        caja.width -
-        parseFloat(cs.borderLeftWidth) -
-        parseFloat(cs.borderRightWidth) -
-        parseFloat(cs.paddingLeft) -
-        parseFloat(cs.paddingRight),
-    };
-  });
-
 for (const ruta of ['admin/grupos/editar/11', 'admin/agentes/editar/1']) {
-  test(`${ruta} · el campo del nombre empieza en la vertical del título y mide lo que pide el nombre`, async ({ page }) => {
+  test(`${ruta} · el nombre es texto, y si cabe no sale entero en un tooltip`, async ({ page }) => {
     await goto(page, ruta);
     await fuentes(page);
-    await page.locator('.headline__name .p-inplace-display').click();
-    const campo = page.locator('.name-inplace__input');
-    await expect(campo).toBeFocused();
-    const m = await medirCampo(page);
-    expect(Math.abs(m.x - m.titulo), `${ruta}: el campo empieza donde el título (${m.x} frente a ${m.titulo})`).toBeLessThan(0.5);
-    // Ni desborda ni sobra: el texto llena el hueco del campo (antes, 147,75 de hueco para cualquier nombre, y «Online
-    // Support» desbordaba: scrollWidth 166 contra clientWidth 165).
-    expect(m.desborda, `${ruta}: el campo desplaza su texto`).toBe(false);
-    expect(m.texto, `${ruta}: el nombre cabe en el campo`).toBeLessThanOrEqual(m.hueco + 0.01);
-    expect(m.hueco - m.texto, `${ruta}: el campo mide lo que pide el nombre`).toBeLessThan(1);
-
-    // Un nombre de una letra se queda en el mínimo del campo, no en nada.
-    await campo.fill('A');
-    const corto = await medirCampo(page);
-    expect(corto.minimo, `${ruta}: el campo tiene un mínimo`).toBeGreaterThan(0);
-    expect(corto.ancho, `${ruta}: con una letra, el campo mide su mínimo`).toBeCloseTo(corto.minimo, 1);
-    await page.keyboard.press('Escape');
-  });
-
-  test(`${ruta} · el nombre entero no sale en el tooltip, ni en reposo si cabe ni encima del campo al editar`, async ({ page }) => {
-    await goto(page, ruta);
-    await fuentes(page);
-    // En reposo, un nombre que cabe no lleva tooltip: antes lo sacaba el `h1`, que desborda por el relleno del display.
-    await page.locator('.name-inplace__text').hover();
-    await page.waitForTimeout(300);
-    await expect(tooltip(page)).toHaveCount(0);
-
-    await page.locator('.headline__name .p-inplace-display').click();
-    const campo = page.locator('.name-inplace__input');
-    await expect(campo).toBeFocused();
-    await campo.hover();
+    const titulo = page.locator('main#main-content h1.headline__name');
+    // DD-258: al editar, el nombre ya no se pulsa para escribirlo en su sitio (el Inplace era un `role="button"`).
+    await expect(titulo.getByRole('button')).toHaveCount(0);
+    await expect(titulo.getByRole('textbox')).toHaveCount(0);
+    await titulo.hover();
     await page.waitForTimeout(300);
     await expect(tooltip(page)).toHaveCount(0);
   });
@@ -94,7 +43,7 @@ test('un nombre que no cabe en sus dos líneas enseña el entero en el tooltip',
   await goto(page, 'admin/grupos/editar/11');
   await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill(enorme);
   await salir(page);
-  await page.locator('.name-inplace__text').hover();
+  await page.locator('main#main-content h1.headline__name').hover();
   await expect(tooltip(page)).toHaveText(enorme);
 });
 

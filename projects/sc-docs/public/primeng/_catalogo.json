@@ -1141,8 +1141,8 @@
           "enlace": "https://primeng.dev/inplace",
           "sirve": "Un dato que al pulsarlo se vuelve editable.",
           "cuando": "Editar un dato suelto sin abrir un formulario.",
-          "aqui": "Sin wrapper: <code>sc-name-inplace</code> del supervisor (sección 2)",
-          "estado": "directo",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
           "obsoleto": false
         }
       ]
@@ -1515,7 +1515,7 @@
           "enlace": "https://primeng.dev/autofocus",
           "sirve": "Pone el foco en un elemento al cargar.",
           "cuando": null,
-          "aqui": "Directo en supervisor (sección 3)",
+          "aqui": "Sin uso (sección 5)",
           "estado": "ds",
           "obsoleto": false
         },
