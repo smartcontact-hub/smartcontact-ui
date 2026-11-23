@@ -46,6 +46,9 @@ import { AgendasStore } from '../state/agendas.store';
 import { EmailTriggersStore, MailboxesStore } from '../state/emails.store';
 import { EntidadesStore } from '../state/entidades.store';
 import { HorariosStore } from '../state/horarios.store';
+import { discoveryActivo } from '@features/lab/calendarios/cal-modo';
+import { CalStore } from '@features/lab/calendarios/cal-store';
+import { resumenDeSemana } from '@features/lab/calendarios/cal-modelo';
 import { EquiposStore } from '../state/equipos.store';
 import { IntencionesStore } from '../state/intenciones.store';
 import { TipificacionesStore } from '../state/tipificaciones.store';
@@ -166,6 +169,7 @@ export class RepositoriosHubPageComponent {
   private readonly mailboxes = inject(MailboxesStore);
   private readonly emailTriggers = inject(EmailTriggersStore);
   private readonly horarios = inject(HorariosStore);
+  private readonly calStore = inject(CalStore);
   private readonly equipos = inject(EquiposStore);
   private readonly templates = inject(TemplatesStore);
   private readonly tipificaciones = inject(TipificacionesStore);
@@ -232,21 +236,58 @@ export class RepositoriosHubPageComponent {
           count: () => this.agendas.items().length,
           entradas: () => this.deFilas(this.filas.agendas(this.agendas.items().map((a) => a.id), true), '/admin/agendas'),
         },
-        {
-          id: 'horarios',
-          labelKey: 'repositories.horarios.title',
-          descriptionKey: 'repositories.hub.descriptions.horarios',
-          icon: 'schedule',
-          path: '/admin/horarios',
-          count: () => this.horarios.items().length,
-          entradas: () =>
-            this.horarios.items().map((h) => ({
-              id: h.id,
-              nombre: h.name,
-              detalle: h.description,
-              link: `/admin/horarios/editar/${h.id}`,
-            })),
-        },
+        /* Con el modo discovery encendido (prototipo de Calendarios), dos tarjetas: el calendario es lo que usa un
+         * servicio y el horario, una semana tipo que comparten varios calendarios. Sin él, la de siempre. */
+        ...(discoveryActivo()
+          ? [
+              {
+                id: 'calendarios',
+                labelKey: 'repositories.calendarios.title',
+                descriptionKey: 'repositories.hub.descriptions.calendarios',
+                icon: 'calendar_month',
+                path: '/admin/calendarios',
+                count: () => this.calStore.calendarios().length,
+                entradas: () =>
+                  this.calStore.calendarios().map((c) => ({
+                    id: c.id,
+                    nombre: c.nombre,
+                    detalle: this.calStore.horario(c.horarioId)?.nombre ?? '',
+                    link: `/admin/calendarios/editar/${c.id}`,
+                  })),
+              },
+              {
+                id: 'horarios',
+                labelKey: 'repositories.horarios.title',
+                descriptionKey: 'repositories.hub.descriptions.horarios_semana',
+                icon: 'schedule',
+                path: '/admin/semanas',
+                count: () => this.calStore.horarios().length,
+                entradas: () =>
+                  this.calStore.horarios().map((h) => ({
+                    id: h.id,
+                    nombre: h.nombre,
+                    detalle: resumenDeSemana(h.semana),
+                    link: `/admin/semanas/editar/${h.id}`,
+                  })),
+              },
+            ]
+          : [
+              {
+                id: 'horarios',
+                labelKey: 'repositories.horarios.title',
+                descriptionKey: 'repositories.hub.descriptions.horarios',
+                icon: 'schedule',
+                path: '/admin/horarios',
+                count: () => this.horarios.items().length,
+                entradas: () =>
+                  this.horarios.items().map((h) => ({
+                    id: h.id,
+                    nombre: h.name,
+                    detalle: h.description,
+                    link: `/admin/horarios/editar/${h.id}`,
+                  })),
+              },
+            ]),
         {
           id: 'emails',
           labelKey: 'repositories.emails.title',

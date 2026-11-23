@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CalPruebaComponent } from '@features/lab/calendarios/cal-prueba.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopBarComponent } from '../top-bar/top-bar.component';
@@ -11,7 +12,7 @@ import { TopBarComponent } from '../top-bar/top-bar.component';
  */
 @Component({
   selector: 'sc-app-shell',
-  imports: [RouterOutlet, SidebarComponent, TopBarComponent, TranslateModule],
+  imports: [CalPruebaComponent, RouterOutlet, SidebarComponent, TopBarComponent, TranslateModule],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1381,7 +1381,9 @@
         "reglas_ia": "Business rules applied to the AI engine",
         "entidades_ia": "Semantic entities managed by language models",
         "clasificacion_ia": "Automatic conversation classification models",
-        "equipos": "Agents with something in common, to find them when filtering"
+        "equipos": "Agents with something in common, to find them when filtering",
+        "calendarios": "Each service’s hours throughout the year, with its holidays",
+        "horarios_semana": "Typical weeks shared by several calendars"
       },
       "all": "All",
       "filter": "Filter by category",
@@ -1496,6 +1498,11 @@
       "contacts_deleted_bulk_one": "1 contact deleted",
       "contacts_delete_title": "Delete {{count}} contacts?",
       "contacts_delete_title_one": "Delete 1 contact?"
+    },
+    "calendarios": {
+      "title": "Calendars",
+      "create_title": "New calendar",
+      "edit_breadcrumb": "Edit calendar"
     },
     "horarios": {
       "title": "Schedules",
