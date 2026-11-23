@@ -13,6 +13,77 @@
 
 ---
 
+## 2026-11-23
+
+> Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
+> los cuatro idiomas) + pasada B (deriva de docs) + pasada C (PRs parados >7d) + pasada D (panel
+> de Cloudflare). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md.
+> Fuentes comparadas: `git log` desde la pasada del 2026-11-16 (#620 a #637, 15 commits: el modo
+> prueba común, el globo de columnas, el Lab de Horarios, la página de Conexión, la mascota);
+> claves i18n: ninguna nueva en la semana; las claves del `es.json` del Supervisor buscadas en
+> sus plantillas y su código; `sc-column-toggle` del Supervisor contra `sc-column-selector` de la
+> librería; la tabla de bifurcaciones de `AGENTS.md` contra DD-153, DD-162, DD-176 y DD-257; el
+> script `verify` de `package.json` partido por `&&` (52, como dicen los docs); los hand-offs de
+> `docs/handoff/` contra `NEXT-SESSION.md` (10 y 10); PRs abiertos por la API de GitHub;
+> `npm run audit:cf-config` con token. El códec repetido entre `prueba.core.mjs` (sc-docs) y
+> `prueba-enlace.core.mjs` (Supervisor) no se marca: está escrito a propósito y una prueba los cruza.
+> Las casillas abiertas del 2026-11-16 siguen abiertas (medido hoy: `pt.json:1538`, `en.json:1646`,
+> `inventory.md:109`, `traspaso.md:56-62` sin cambios).
+
+### Deuda de código
+
+- [ ] **P2** Dos globos de columnas y solo uno se mantiene. Las listas del Supervisor usan el suyo,
+      `sc-column-toggle` (`projects/supervisor/src/app/shared/components/column-toggle/column-toggle.component.ts`,
+      en `list-page.component.html:61` y `agenda-contacts-table.component.html:13`), y DD-257 lo
+      cambió solo a él; la librería publica `sc-column-selector`
+      (`projects/ui-smartcontact/src/lib/components/column-selector/sc-column-selector.component.ts`),
+      que es el que enseña sc-docs y usan CusCare DS y el laboratorio de tablas. Ninguno de los dos
+      docs que llevan los huecos lo apunta: `docs/inventory.md:109` cuenta 2 copias locales y esta no
+      está. Y el listado de agentes aún habla del de la librería en dos comentarios
+      (`projects/supervisor/src/app/features/admin/agents/pages/agents-list-page.component.ts:49`, `:184`).
+      → decidir si el globo del Supervisor sube al DS (y `sc-column-selector` se retira) o se apunta
+      como hueco con su disparador en el roadmap; y quitar la mención de los dos comentarios. [arréglalo]
+- [ ] **P3** Tres textos sin uso en los cuatro idiomas que DD-250 dejó por retirar
+      (`docs/DECISIONS.md:601`, «Pendiente: retirar de `i18n` las claves…»):
+      `groups.form.assigned.not_allowed_hint` y `groups.form.assigned.permissions_link`
+      (`projects/supervisor/src/assets/i18n/es.json:2191`, `:2192`) y
+      `agents.form.assigned.not_allowed_hint` (`es.json:2667`), y sus pares en `en.json`, `fr.json`
+      y `pt.json`. Ninguna plantilla ni fichero `.ts` del Supervisor los nombra.
+      → borrarlos de los cuatro ficheros. [arréglalo; gate-able solo en parte: buscar las claves
+      sin uso da hoy 107 candidatas, casi todas compuestas en código (el catálogo del panel, los
+      fallos de Conversaciones), así que un guard necesitaría su lista de prefijos dinámicos]
+
+### Deriva de docs
+
+- [x] La tabla de bifurcaciones de `AGENTS.md:326` mandaba elegir columnas con `sc-multiselect
+      iconOnly` (DD-153) y ponía «un selector propio» como lo que no se hace. Desde DD-162 y DD-176
+      es el globo «Column Toggle» de primeng.dev (`sc-column-toggle`: botón, Popover, casilla nativa
+      y asa), y DD-257 lo rehízo esta semana; ninguna lista usa ya un multiselect para las columnas.
+      Quien construyera una lista nueva siguiendo la guía haría la versión retirada. Corregido en
+      esta pasada (fila con DD-153 · DD-176 · DD-257).
+
+### Trabajo sin mergear
+
+Los cinco son borradores del Lab de Horarios, con el CI verde. Otras versiones del Lab de Horarios
+ya entraron en `main` (#621, #625, #630, #636); no comprobado si estos las repiten.
+
+- [ ] PR #614 «Lab de Horarios: estado en una columna, semana por tramos, calendario fijo y festivos
+      precargados» — abierto hace 9 d, con conflictos, CI verde → cerrar o rehacer sobre `main`.
+- [ ] PR #616 «Horarios, la presentación: la propuesta de referencia y el rediseño lado a lado» —
+      abierto hace 9 d, mergeable, CI verde → mergear o cerrar.
+- [ ] PR #617 «feat(lab): Calendarios, la propuesta de referencia acoplada al DS» — abierto hace 9 d,
+      con conflictos, CI verde → cerrar o rehacer sobre `main`.
+- [ ] PR #618 «Lab Tiempo premium: horarios y festivos con aspecto propio, en una pantalla» —
+      abierto hace 9 d, mergeable, CI verde → mergear o cerrar.
+- [ ] PR #619 «Lab de Horarios: la tabla de la versión premium, hecha con sc-datatable y el DS» —
+      abierto hace 8 d, mergeable, CI verde → mergear o cerrar.
+
+### Panel de Cloudflare
+
+sin hallazgos: `npm run audit:cf-config`, con token, da ✓ en los seis proyectos (medido hoy).
+
+---
+
 ## 2026-11-16
 
 > Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
