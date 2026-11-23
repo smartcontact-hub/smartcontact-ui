@@ -62,7 +62,7 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 | `sc-checkbox` (input nativo) | Checkbox | **Mantener** | `p-checkbox` no modela el ciclo ninguno/alguno/todos que piden las casillas de «todos» (su `indeterminate` es binario). Escrito en el componente. |
 | `sc-inputnumber` (sobre InputText) | InputNumber | **Mantener** (revisado, DD-195) | El motivo sigue: enteros sin formato. La unidad, los topes y las flechas ya los da, y acota al salir del campo, como `p-inputnumber` (medido en su código: `onInputBlur`, Enter y Tab). Pasarse cambiaría dos cosas a peor: la unidad entraría en el texto del número, con su color, y el valor solo llega tecla a tecla (pegar con el ratón, el dictado o un `fill` esperan a salir del campo). |
 | `sc-photo-upload` | FileUpload (basic) + Avatar | **Mantener** | Recorte e ilustración de reserva; decisión §10 del componente. El resto de subidas, `sc-fileupload` (DD-184). |
-| `sc-inline-rename-cell` | Inplace | **Mantener** (revisado, DD-195) | No es lo mismo que `sc-name-inplace` (el `p-inplace` nativo del nombre de las fichas, de reposo a edición). La celda no tiene reposo: aparece ya editando tras duplicar una fila, o en el globo de renombrar del Monitor, con confirmar y cancelar. Un `p-inplace` en la fila pelearía con el clic que abre la ficha. |
+| `sc-inline-rename-cell` | Inplace | **Mantener** (revisado, DD-195) | La celda no tiene reposo: aparece ya editando tras duplicar una fila, o en el globo de renombrar del Monitor, con confirmar y cancelar. Un `p-inplace` en la fila pelearía con el clic que abre la ficha. |
 | `sc-command-palette` | CommandMenu | **Mantener** (revisado) | CommandMenu (22.1.0, `node_modules/primeng/types/primeng-commandmenu.d.ts`) agrupa igual que `sc-command-palette` —un `MenuItem` sin `command`, con `items`, es cabecera de grupo no plegable— y filtra igual o mejor (`filteredModel`, con su `defaultFilter` por etiqueta+`keywords` o un `filter` propio). Pero `sc-command-palette` no es solo esa lista: la mitad de su código es la paleta en sí —Cmd+K/Ctrl+K global, abrir/cerrar, backdrop, Esc, `/` que enfoca el buscador más cercano, resaltado solo con `mousemove` (medido el 2026-08-24, ver el componente)— y CommandMenu no trae nada de eso: es un widget embebido (buscador + lista), no un overlay. Migrar cambiaría el buscador y la lista por los de CommandMenu y dejaría exactamente la misma paleta alrededor, sin ganar la parte que de verdad pesa. |
 | `sc-delete-entity-dialog` | ConfirmDialog | **Mantener** | Lista de lo que se borra y su recuento; ConfirmDialog solo da un mensaje. |
 | `sc-section-card` · `sc-subsection` · `sc-slot` | Card · Fieldset · Panel | **Mantener** | El árbol del DS (DD-157) con sus fondos y medidas; ninguno de los nativos lo da. |
@@ -86,9 +86,8 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 | Slider | supervisor (la barra del reproductor de Memory, candidato 1 del barrido) | El nativo tal cual (DD-113): el DS ya trae el tema (`sc-preset/slider.ts`). En la página PrimeNG de sc-docs (nota de abajo). |
 | Toolbar | supervisor | En la página PrimeNG de sc-docs (nota de abajo). |
 | Checkbox | supervisor (el «Column Toggle», DD-176 §7), sc-docs | **Bien directo** (revisado): el «Column Toggle» calca el ejemplo nativo de primeng.dev (DD-176 §7), que liga cada casilla a un array por `[value]` + un `ngModel` compartido. `sc-checkbox` no modela ese patrón — su `state` es `input.required<TriState>()` (none/some/all), pensado para una casilla de «todos» por columna, no para una lista de casillas binarias independientes (`projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts`). Dos casillas con trabajos distintos, no una inconsistencia. |
-| Inplace | supervisor (`sc-name-inplace`) | Bien directo: ver sección 2. |
 | MeterGroup | supervisor (resumen de grupo) | En la página PrimeNG de sc-docs (nota de abajo). |
-| Tooltip · AutoFocus · ScrollArea · DynamicDialog · InputGroupAddon | supervisor, sc-docs | Directivas y piezas internas de otro componente: bien directas. |
+| Tooltip · ScrollArea · DynamicDialog · InputGroupAddon | supervisor, sc-docs | Directivas y piezas internas de otro componente: bien directas. |
 | ToggleButton | cuscare | Réplica (DD-35): no se toca. |
 | Sidebar | supervisor (página de laboratorio) | **Se queda.** Es el menú lateral nuevo de la 22, en prueba para la versión «no se cierra nada» del sidebar (frente `supervisor-sidebar`, DD-118). |
 | Rating | supervisor (`lab/tabla`, celda de «Valoración» en modo `readonly`) | El nativo tal cual (DD-113): el DS ya trae el tema listo (`sc-preset/rating.ts`), sin wrapper propio todavía. Demuestra contenido rico en celda (estrellas), no sustituye ningún componente del DS. |
@@ -109,6 +108,7 @@ las dos a la vez. Una página propia para un nativo se abre si llega a usarse en
 Carousel, Galleria, Gallery, Image, ImageCompare, Compare, Dock, SpeedDial, Terminal, OrganizationChart, PickList, DataView,
 MegaMenu, Menubar, PanelMenu, Splitter, ScrollTop, BlockUI, CascadeSelect, ButtonGroup, SplitButton,
 FloatLabel, IftaLabel, InputColor, KeyFilter, Chart, Steps (la documentación ya no lo trae; su sucesor es Stepper).
+Inplace dejó de usarse con DD-258: el nombre de las fichas de grupo y agente se cambia en su campo, no en el título.
 Se reabren si aparece el caso.
 
 ## 5. Directivas, piezas de otros componentes y obsoletos
@@ -118,7 +118,7 @@ No se deciden solos: van dentro de otro componente o son ayudas de una plantilla
 - **Piezas de otro componente**: Paginator (de Table), Overlay (el globo de Select, AutoComplete…), Scroller (la lista
   virtual de Table y Select).
 - **Directivas**: Ripple, StyleClass, FocusTrap, AnimateOnScroll, DragDrop (el arrastre del repo es el de CDK), Fluid,
-  Label (`pLabel`).
+  Label (`pLabel`) y AutoFocus (la usaba el nombre editable de las fichas, que DD-258 quitó).
 - **Obsoletos en la 22**: Password (lo sustituye InputPassword, que envuelve `sc-password`) y ScrollPanel (lo sustituye
   ScrollArea).
 
@@ -299,7 +299,7 @@ Piezas que van alrededor de un campo, no campos.
 | Splitter | Paneles cuyo tamaño ajusta el usuario. | Un maestro y detalle donde el usuario quiere repartir el ancho. | Sin caso hoy (sección 4) |
 | ScrollArea | Zona con scroll y barras con el tema. | Zonas con scroll propio. | Sin wrapper: supervisor (sección 3) |
 | ScrollPanel | La de antes. | Obsoleto: ScrollArea. | Sin uso (sección 5) |
-| Inplace | Un dato que al pulsarlo se vuelve editable. | Editar un dato suelto sin abrir un formulario. | Sin wrapper: `sc-name-inplace` del supervisor (sección 2) |
+| Inplace | Un dato que al pulsarlo se vuelve editable. | Editar un dato suelto sin abrir un formulario. | Sin caso hoy (sección 4) |
 
 ### 6.14 Datos y colecciones
 
@@ -350,7 +350,7 @@ Ayudas de plantilla; no se eligen frente a un hermano.
 
 | Componente | Para qué sirve | Aquí |
 |---|---|---|
-| AutoFocus | Pone el foco en un elemento al cargar. | Directo en supervisor (sección 3) |
+| AutoFocus | Pone el foco en un elemento al cargar. | Sin uso (sección 5) |
 | FocusTrap | Mantiene el foco dentro de una zona al tabular. | Sección 5 |
 | DragDrop | Arrastrar y soltar (`pDraggable`, `pDroppable`). | Sección 5: el arrastre del repo es el de CDK |
 | AnimateOnScroll | Anima al entrar o salir de la vista. | Sección 5 |

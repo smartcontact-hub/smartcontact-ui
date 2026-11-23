@@ -14,7 +14,6 @@ import { injectLangChange } from '@core/utils/lang-change';
 import {
   AltaPieComponent,
   ChannelIconComponent,
-  NameInplaceComponent,
   ResourceOptionComponent,
   type FaltaDelResumen,
   AudioPickerComponent,
@@ -219,7 +218,6 @@ type AudioKey = 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAu
     NgTemplateOutlet,
     AudioPickerComponent,
     ChannelIconComponent,
-    NameInplaceComponent,
     CheckboxComponent,
     AgentChannelTableComponent,
     GroupIdentityFieldsComponent,

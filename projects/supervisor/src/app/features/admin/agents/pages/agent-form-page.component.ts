@@ -25,7 +25,6 @@ import { EMAIL_RE } from '@core/utils/validators';
 import {
   AltaPieComponent,
   ChannelIconComponent,
-  NameInplaceComponent,
   ResourceOptionComponent,
   SummaryKpiComponent,
   type FaltaDelResumen,
@@ -218,7 +217,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     ButtonComponent,
     ChannelIconComponent,
     IconComponent,
-    NameInplaceComponent,
     SummaryKpiComponent,
     AltaPieComponent,
     ResourceOptionComponent,

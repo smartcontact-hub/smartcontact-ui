@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El nombre de las fichas de grupo y agente se cambia en su campo de General: el título es texto en el alta, al duplicar y al editar, como en Usuarios · fuera `sc-name-inplace` (enmienda DD-170 y DD-176) | DD-258 |
 > | El globo de columnas de las listas: candado en la columna fija, el asa de seis puntos del DS (`drag_indicator`) y «Restablecer» al pie con su icono, apagado mientras todo está como de partida; la cabecera, solo el título (enmienda DD-176) | DD-257 |
 > | Variables sale de «Próximamente» en el hub de Repositorios: abre su panel, una entrada por variable que abre la lista buscando su clave (`?buscar=`), y «Abrir repositorio» lleva a su página · quedan seis «Próximamente» (enmienda DD-245 §4 y DD-251 §6) | DD-255 |
 > | Las dos tablas de asignación enseñan solo los canales marcados (el agente en General; el grupo, los de sus agentes), sin candado ni enlace (enmienda DD-217 §13 y DD-187 §2) | DD-250 |
@@ -181,6 +182,38 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-258 · 2026-11-23 — El nombre de las fichas de grupo y agente se cambia en su campo, no en el título
+
+**Contexto** · Al editar un grupo o un agente, el título de la ficha se pulsaba para escribir el nombre en su sitio
+(`sc-name-inplace`, el `p-inplace` nativo; DD-170 y DD-176), y los COA de SISMAC-4058 y SISMAC-4062 lo describían. Al
+construirlo, desarrollo preguntó si iba en más fichas y también en el alta (2026-11-20): solo estaba en esas dos, y solo al
+editar. Producto decidió quitarlo (2026-11-23).
+
+**Decisión** ·
+1. **El título de las fichas de grupo y de agente es texto en los tres modos** (alta, duplicar y editar), como el de
+   Usuarios y Tipificaciones: dice el nombre, o «Nuevo …» / «Duplicar …» mientras está vacío, y sigue lo que se escribe en
+   Nombre, en General.
+2. **Se retira `sc-name-inplace`** (`shared/components` del Supervisor), su mapeo de Code Connect y su prueba. Inplace y
+   AutoFocus pasan a «sin uso» en el catálogo de PrimeNG (`docs/AUDIT-PRIMENG-CATALOGO.md`).
+3. **La miga no cambia**: sigue diciendo el nombre guardado (SISMAC-4058).
+
+**Razón** · Era un segundo sitio para el mismo dato, que ya está a la vista: la ficha abre en General, con Nombre en su
+primera fila. Solo dos de las siete fichas lo tenían, y solo al editar; y cerrar el campo no guardaba, cosa que el título
+no decía. Una sola manera de cambiar el nombre se aprende antes y se construye una vez.
+
+**Descartadas** ·
+- *Llevarlo a todas las fichas*: multiplicaba lo que hay que construir para un gesto que ya cubre el campo de General.
+- *Dejarlo en una sola de las dos*: grupo y agente son fichas gemelas (DD-143) y se comportarían distinto.
+
+**Consecuencias** · Enmienda DD-170 y DD-176 en lo del nombre editable. El hueco de 7 entre el nombre y su línea de datos
+se queda, para que el índice no se mueva. Pruebas: se borra `name-inplace.spec.ts`; `fichas-tres-columnas.spec.ts` pierde
+las dos del campo; `fichas-alineacion.spec.ts` mide que el título no tiene campo y que su tooltip solo sale si el nombre se
+corta; `breadcrumb-current.spec.ts` y `panel-agentes-monitor.spec.ts` cambian el nombre en General. Fuera del repo: los COA
+de SISMAC-4058 y SISMAC-4062, las hojas «Cómo se comporta» de la edición y los mapas de componentes del Figma Supervisor
+(registro en `docs/guia-tokens.md`), y el mapeo ya publicado de Code Connect (`figma connect unpublish`, con token).
 
 ---
 
