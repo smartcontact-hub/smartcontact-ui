@@ -136,7 +136,8 @@ export class HorarioSemanaVistaComponent {
       acceptLabel: this.translate.instant('repositories.horarios.sv.repeat_yes') as string,
       rejectLabel: this.translate.instant('repositories.horarios.sv.repeat_no') as string,
       icon: 'content_copy',
-      target: celdas[sug.origen] ?? null,
+      // Pegado a la franja recién puesta (su fila de horas), no a toda la celda, que es mucho más ancha.
+      target: celdas[sug.origen]?.querySelector('.franjas__fila') ?? celdas[sug.origen] ?? null,
     });
     if (acepta) this.repetir(sug.origen, destinos);
   }
