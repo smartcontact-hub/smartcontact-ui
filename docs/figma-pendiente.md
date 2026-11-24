@@ -1015,6 +1015,45 @@ Figma) y sus entradas de ejemplo. La flecha, **hecha el 2026-11-03**: las 30 (3 
 - **Enlaces de Figma en los COA** de 4438, 4440 y 4064 (páginas `4077:58411`, `4067:100978` y `3491:35886`): van en los
   prompts de `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega y publica Rafa.
 
+## 72 · El `inputtext` del Kit fuera de la escala, y la maqueta de Equipos montada a mano (SISMAC-4453; medido el 2026-11-24)
+
+**Estado:** abierta · **Dónde:** el conjunto `inputtext` del DS (`khNq9dJKNi13pNllrqm6dx`, página `❖ InputText`) y la
+página Equipos del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`, pantalla `3452:14415`) · **Cómo se comprueba:**
+`node tools/figma-revision.mjs 3452:14415` y ejecutar lo que imprime: `camposAMano` y `componentesFueraDelKit` vacías.
+
+Decisión de producto (2026-11-24): la app se queda como está (campos a 14, etiquetas a 12 regular, placeholder y ayuda en
+rojo cuando el campo no es válido) y Figma se corrige al código.
+
+**1. El componente `inputtext`** (librería publicada, leída desde el Supervisor; las variantes `State=Default`). Ninguno
+de estos textos lleva text style, y la letra no está atada a ninguna variable:
+
+| Capa | Hoy en Figma | Kit y app | Atar a |
+|---|---|---|---|
+| `Label`, los tres tamaños | Inter Regular 15/21 | 12/18 regular | el text style de caption regular |
+| `Placeholder`, `Size=Small` | 13,25/18 | 12/18 | `inputtext.sm.font.size` (= `form.field.sm.font.size`, 12) |
+| `Placeholder`, `Size=Normal` | 15/20 | 14/20 | `primitive.typography.font.size.200` (la base, 14) |
+| `Placeholder`, `Size=Large` | 16,75/24 | 16/24 | `inputtext.lg.font.size` (= `form.field.lg.font.size`, 16) |
+| `Helper Text`, los tres tamaños | 13/21 | 12/18 | el text style de caption regular |
+| `Helper Text` con `Invalid=True` | el mismo color oscuro que sin error | el rojo del placeholder inválido (red-600) | la variable de color de error del Kit |
+
+Si la etiqueta IFTA (`iftalabel.font.size`, 12) o el `textarea`, el `select` y el `password` traen lo mismo, la revisión
+lo dice en `componentesFueraDelKit` al pasarla por una pantalla que los use: se corrigen en la misma tanda.
+
+**2. La maqueta de Equipos** (lo hace quien maqueta, después del punto 1). `node tools/figma-revision.mjs "↳ Equipos"`
+sobre las 29 pantallas de la página, el 2026-11-24:
+- **30 campos montados a mano** (`camposAMano`): «Nombre *» y «Descripción (opcional)» son textos sueltos encima del
+  input, con `Show Label` apagada. Van en la propiedad `Label` del propio input (que ya dice «Nombre *») con `Show Label`
+  encendida; el aviso «El nombre es obligatorio», en `Helper Text` con `Show Helper` encendida. En `3452:14415` la
+  etiqueta suelta va a 600 (caption semibold) y la app la pinta a 400: con la propiedad, todas salen del componente y del
+  mismo peso. Dos de esas etiquetas (`4225:10503` y `4225:10531`) ni siquiera llevan text style.
+- **8 placeholders y 1 texto pintados a mano** (`retoques`, `inputtext › Placeholder: fills`): el estado va en
+  `Invalid=True`, no en el color.
+- **La miga, en las 29 pantallas**: la del `Header` va tapada con la opacidad retocada y encima hay otra montada a mano
+  (`sinVariable`, `itemSpacing 7`). Si el `Header` del Kit no deja poner la miga de la pantalla, es del punto 1.
+- **Retoques sobre piezas del DS**: los radios de los `togglebutton` del `selectbutton` del filtro (15 filtros), el text
+  style de 56 cabeceras de tabla (`datatable-header-cell › Header`) y el de 4 filas de menú (`menu-item › Menu Item`).
+- **Un vacío de tabla** (`4591:91568`) con padding 28 y 504 sin variable; el 504 no está en el Kit.
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
@@ -1193,6 +1232,10 @@ Figma) y sus entradas de ejemplo. La flecha, **hecha el 2026-11-03**: las 30 (3 
   veredicto rápido, y al fundir, `tema-zip` publica el tema del equipo externo.
 - **Solo viajan por el export las variables:** las fichas 4, 8, 12, 14 y 19, la variable nueva de la 2, los bordes de
   Tabs (9) y el hueco entre botones del diálogo (17). El dibujo no lo recoge el robot.
+- **Una maqueta contra el Kit**, antes de darla por montada: `node tools/figma-revision.mjs <nodo o página>` imprime el
+  JavaScript para `figma_execute` (con `fileKey` del Supervisor) o `use_figma`. Lista los campos montados a mano, los
+  retoques sobre instancias, lo que va sin variable y lo que no está en el Kit; lo que trae el propio componente sale
+  aparte (`componentesFueraDelKit`) y entra aquí como ficha. Las reglas, en `AGENTS.md` §«Maquetar en Figma desde el código».
 - **Figma contra el export**, con el bridge abierto: `node tools/figma-export-parity.mjs <capa>` imprime el JavaScript
   para `figma_execute_across_files` con `fileKeys: ["khNq9dJKNi13pNllrqm6dx"]`. Verde es `distintos: []` **con**
   coincidencias distintas de cero (`tools/README.md`).

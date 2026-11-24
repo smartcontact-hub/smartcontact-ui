@@ -468,7 +468,8 @@ DesignOps en un repo que lee cualquiera:
   Figma (limitaciones del Kit, «componente local», «Por decidir») no va en la entrega, se comprueba y se apunta en
   `figma-pendiente` (ficha 53). **Antes de dar por entregada una página del Supervisor**, `node tools/figma-revision.mjs
   "<página>"` y se ejecuta lo que imprime: costuras, textos sin text style y filas de menú apretadas tienen que salir
-  vacíos (se limpiaron el 2026-11-04; tres de las cinco limitaciones anotadas ya eran falsas).
+  vacíos (se limpiaron el 2026-11-04; tres de las cinco limitaciones anotadas ya eran falsas). Desde el 2026-11-24 la
+  misma revisión mira también cómo está montada cada pantalla: §«Maquetar en Figma desde el código».
 - **Los hooks, al hablarle al agente**, dicen «el usuario».
 - **La excepción es el nombre como DATO**, nunca como firma: el agente de demo con el nombre del
   autor está puesto a propósito (`audit-seed-pii.mjs`). Cada caso va declarado con su motivo en
@@ -885,6 +886,45 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   para capturar, script aislado con la API de Playwright.
 - **Añadir o quitar un `<sc-*>` desfasa `audit:components`** → `node
   scripts/component-audit.mjs --write` + commitea `docs/inventory.md` y `docs/_component-status.json`. ↔ `LEARNINGS.md` **#7**.*
+
+---
+
+## Maquetar en Figma desde el código
+
+Vale para cada pantalla que un agente pasa del prototipo a un fichero de Figma (el del Supervisor,
+`Hjyy41SYKqcRuIzCGggfYH`, o cualquier otro), con `figma_execute` o `use_figma`. La maqueta la lee desarrollo, que
+construye lo que ve: montada a mano, enseña valores que el Kit no tiene y que luego no cuadran con la app. Nace de la
+página Equipos (SISMAC-4453), medida el 2026-11-24: las etiquetas iban en textos sueltos con la propiedad del input
+apagada, el estado inválido se pintaba a mano y el input traía letra que el Kit no tiene (ficha 72 de
+`docs/figma-pendiente.md`).
+
+1. **Una pieza del DS es una instancia con sus propiedades, nunca un marco al lado.** Antes de montar un campo, lee
+   `componentProperties` de la instancia y enciende lo que la app enseña: la etiqueta en `Show Label` + `Label`, la ayuda
+   o el error en `Show Helper` + `Helper Text`, el tamaño en `Size`, el estado en su variante (`Invalid`, `Disabled`,
+   `Filled`, `State`). Un texto suelto encima o debajo de un campo con su etiqueta o su ayuda apagada es un fallo.
+   Antes de cambiar cualquier valor de una instancia, se busca la variante o la propiedad que ya lo hace: para eso
+   están. Retocar la instancia es el último recurso y lleva ficha en `figma-pendiente`.
+2. **Nada a mano: todo valor sale de un estilo o de una variable.** Cada texto lleva uno de los 14 text styles. Color,
+   padding, separación y radio van atados a una variable del Kit (`setBoundVariable`, `setBoundVariableForPaint`). No se
+   escribe `fontSize`, un `fills` con hex ni un `paddingLeft` sin variable, tampoco «para que se parezca».
+3. **Solo valores del Kit**, y el Kit es `projects/design-tokens/scripts/kit-export-dtcg.json`, no lo que trae un
+   componente ni otra maqueta: letra 12 · 14 · 16 (la base es 14; en `sm`, 12: `form.field.sm.font.size`,
+   `inputtext.sm.font.size`, `iftalabel.font.size`), interlineado 18 · 20 · 24, espacios de la escala 14-base.
+4. **El componente manda sobre la maqueta, y lo que está mal en el componente lo corrige diseño en el Kit.** Si una
+   instancia trae un valor fuera del Kit (hoy, el `inputtext`: etiqueta 15/21, placeholder 13,25 en `Small`), no se
+   retoca la instancia: se deja como viene y se apunta en `docs/figma-pendiente.md`, con la capa, el valor de hoy, el del
+   Kit y la variable a la que atarlo.
+5. **El estado lo pone la variante, no un color.** Un campo inválido es `Invalid=True`. No se pinta a mano el
+   placeholder ni la ayuda de rojo, ni se añade un texto rojo debajo. Si la variante no pinta lo que pinta la app (hoy la
+   ayuda no se pone roja con `Invalid=True`), se usa tal cual y va a `figma-pendiente`.
+6. **Una captura de la web no es una pantalla.** Lo que sale de `generate_figma_design` sirve de referencia al lado; la
+   pantalla se monta con instancias del DS publicadas en la librería.
+7. **Antes de dar la pantalla por montada**, `node tools/figma-revision.mjs <nodo>` (o `"<página>"`) y se ejecuta lo que
+   imprime (con `figma_execute` y el `fileKey` del fichero, o con `use_figma`). Con el nodo no cambia de página; con la
+   página, las listas de montaje miran solo las pantallas (los marcos que llevan la `sidebar`), no los tableros. Tienen
+   que salir vacías `costuras`, `sinEstilo`, `menusApretados`, `camposAMano`, `sinVariable` y `fueraDelKit`;
+   `retoques`, vacía o cada línea con su ficha en `figma-pendiente`. `componentesFueraDelKit` no se arregla en la
+   pantalla: cada línea nueva va a `figma-pendiente` para diseño. El resultado va en el parte de cierre.
 
 ---
 
