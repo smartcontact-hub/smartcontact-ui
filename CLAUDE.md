@@ -47,6 +47,11 @@ Resumen operativo:
   [AGENTS.md](AGENTS.md) §«UX de pantalla» (color funcional, `sc-skeleton` en carga, copy sin
   relleno, `sc-icon` sin emojis, contraste, sin saltos, agrupación 7 · 14 · 28 —entre grupos,
   el doble que dentro—). Navegable: `sc-docs` → Fundamentos → Patrones.
+- **Maquetar en Figma desde el código**: cada pieza, instancia del DS con sus propiedades encendidas (etiqueta, ayuda,
+  tamaño, estado), nunca un texto suelto al lado; ningún valor a mano (text style o variable del Kit); solo valores del
+  Kit, y lo que el componente trae mal va a `docs/figma-pendiente.md`, no se retoca. Antes de darla por montada,
+  `node tools/figma-revision.mjs <nodo>` con sus listas vacías ([AGENTS.md](AGENTS.md) §«Maquetar en Figma desde el
+  código»).
 - **Voz del código**: comentarios, commits y PRs sin nombres de personas ni citas de conversación;
   la procedencia es la DD, el ticket o el nodo de Figma (AGENTS.md §«Voz del código»; lo vigilan
   `audit:personal-names` y `bash-guard`).
