@@ -24,7 +24,7 @@
   border: 1px solid var(--sc-toast-info-border);
   border-radius: var(--sc-toast-radius);
   background: var(--sc-toast-info-bg);
-  /* Backdrop blur — frosted-glass effect per Figma `toast/blur: 1.5`. */
+  /* Desenfoque del fondo (efecto cristal): `toast.blur` del Kit, 10. */
   backdrop-filter: blur(var(--sc-toast-backdrop-blur));
   -webkit-backdrop-filter: blur(var(--sc-toast-backdrop-blur));
   color: var(--sc-toast-title);
@@ -90,7 +90,7 @@
   }
 
   &__title {
-    /* Figma `toast/summary/font/size: 14`, `toast/summary/font/weight: 500`. */
+    /* `toast.summary`: 14, peso 500. */
     font-family: var(--sc-font-family-primary);
     font-weight: var(--sc-toast-summary-font-weight);
     font-size: var(--sc-toast-summary-font-size);
@@ -99,7 +99,7 @@
   }
 
   &__message {
-    /* Figma `toast/detail/font/size: 12.25` raw, `toast/detail/font/weight: 500`. */
+    /* `toast.detail`: 12, peso 500. */
     font-family: var(--sc-font-family-primary);
     font-weight: var(--sc-toast-detail-font-weight);
     font-size: var(--sc-toast-detail-font-size);
