@@ -176,10 +176,6 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
       background: var(--sc-bg-canvas);
     }
     /* Las dos secciones se apilan con el margen que les da el DS, como en el editor de agendas. */
-    /* Un nombre largo o sin espacios baja a la línea siguiente en vez de salirse por la derecha. */
-    .page__heading {
-      overflow-wrap: anywhere;
-    }
     .editor {
       display: flex;
       flex-direction: column;

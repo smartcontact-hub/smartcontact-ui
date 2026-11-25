@@ -19,6 +19,7 @@ export const NAV_ICONS = {
   database: 'database',
   'file-text': 'description',
   'folder-open': 'folder_open',
+  gavel: 'gavel',
   headphones: 'headphones',
   'help-circle': 'help',
   'layout-dashboard': 'space_dashboard',

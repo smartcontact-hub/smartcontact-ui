@@ -28,6 +28,7 @@ export const supervisionRoutes: Routes = [
   },
   { path: 'informes', loadComponent: placeholder },
   { path: 'analizador', loadComponent: placeholder },
+  { path: 'ley-sac', loadComponent: placeholder },
   { path: 'scc', loadComponent: placeholder },
   { path: 'vui-designer', loadComponent: placeholder },
   { path: 'centro-control', loadComponent: placeholder },
