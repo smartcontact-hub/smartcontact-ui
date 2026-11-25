@@ -6544,7 +6544,7 @@
         "header": {
           "padding": {
             "$type": "number",
-            "$value": "{overlay.modal.padding}"
+            "$value": "{scale.1-25}"
           },
           "gap": {
             "$type": "number",
@@ -6580,7 +6580,7 @@
         "footer": {
           "gap": {
             "$type": "number",
-            "$value": "{scale.0-5}"
+            "$value": "{dialog.footer.gap}"
           },
           "padding": {
             "top": {
@@ -15975,7 +15975,7 @@
       "max": {
         "width": {
           "$type": "number",
-          "$value": "{scale.12-5}"
+          "$value": "{scale.18}"
         }
       },
       "gutter": {
