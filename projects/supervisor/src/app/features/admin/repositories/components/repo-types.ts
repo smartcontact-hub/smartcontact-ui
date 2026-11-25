@@ -49,12 +49,10 @@ export interface RepoColumnDef<T extends RepoEntity> {
 
 }
 
-/** Un horario para la celda de una lista: «L–V 09:00–18:00» con su barra de 24 h. */
+/** Un horario para la celda de una lista: «L–V 09:00–18:00». */
 export interface ScheduleGroup {
   readonly label: string;
   readonly text: string;
-  /** Tramos de la barra, en % del día. */
-  readonly segments: readonly { readonly left: number; readonly width: number }[];
 }
 
 export interface ScheduleCell {

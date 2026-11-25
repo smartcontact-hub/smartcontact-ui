@@ -100,14 +100,6 @@ export class HorariosPageComponent {
           return {
             label: todoElDia ? siempre : g.desde === g.hasta ? dias[g.desde] : `${dias[g.desde]}–${dias[g.hasta]}`,
             text: todoElDia ? '' : g.franjas.map(textoDeFranja).join(', '),
-            segments: g.franjas.flatMap((f): { left: number; width: number }[] =>
-              f[1] > f[0]
-                ? [{ left: (f[0] / MINUTOS_DEL_DIA) * 100, width: ((f[1] - f[0]) / MINUTOS_DEL_DIA) * 100 }]
-                : [
-                    { left: (f[0] / MINUTOS_DEL_DIA) * 100, width: ((MINUTOS_DEL_DIA - f[0]) / MINUTOS_DEL_DIA) * 100 },
-                    ...(f[1] > 0 ? [{ left: 0, width: (f[1] / MINUTOS_DEL_DIA) * 100 }] : []),
-                  ],
-            ),
           };
         });
         return {

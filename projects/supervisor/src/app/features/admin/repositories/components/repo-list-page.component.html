@@ -134,19 +134,14 @@
           @for (g of c.visibles; track $index) {
             <span class="sched__grupo">
               <span class="sched__linea">
-                <sc-badge [label]="g.label" variant="info" size="lg" />
+                <sc-tag severity="info" [value]="g.label" />
                 <span class="sched__texto sc-text-caption-regular">{{ g.text }}</span>
-              </span>
-              <span class="sched__barra" aria-hidden="true">
-                @for (t of g.segments; track $index) {
-                  <span class="sched__tramo" [style.left.%]="t.left" [style.width.%]="t.width"></span>
-                }
               </span>
             </span>
           }
           @if (c.resto.length > 0) {
             <button type="button" class="sched__mas" (click)="$event.stopPropagation(); masChips.toggle($event)" [attr.aria-label]="'+' + c.resto.length">
-              <sc-badge [label]="'+' + c.resto.length" variant="secondary" size="lg" />
+              <sc-tag severity="secondary" [value]="'+' + c.resto.length" />
             </button>
             <p-popover #masChips>
               <ul class="sched__resto" role="list">
