@@ -47,7 +47,8 @@ export const SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS: ScDynamicDialogConfig = {
   showHeader: false,
   focusOnShow: false,
   styleClass: 'sc-custom-modal-dialog',
-  style: { overflow: 'hidden', border: '0', background: 'transparent' },
+  // Sin sombra: la lleva la tarjeta. En el contenedor, con un título largo, se veía una banda más ancha que ella.
+  style: { overflow: 'hidden', border: '0', background: 'transparent', boxShadow: 'none' },
   contentStyle: { padding: '0', overflow: 'hidden', background: 'transparent' },
 };
 

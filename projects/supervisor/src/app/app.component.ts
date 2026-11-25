@@ -160,12 +160,13 @@ export class AppComponent {
    */
   protected iconFor(severity: ToastSeverity | undefined): string {
     switch (severity) {
+      /* Los glifos del Kit (`toast`): success, el check solo; error, el círculo con la X. */
       case 'success':
-        return 'check_circle';
+        return 'check';
       case 'warn':
         return 'warning';
       case 'error':
-        return 'error';
+        return 'cancel';
       case 'info':
       case 'secondary':
       default:
