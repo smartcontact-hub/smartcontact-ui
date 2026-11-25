@@ -93,6 +93,11 @@ export const NAV_SECTIONS: readonly NavSection[] = [
                 icon: 'route',
                 path: '/analizador',
               },
+              {
+                labelKey: 'sidebar.ley_sac',
+                icon: 'gavel',
+                path: '/ley-sac',
+              },
             ],
           },
           {

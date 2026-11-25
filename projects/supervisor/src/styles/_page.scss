@@ -425,6 +425,19 @@
 h1.page__heading {
   margin: 0 0 var(--sc-spacing-1);
   color: var(--sc-text-primary);
+  /* Un nombre largo, o sin espacios, baja de línea en vez de salirse por la derecha. */
+  overflow-wrap: anywhere;
+}
+
+/* EL TÍTULO USA TODO EL LIENZO, no el tope del arquetipo. El tope (1200 en editores, 832 en lectura…) limita el ancho
+ * de lectura de los CONTROLES; un nombre largo no debe saltar de línea en cuanto llega a él, sino al borde de la
+ * página (menos los 28 de cada lado). `.page` es el contenedor: así el título mide lo que mide la página, sin
+ * número a mano y con el menú lateral abierto o cerrado. Solo el de las páginas que tienen título en su cuerpo. */
+.page:has(> .page__inner > h1.page__heading) {
+  container-type: inline-size;
+}
+.page__inner > h1.page__heading {
+  width: max(100%, calc(100cqw - 2 * var(--sc-spacing-2)));
 }
 
 /* PÁGINA DE TABLA CON SCROLL PROPIO (`.page--tabla`, DD-95, 2026-09-14).
