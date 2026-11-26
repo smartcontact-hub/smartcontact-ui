@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { rutaInterna } from '@shared/utils/ruta-interna.core.mjs';
+import { entrarEnLab } from './features/lab/horarios/lab-modo';
 
 /**
  * Marca de la PESTAÑA: con ella la app se enmarca en el laboratorio del Sidebar en vez del shell.
@@ -94,6 +95,26 @@ export const appRoutes: Routes = [
         path: 'lab/tabla',
         loadComponent: () =>
           import('./features/lab/table-lab-page.component').then((m) => m.TableLabPageComponent),
+      },
+      /* Cierre de Horarios (sale del laboratorio «Tiempo» premium): la lista en la tabla de Repositorios y el editor de la
+       * semana. Lee y escribe el mismo almacén que /admin/horarios. */
+      {
+        path: 'lab/tiempo',
+        canActivate: [entrarEnLab],
+        data: { breadcrumb: [{ labelKey: 'sidebar.administration', link: false as const }, { labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'repositories.horarios.title', link: '/lab/tiempo' }] },
+        loadChildren: () => import('./features/lab/tiempo/tp-rutas').then((m) => m.tiempoRoutes),
+      },
+      /* El laboratorio anterior de Horarios lleva aquí a su equivalente de «Tiempo»: un solo rediseño a la vista. */
+      {
+        path: 'lab/horarios',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: '/lab/tiempo' },
+          { path: 'crear', redirectTo: '/lab/tiempo/horario/crear' },
+          { path: 'editar/:id', redirectTo: '/lab/tiempo/horario/:id' },
+          { path: 'festivos', pathMatch: 'full', redirectTo: '/admin/festivos' },
+          { path: 'festivos/crear', redirectTo: '/admin/festivos/crear' },
+          { path: 'festivos/editar/:id', redirectTo: '/admin/festivos/editar/:id' },
+        ],
       },
       {
         path: 'lab/arbol',

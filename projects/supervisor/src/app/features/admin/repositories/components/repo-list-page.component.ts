@@ -78,6 +78,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
 
   readonly config = input.required<RepoPageConfig<T>>();
   readonly store = input.required<RepoStore<T>>();
+  /** Celdas propias por columna (`key` de la columna → plantilla), para lo que no es texto, cifra, estado ni grupos:
+   *  un dibujo, unas etiquetas. Las demás columnas siguen con la plantilla de siempre; ordenar, buscar y exportar siguen
+   *  leyendo el `accessor`. */
+  readonly cellTemplates = input<Readonly<Record<string, TemplateRef<ScColumnCellContext<T>>>>>({});
 
   /** CTA + panel inline proyectados a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -177,7 +181,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
       skeleton: c.kind === 'status' ? 'tag' : undefined,
       // La cifra que abre la ficha en su sección no deja que la fila la vuelva a abrir arriba.
       stopRowClick: !!c.countOpensSection,
-      cellTemplate: cell,
+      cellTemplate: this.cellTemplates()[c.key] ?? cell,
     }));
   });
 
@@ -193,7 +197,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected readonly columnDefs = computed<readonly ColumnDef[] | undefined>(() => {
     this.lang();
     if (!this.config().columnChoices) return undefined;
-    return this.config().columns.map((c, i) => ({ key: c.key, label: this.translate.instant(c.labelKey), locked: i === 0 }));
+    return this.config().columns.map((c, i) => ({ key: c.key, label: this.translate.instant(c.labelKey), locked: i === 0, defaultVisible: c.defaultVisible }));
   });
 
   protected readonly columnPrefKey = computed(() => `sc-${this.config().filePrefix}-columns-v1`);
@@ -284,6 +288,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
   /** El texto entero de una celda que se corta, para su tooltip (`showOnEllipsis`); vacío, sin tooltip. */
   protected cellTitle(item: T, key: string): string {
     return this.isKind(key, 'truncate') ? this.getCellValue(item, key) : '';
+  }
+
+  protected statusDetail(item: T, key: string): string {
+    return this.config().columns.find((c) => c.key === key)?.statusDetail?.(item) ?? '';
   }
 
   protected getStatusEntry(

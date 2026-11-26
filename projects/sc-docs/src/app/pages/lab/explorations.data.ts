@@ -251,4 +251,34 @@ export const LABS: readonly Lab[] = [
     href: 'https://sc-supervisor.pages.dev/lab/tabla',
     label: 'sc-supervisor.pages.dev/lab/tabla',
   },
+  {
+    id: 'lab-horarios',
+    title: 'Horarios, sin scroll',
+    question: '¿Cómo se monta un horario con su semana, sus festivos y sus excepciones sin perder el calendario de vista?',
+    controls: ['Días en bolitas por tramo', 'Calendario: 3 meses o año', 'Elegir día, rango o semana', 'Festivos precargados'],
+    where: 'Abre un horario de la lista; «Festivos» importa los de un país o comunidad.',
+    // Vive en su rama experimental: el preview de la rama, no producción.
+    href: 'https://claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios',
+    label: 'claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios',
+  },
+  {
+    id: 'lab-tiempo-premium',
+    title: 'Tiempo, versión premium',
+    question: '¿Y si horarios y festivos se vieran como un SaaS premium, en una sola pantalla y sin atarse al DS?',
+    controls: ['Semana en líneas de 24 h', 'Calendario con calor', 'Ficha del día con su porqué', 'El año de festivos en doce meses'],
+    where: 'Entra por Repositorios › Tiempo; pulsa un día del calendario para ver su ficha.',
+    // Vive en su rama experimental: el preview de la rama, no producción. Ese dominio entra ya en el rediseño.
+    href: 'https://claude-lab-horarios-premium.sc-supervisor.pages.dev/lab/tiempo',
+    label: 'claude-lab-horarios-premium.sc-supervisor.pages.dev/lab/tiempo',
+  },
+  {
+    id: 'lab-horarios-cierre',
+    title: 'Horarios, para cerrar',
+    question: '¿Qué queda de Horarios si periodos, días especiales y festivos se van al calendario?',
+    controls: ['Un día por fila: su interruptor lo abre o lo cierra', 'Los días que abres copian y siguen al de arriba', 'Arrastrar o escribir las horas, y elegir cuáles se ven', '«Aplicado en» y aviso al guardar'],
+    where: 'Entra por Repositorios › Horarios; abre uno y cambia sus horas.',
+    // Vive en su rama experimental: el preview de la rama, no producción. Ese dominio entra ya en esta versión.
+    href: 'https://claude-horarios-cierre.sc-supervisor.pages.dev/lab/tiempo',
+    label: 'claude-horarios-cierre.sc-supervisor.pages.dev/lab/tiempo',
+  },
 ];

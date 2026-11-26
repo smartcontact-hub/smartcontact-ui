@@ -80,9 +80,14 @@ const esReplicaDeLinea = (line) => line.includes(REPLICA_LINEA);
  * borrado era del todo legítimo (pasó el 2026-09-05 al retirar
  * `_sc-overlay-sizes.scss`). Lo que el guard vigila es lo que hay escrito; un
  * fichero que ya no existe no tiene nada que vigilar. */
+/* LABORATORIO «Tiempo» premium: vive en una rama experimental que no se funde y lleva su propio sistema visual (color,
+ * tipografía y oscuro) fuera del DS a propósito. Fuera entera, como una réplica: medirla con el DS no dice nada. */
+const LAB_FUERA_DEL_DS = 'projects/supervisor/src/app/features/lab/tiempo/';
+
 const files = execSync('git ls-files projects', { cwd: root, encoding: 'utf8' })
   .split('\n')
   .filter((f) => /\.(scss|css|html|ts)$/.test(f) && !f.endsWith('.spec.ts'))
+  .filter((f) => !f.startsWith(LAB_FUERA_DEL_DS))
   .filter((f) => existsSync(resolve(root, f)));
 
 let problems = 0;

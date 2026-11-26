@@ -1,0 +1,182 @@
+<div class="tp tp-editor tp-fest">
+  <div class="tp-lienzo">
+    <header class="tp-head tp-stagger" style="--i: 0">
+      <div class="tp-head__main">
+        <button type="button" class="tp-head__back" (click)="volver()">
+          <sc-tp-icono nombre="arrow-left" [tam]="14" />
+          Festivos
+        </button>
+        <div class="tp-head__title">
+          <span class="tp-mark tp-mark--festivo"><sc-tp-icono nombre="calendar-x" [tam]="16" /></span>
+          <input class="tp-inline tp-head__name t-display" [attr.aria-label]="t.nombreLista" [placeholder]="t.ejemploLista" [value]="form().name" (input)="update('name', $any($event.target).value)" />
+        </div>
+        <div class="tp-head__meta">
+          <span class="tp-meta"><sc-tp-icono nombre="calendar-x" [tam]="14" /><span><span class="t-num">{{ form().days.length }}</span> {{ form().days.length === 1 ? 'día cerrado' : 'días cerrados' }}</span></span>
+          <span class="tp-sep"></span>
+          <span class="tp-meta"><sc-tp-icono nombre="clock" [tam]="14" />{{ aplicada().length === 0 ? 'Ningún horario la aplica' : 'La aplican ' + aplicada().length + (aplicada().length === 1 ? ' horario' : ' horarios') }}</span>
+          @if (proximo(); as p) {
+            <span class="tp-sep"></span>
+            <span class="tp-meta"><span>Próximo: <strong class="t-strong">{{ p.nombre }}</strong>, {{ p.cuando }}</span></span>
+          }
+          <span class="tp-sep"></span>
+          <label class="tp-meta">
+            <button type="button" class="tp-switch" role="switch" [attr.aria-checked]="form().status !== 'inactive'" [attr.aria-label]="t.activa" (click)="update('status', form().status === 'inactive' ? 'active' : 'inactive')"></button>
+            {{ form().status === 'inactive' ? 'Apagada: no cierra ningún horario' : 'Activa' }}
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <div class="tp-fest__rejilla">
+      <!-- El año en doce meses -->
+      <section class="tp-card tp-fest__anio tp-stagger" style="--i: 1">
+        <header class="tp-card__head">
+          <div class="tp-cal__nav">
+            <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm" [attr.aria-label]="t.anterior" (click)="anio.set(anio() - 1)"><sc-tp-icono nombre="chevron-left" [tam]="16" /></button>
+            <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm" [attr.aria-label]="t.siguiente" (click)="anio.set(anio() + 1)"><sc-tp-icono nombre="chevron-right" [tam]="16" /></button>
+          </div>
+          <h2 class="t-title t-num">{{ anio() }}</h2>
+          <span class="tp-spacer"></span>
+          <span class="t-micro t-3">Clic añade o quita un día. <kbd class="tp-kbd">Mayús</kbd> + clic, varios seguidos</span>
+        </header>
+        <div class="tp-doce">
+          @for (m of meses(); track $index) {
+            <div class="tp-doce__mes">
+              <h3 class="tp-doce__nombre t-small t-strong">
+                {{ m.nombre }}
+                @if (m.cuantos) {
+                  <span class="tp-doce__n t-num">{{ m.cuantos }}</span>
+                }
+              </h3>
+              <div class="tp-doce__grid">
+                @for (l of letras; track $index) {
+                  <span class="tp-doce__l">{{ l }}</span>
+                }
+                @for (c of m.celdas; track $index) {
+                  @if (c) {
+                    <button
+                      type="button"
+                      class="tp-doce__d t-num"
+                      [class.is-f]="!!c.f"
+                      [class.is-finde]="c.finde"
+                      [class.is-hoy]="c.fecha === hoy"
+                      [class.is-pasado]="c.fecha < hoy"
+                      [class.is-res]="resaltada() === c.fecha"
+                      [attr.aria-pressed]="!!c.f"
+                      [attr.aria-label]="etiquetaDia(c)"
+                      [attr.data-tip]="c.f ? c.f.name || 'Festivo' : null"
+                      (click)="pulsar(c.fecha, $event)"
+                    >
+                      {{ c.n }}
+                    </button>
+                  } @else {
+                    <span></span>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <div class="tp-fest__lado">
+        <!-- A quién cierra -->
+        <section class="tp-card tp-fest__aplica tp-stagger" style="--i: 2">
+          <header class="tp-card__head">
+            <div class="tp-card__title"><h2 class="t-title">Cierra estos horarios</h2></div>
+          </header>
+          <ul class="tp-aplica" role="list">
+            @for (h of filasHorarios(); track h.id) {
+              <li class="tp-aplica__fila" [class.is-on]="h.aplicada">
+                <span class="tp-avatar" [style.--c]="avatarColor(h.nombre)">{{ iniciales(h.nombre) }}</span>
+                <span class="t-small t-trunc tp-aplica__nombre">{{ h.nombre }}</span>
+                <button type="button" class="tp-switch" role="switch" [attr.aria-checked]="h.aplicada" [attr.aria-label]="h.nombre" (click)="alternarHorario(h.id)"></button>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <!-- Sus días -->
+        <section class="tp-card tp-fest__dias tp-stagger" style="--i: 3">
+          <header class="tp-card__head">
+            <div class="tp-card__title">
+              <h2 class="t-title">Días</h2>
+              <span class="t-small t-3 t-num">{{ form().days.length }}</span>
+            </div>
+            <span class="tp-spacer"></span>
+            <button type="button" class="tp-btn tp-btn--sm" (click)="importando.set(true)">
+              <sc-tp-icono nombre="download" [tam]="14" />
+              Importar oficiales
+            </button>
+          </header>
+          <div class="tp-fest__dias-cuerpo">
+            @if (filas().length === 0) {
+              <div class="tp-vacio">
+                <span class="tp-vacio__ico"><sc-tp-icono nombre="calendar-x" [tam]="20" /></span>
+                <p class="t-body t-strong">Aún sin días</p>
+                <p class="t-small t-2">Pulsa días en el calendario o trae los oficiales de tu región de una vez.</p>
+                <button type="button" class="tp-btn tp-btn--primary tp-btn--sm" (click)="importando.set(true)"><sc-tp-icono nombre="download" [tam]="14" />Importar oficiales</button>
+              </div>
+            } @else {
+              <ul class="tp-dias" role="list">
+                @for (d of filas(); track d.id) {
+                  @if (d.id === primerPasado()) {
+                    <li class="tp-dias__sep t-eyebrow" role="presentation">Ya pasados</li>
+                  }
+                  <li class="tp-dias__fila" [attr.data-dia]="d.id" [class.is-nueva]="d.id === nuevo()" [class.is-pasado]="d.pasado" (mouseenter)="resaltada.set(d.fecha)" (mouseleave)="resaltada.set(null)">
+                    <span class="tp-hoja tp-hoja--sm"><span class="tp-hoja__mes">{{ d.mes }}</span><span class="tp-hoja__dia">{{ d.dia }}</span></span>
+                    <span class="tp-dias__txt">
+                      <input class="tp-inline t-small t-strong" [attr.aria-label]="t.nombreFestivo" [placeholder]="t.nombreFestivo" [value]="d.name" (input)="cambiar(d.id, { name: $any($event.target).value })" />
+                      <span class="t-micro t-3">{{ d.semana }}{{ d.otroAnio ? ', ' + d.date.slice(0, 4) : '' }}</span>
+                    </span>
+                    <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm tp-dias__cada" [attr.aria-pressed]="d.yearly" [attr.aria-label]="t.cadaAnio" [attr.data-tip]="d.yearly ? 'Se repite cada año' : 'Solo este año'" (click)="cambiar(d.id, { yearly: !d.yearly })">
+                      <sc-tp-icono nombre="repeat" [tam]="14" />
+                    </button>
+                    <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm" [attr.aria-label]="t.quitar(d.name || t.festivo)" (click)="quitar(d.id)">
+                      <sc-tp-icono nombre="x" [tam]="14" />
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-savebar" [attr.data-visible]="modo() === 'crear' || dirty()" role="region" [attr.aria-label]="t.guardar">
+    <span class="tp-savebar__msg">
+      <span class="tp-savebar__dot"></span>
+      {{ modo() === 'crear' ? 'Lista nueva' : 'Cambios sin guardar' }}
+      @if (!form().name.trim()) {
+        <span class="tp-savebar__why">Ponle un nombre</span>
+      }
+    </span>
+    @if (modo() === 'crear') {
+      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="volver()">Cancelar</button>
+    } @else {
+      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="discard()">Deshacer</button>
+    }
+    <button type="button" class="tp-btn tp-btn--primary tp-btn--sm" [disabled]="!puedeGuardar()" (click)="save()">
+      {{ modo() === 'crear' ? 'Crear lista' : 'Guardar' }}
+      <kbd class="tp-kbd">⌘S</kbd>
+    </button>
+  </div>
+
+  @if (importando()) {
+    <sc-tp-importar modo="dias" (diasElegidos)="sumar($event)" (cerrado)="importando.set(false)" />
+  }
+  @if (saliendo()) {
+    <sc-tp-modal titulo="¿Salir sin guardar?" subtitulo="Hay cambios en esta lista que aún no están guardados." icono="alert" ancho="28rem" (cerrar)="responderSalida('seguir')">
+      <div tpPie class="tp-modal__acciones">
+        <button type="button" class="tp-btn tp-btn--ghost" (click)="responderSalida('descartar')">Descartar</button>
+        <span class="tp-spacer"></span>
+        <button type="button" class="tp-btn" (click)="responderSalida('seguir')">Seguir editando</button>
+        <button type="button" class="tp-btn tp-btn--primary" [disabled]="!puedeGuardar()" (click)="responderSalida('guardar')">Guardar y salir</button>
+      </div>
+    </sc-tp-modal>
+  }
+
+  <sc-tp-avisos />
+</div>
