@@ -1602,6 +1602,34 @@
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
           "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Isolation"
+          ],
+          "modulos": [
+            "isolation"
+          ],
+          "enlace": "https://primeng.dev/isolation",
+          "sirve": "Encierra el tema y los estilos de PrimeNG de una app en su propio ámbito (<code>withIsolation</code>, experimental).",
+          "cuando": null,
+          "aqui": "Sin uso (sección 5)",
+          "estado": "sin-uso",
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "UseId"
+          ],
+          "modulos": [
+            "useid"
+          ],
+          "enlace": "https://primeng.dev/useid",
+          "sirve": "Numera los ids de los componentes de una app.",
+          "cuando": null,
+          "aqui": "Sin uso (sección 5)",
+          "estado": "sin-uso",
+          "obsoleto": false
         }
       ]
     }

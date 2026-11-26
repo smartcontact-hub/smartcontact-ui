@@ -45,9 +45,12 @@ const leer = (f) => {
   }
 };
 
-/** Las ranuras que declara PrimeNG: `xxxTemplate = contentChild('nombre'`. */
+/**
+ * Las ranuras que declara PrimeNG: `xxxTemplate = contentChild('nombre'`. Desde PrimeNG 22.1.5 el `.mjs` las escribe con
+ * comillas dobles, `contentChild("nombre"`: leer solo las simples daba las 38 ranuras por quitadas.
+ */
 export const ranurasDePrimeng = (fuente) =>
-  new Set([...fuente.matchAll(/[a-zA-Z]+Template = contentChild\('([a-z]+)'/g)].map((m) => m[1]));
+  new Set([...fuente.matchAll(/[a-zA-Z]+Template = contentChild\(['"]([a-z]+)['"]/g)].map((m) => m[1]));
 
 /** Las que declaramos nosotros: `readonly userX = contentChild<...>('nombre')`. */
 export const ranurasDelWrapper = (fuente) =>

@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "primeng": "22.1.0",
+  "primeng": "22.1.5",
   "catalogoPrimeng": [
     {
       "componente": "accordion",
@@ -9759,9 +9759,11 @@
         "checkmark",
         "dataKey",
         "dropdownIcon",
+        "emptySelectionMessage",
         "filterFields",
         "filterLocale",
         "filterMatchMode",
+        "filterMessage",
         "filterValue",
         "fluid",
         "focusOnHover",
@@ -9785,6 +9787,7 @@
         "resetFilterOnHide",
         "scrollHeight",
         "selectOnFocus",
+        "selectionMessage",
         "step",
         "tabindex",
         "tooltip",
@@ -11262,7 +11265,7 @@
         {
           "nombre": "pTooltip",
           "clase": "input",
-          "tipo": "string | TemplateRef<HTMLElement>",
+          "tipo": "string | TemplateRef<void>",
           "porDefecto": null,
           "requerido": false,
           "descripcion": null,
@@ -11337,7 +11340,7 @@
         {
           "nombre": "tooltipZIndex",
           "clase": "input",
-          "tipo": "string",
+          "tipo": "string | number",
           "porDefecto": null,
           "requerido": false,
           "descripcion": null,
@@ -11448,7 +11451,7 @@
           "descripcion": null,
           "origen": "nativo",
           "nativo": {
-            "descripcion": "Whether to hide tooltip when hovering over tooltip content.",
+            "descripcion": "Whether to hide tooltip when hovering over tooltip content. Keeping the tooltip open applies to pointer users only, content inside the tooltip is not reachable with the keyboard.",
             "porDefecto": null,
             "obsoleta": null,
             "heredadaDe": null
@@ -11463,7 +11466,7 @@
           "descripcion": null,
           "origen": "nativo",
           "nativo": {
-            "descripcion": "Automatically adjusts the element position when there is not enough space on the selected position.",
+            "descripcion": "Whether the width of the tooltip fits its content.",
             "porDefecto": null,
             "obsoleta": null,
             "heredadaDe": null

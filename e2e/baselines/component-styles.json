@@ -842,7 +842,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-crear > p-button > button.p-ripple": {
+    "sc-btn-crear > p-button > button.p-button": {
       "padding-top": "5.25px",
       "padding-right": "0px",
       "padding-bottom": "5.25px",
@@ -874,7 +874,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-crear-sm > p-button > button.p-ripple": {
+    "sc-btn-crear-sm > p-button > button.p-button": {
       "padding-top": "3.5px",
       "padding-right": "7px",
       "padding-bottom": "3.5px",
@@ -906,7 +906,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-icononly > p-button > button.p-ripple": {
+    "sc-btn-icononly > p-button > button.p-button": {
       "padding-top": "5.25px",
       "padding-right": "0px",
       "padding-bottom": "5.25px",
@@ -938,7 +938,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-legacy-icon > p-button > button.p-ripple": {
+    "sc-btn-legacy-icon > p-button > button.p-button": {
       "padding-top": "5.25px",
       "padding-right": "8.75px",
       "padding-bottom": "5.25px",
@@ -970,7 +970,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-lg > p-button > button.p-ripple": {
+    "sc-btn-lg > p-button > button.p-button": {
       "padding-top": "7px",
       "padding-right": "10.5px",
       "padding-bottom": "7px",
@@ -1002,7 +1002,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-md > p-button > button.p-ripple": {
+    "sc-btn-md > p-button > button.p-button": {
       "padding-top": "5.25px",
       "padding-right": "8.75px",
       "padding-bottom": "5.25px",
@@ -1034,7 +1034,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-popup > p-button > button.p-ripple": {
+    "sc-btn-popup > p-button > button.p-button": {
       "padding-top": "5.25px",
       "padding-right": "0px",
       "padding-bottom": "5.25px",
@@ -1066,7 +1066,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-press > p-button > button.p-ripple": {
+    "sc-btn-press > p-button > button.p-button": {
       "padding-top": "5.25px",
       "padding-right": "8.75px",
       "padding-bottom": "5.25px",
@@ -1098,7 +1098,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-raised > p-button > button.p-ripple": {
+    "sc-btn-raised > p-button > button.p-button": {
       "padding-top": "5.25px",
       "padding-right": "8.75px",
       "padding-bottom": "5.25px",
@@ -1130,7 +1130,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-btn-sm > p-button > button.p-ripple": {
+    "sc-btn-sm > p-button > button.p-button": {
       "padding-top": "3.5px",
       "padding-right": "7px",
       "padding-bottom": "3.5px",
@@ -2360,7 +2360,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "dt-export > p-button > button.p-ripple": {
+    "dt-export > p-button > button.p-button": {
       "padding-top": "3.5px",
       "padding-right": "7px",
       "padding-bottom": "3.5px",
@@ -2616,7 +2616,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgb(255, 255, 255)"
     },
-    "sc-datatable > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-ripple": {
+    "sc-datatable > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-disabled": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2632,7 +2632,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-ripple#2": {
+    "sc-datatable > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-disabled#2": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2648,7 +2648,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-ripple#3": {
+    "sc-datatable > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-paginator-last": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2664,7 +2664,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-ripple#4": {
+    "sc-datatable > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-paginator-next": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2792,7 +2792,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgb(255, 255, 255)"
     },
-    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-ripple": {
+    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-disabled": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2808,7 +2808,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-ripple#2": {
+    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-disabled#2": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2824,7 +2824,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-ripple#3": {
+    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-disabled#3": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2840,7 +2840,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-ripple#4": {
+    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-disabled#4": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2856,7 +2856,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-ripple#5": {
+    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-paginator-last": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2872,7 +2872,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-ripple#6": {
+    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-paginator-last#2": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2888,7 +2888,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-ripple#7": {
+    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-paginator-next": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2904,7 +2904,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-ripple#8": {
+    "sc-datatable-data-tools > p-table.p-component > p-paginator.p-datatable-paginator-both > button.p-paginator-next#2": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -3144,7 +3144,7 @@
       "color": "rgb(24, 29, 38)",
       "background-color": "rgb(255, 255, 255)"
     },
-    "sc-datatable-lazy > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-ripple": {
+    "sc-datatable-lazy > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-disabled": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -3160,7 +3160,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-lazy > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-ripple#2": {
+    "sc-datatable-lazy > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-disabled#2": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -3176,7 +3176,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-lazy > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-ripple#3": {
+    "sc-datatable-lazy > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-paginator-last": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -3192,7 +3192,7 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-datatable-lazy > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-ripple#4": {
+    "sc-datatable-lazy > p-table.p-component > p-paginator.p-datatable-paginator-bottom > button.p-paginator-next": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -8986,7 +8986,7 @@
       "color": "rgb(111, 119, 132)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-select-editable > div.sc-select__field > p-select.sc-select__control > input.p-placeholder": {
+    "sc-select-editable > div.sc-select__field > p-select.sc-select__control > input.p-select-label": {
       "padding-top": "5.25px",
       "padding-right": "8.75px",
       "padding-bottom": "5.25px",
@@ -8999,7 +8999,7 @@
       "font-size": "14px",
       "font-weight": "400",
       "line-height": "20px",
-      "color": "rgb(79, 86, 99)",
+      "color": "rgb(24, 29, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-editable > sc-field-label > label.sc-field__label": {

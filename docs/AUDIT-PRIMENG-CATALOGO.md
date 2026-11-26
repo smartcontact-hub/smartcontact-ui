@@ -1,6 +1,6 @@
 # Auditoría · el catálogo de PrimeNG contra el DS
 
-> **Qué es.** Un cruce de tres listas contra PrimeNG **22.1.0** (el de `package-lock.json`): los módulos que trae
+> **Qué es.** Un cruce de tres listas contra PrimeNG **22.1.5** (el de `package-lock.json`): los módulos que trae
 > PrimeNG (`node_modules/primeng/fesm2022`), lo que envuelve el DS (`docs/_component-status.json`, columna «PrimeNG
 > base») y lo que las apps importan de `primeng/*` directamente. Se hizo el 2026-10-07 (DD-186) y se decidió el
 > 2026-10-11 (DD-195). Nace porque `sc-fileupload` (DD-184) existía en PrimeNG desde siempre y se nos pasó.
@@ -25,14 +25,14 @@
 
 ## Cifras
 
-Las da el gate en cada `verify`; estas son las del 2026-10-15.
+Las da el gate en cada `verify`; estas son las del 2026-11-26, al subir a PrimeNG 22.1.5.
 
 | | Cuántos |
 |---|---|
-| Módulos de PrimeNG 22.1.0 con interfaz | 109 (sin contar las utilidades de base, `api`, `dom`, `utils`… ni los iconos) |
-| Envueltos por el DS | 38 módulos |
-| Usados directamente por alguna app, sin wrapper del DS | 18 (sección 3; cinco son directivas o piezas internas) |
-| Sin usar en ninguna parte | 53 (secciones 1, 4 y 5) |
+| Módulos de PrimeNG 22.1.5 con interfaz | 111 (sin contar las utilidades de base, `api`, `dom`, `utils`… ni los iconos) |
+| Envueltos por el DS | 40 módulos |
+| Usados directamente por alguna app, sin wrapper del DS | 15 (sección 3) |
+| Sin usar en ninguna parte | 56 (secciones 1, 4 y 5) |
 
 ## 1. Lo que PrimeNG trae, no usamos y tiene un caso en el producto
 
@@ -119,12 +119,14 @@ No se deciden solos: van dentro de otro componente o son ayudas de una plantilla
   virtual de Table y Select).
 - **Directivas**: Ripple, StyleClass, FocusTrap, AnimateOnScroll, DragDrop (el arrastre del repo es el de CDK), Fluid,
   Label (`pLabel`) y AutoFocus (la usaba el nombre editable de las fichas, que DD-258 quitó).
+- **Utilidades de configuración** (nuevas en la 22.1.5): Isolation (`withIsolation`, estilos y tema de PrimeNG en su
+  propio ámbito, marcado experimental) y UseId (el servicio que numera los ids de los componentes).
 - **Obsoletos en la 22**: Password (lo sustituye InputPassword, que envuelve `sc-password`) y ScrollPanel (lo sustituye
   ScrollArea).
 
 ## 6. Por familias: para qué sirve cada uno y cuándo elegirlo
 
-Los 109, agrupados por el trabajo que hacen. Un uso equivocado casi nunca es «este componente no sirve»: es que su
+Los 111, agrupados por el trabajo que hacen. Un uso equivocado casi nunca es «este componente no sirve»: es que su
 **hermano** encajaba mejor en ese caso. Cada familia empieza por la pregunta que decide entre hermanos.
 
 - **Fuente**: la descripción y la API de la versión instalada (`node_modules/primeng/types/primeng-<x>.d.ts`, también lo
@@ -132,7 +134,7 @@ Los 109, agrupados por el trabajo que hacen. Un uso equivocado casi nunca es «e
   esa fuente: para construir, la documentación entera sigue mandando.
 - **«Aquí»** es lo que mide el gate hoy: el wrapper del DS que lo envuelve, la app que lo usa sin wrapper, o «sin uso»
   con la decisión que lo dejó fuera (secciones 1 a 5).
-- **Obsoleto** quiere decir marcado `@deprecated` en la 22.1.0: funciona, pero PrimeNG ya dice qué lo sustituye.
+- **Obsoleto** quiere decir marcado `@deprecated` en la 22.1.5: funciona, pero PrimeNG ya dice qué lo sustituye.
 
 ### 6.1 Elegir de una lista
 
@@ -357,6 +359,8 @@ Ayudas de plantilla; no se eligen frente a un hermano.
 | Ripple | La onda al pulsar. | Sección 5 |
 | StyleClass | Pone y quita clases al entrar o salir. | Sección 5 |
 | Terminal | Una consola de texto. | Sin caso hoy (sección 4) |
+| Isolation | Encierra el tema y los estilos de PrimeNG de una app en su propio ámbito (`withIsolation`, experimental). | Sin uso (sección 5) |
+| UseId | Numera los ids de los componentes de una app. | Sin uso (sección 5) |
 
 ## 7. Barrido de usos: dónde un hermano encajaría mejor (2026-10-14)
 

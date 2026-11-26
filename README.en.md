@@ -1,5 +1,12 @@
 # Smart Contact Design System
 
+<a href="https://sc-doc.pages.dev">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/cover-dark.png">
+    <img src="docs/readme/cover-light.png" alt="SmartContact Design System: Angular components on top of PrimeNG, with a theme where every value comes from the Figma Kit. Packages @smartcontact-hub/components, /styles and /icons." width="100%">
+  </picture>
+</a>
+
 [![Versión](https://img.shields.io/badge/versi%C3%B3n-1.1.0-0B2C5C)](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest)
 ![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
 ![PrimeNG](https://img.shields.io/badge/PrimeNG-22-10B981)
