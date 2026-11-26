@@ -1,8 +1,8 @@
 {
-  "commit": "04bd6182",
-  "primeng": "22.1.0",
-  "themes": "3.0.2",
-  "generado": "2026-11-26T16:59:37.639Z",
+  "commit": "4437e047",
+  "primeng": "22.1.5",
+  "themes": "3.1.1",
+  "generado": "2026-11-26T18:02:00.945Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -25,15 +25,12 @@
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs",
-        "smartcontact-tokens.css"
+        "sc-preset.mjs"
       ],
-      "variables": [
-        "claro|--sc-cmp-tooltip-max-width"
-      ],
+      "variables": [],
       "retirados": [],
-      "semanticaComun": true,
-      "reglasCss": false,
+      "semanticaComun": false,
+      "reglasCss": true,
       "componentes": [],
       "guia": false
     },
@@ -46,5 +43,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261126.1659"
+  "version": "0.20261126.1802"
 }

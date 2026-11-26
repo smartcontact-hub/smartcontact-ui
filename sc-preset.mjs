@@ -4966,11 +4966,11 @@ ${LIST} .p-datatable-tbody > tr.sc-row--clickable {
 }
 
 ${LIST} .p-datatable-tbody > tr.sc-row--clickable:hover,
-${LIST} .p-datatable-tbody > tr.p-selectable-row:hover {
+${LIST} .p-datatable-tbody > tr.p-datatable-selectable-row:hover {
     background: var(--sc-bg-default);
 }
 
-${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):hover {
+${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-datatable-selectable-row):hover {
     background: transparent;
 }
 
@@ -5042,7 +5042,7 @@ ${LIST} .p-datatable-tbody > tr > th[scope='row']:not(.p-datatable-frozen-column
 `;
 var frozenColumnsCss = () => `
 /* El hover inerte de lista era transparente: una celda fija debe tapar los datos que pasan debajo. */
-${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):not(.p-datatable-row-selected):hover:has(> .p-datatable-frozen-column) {
+${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-datatable-selectable-row):not(.p-datatable-row-selected):hover:has(> .p-datatable-frozen-column) {
     background: var(--p-datatable-row-background);
 }
 sc-datatable.sc-datatable--overflow-right .sc-datatable__frozen-right-edge,
