@@ -178,9 +178,7 @@ test('el latido de 8 s no le quita nada al menú ni al panel', async ({ page }) 
 
 test('un grupo renombrado en Administración sale con su nombre nuevo', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/5');
-  await page.locator('.headline__name .p-inplace-display').click();
-  await page.locator('.name-inplace__input').fill('Exclusivo VIP');
-  await page.keyboard.press('Enter');
+  await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Exclusivo VIP');
   await page.getByRole('button', { name: 'Guardar' }).click();
   // El aviso sale cuando el almacén ya lo tiene: salir antes puede perder el nombre nuevo.
   await expect(page.getByText('Grupo «Exclusivo VIP» actualizado')).toBeVisible();

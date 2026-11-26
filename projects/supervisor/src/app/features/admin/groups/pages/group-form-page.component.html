@@ -47,23 +47,11 @@
       <!-- SIN AVATAR NI FOTO: los grupos no llevan cara (DD-119; cara = persona). Las tres cifras que
            vivían aquí se fueron al resumen, que las dice con más detalle y a la vista. -->
       <div class="headline">
-        <!-- El nombre es el TÍTULO DE LA PÁGINA y se edita en su sitio (`sc-name-inplace`, el Inplace
-             nativo), con el mismo aviso de nombre repetido que el campo de General. `h3-semibold` es el
-             rol que ya usan las nueve listas para su `h1`. Su tooltip
-             lo lleva el texto que se corta, dentro del Inplace: en el `h1` salía también editando. -->
+        <!-- El nombre es el TÍTULO DE LA PÁGINA y es texto en los tres modos, como en Usuarios: se escribe en General y el
+             título lo sigue según se escribe (DD-258; hasta entonces, al editar se pulsaba para escribirlo en su sitio).
+             `h3-semibold` es el rol que ya usan las nueve listas para su `h1`. -->
         <div class="headline__who">
-          @if (mode() === 'edit') {
-            <h1 class="headline__name headline__name--editable sc-text-title-semibold">
-              <sc-name-inplace
-                [name]="form().name"
-                [label]="'groups.form.fields.name' | translate"
-                (nameChange)="onNameChange($event)"
-              />
-            </h1>
-          } @else {
-            <!-- En el alta el nombre se escribe en General; el título lo sigue según se escribe. -->
-            <h1 class="headline__name sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
-          }
+          <h1 class="headline__name sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
           <!-- Los datos del grupo, CON su nombre: «Media» a secas no decía de qué. El teléfono, solo si
                el grupo ofrece teléfono: a un grupo de chat no se le pide. -->
           <span class="headline__meta sc-text-caption-regular" [pTooltip]="identitySummary()" showOnEllipsis tooltipPosition="top">{{ identitySummary() }}</span>

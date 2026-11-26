@@ -166,16 +166,20 @@
      {primitive.typography.font.size.100}`. El 12.25 era el raw fraccionario. */
   --sc-toast-detail-font-weight: 500; /* Figma `toast/detail/font/weight: 500` */
 
-  /* Shared geometry — Figma values */
-  --sc-toast-width: var(--sc-scale-25); /* 350px */ /* Figma `toast/width: 350` (was 400) */
+  /* Shared geometry — la del Kit (`toast.*` en el export), leída de las variables que genera `tokens:import`: un
+   * cambio del Kit llega al toast del Supervisor sin tocar esta hoja. Hasta el 2026-11-24 iban escritas a mano con
+   * valores de un Figma anterior (padding 10,5, icono 15,75, 7 entre textos, desenfoque 1,5). */
+  --sc-toast-width: var(--sc-cmp-toast-width); /* 350 — `toast.width` */
   --sc-toast-radius: var(--sc-radius-200); /* 6px — Figma `toast/border/radius: 6` (was 12) */
-  --sc-toast-padding-x: var(--sc-scale-0-75); /* 10.5px */ /* Figma `toast/content/padding: 10.5` raw */
-  --sc-toast-padding-y: var(--sc-scale-0-75);
-  --sc-toast-gap-content: var(--sc-scale-0-5); /* 7px */ /* Figma `toast/content/gap: 7` (icon ↔ body) */
-  --sc-toast-gap-text: var(--sc-scale-0-5); /* 7px */ /* Figma `toast/text/gap: 7` (summary ↔ detail) */
-  --sc-toast-icon-size: var(--sc-scale-1-125); /* 15.75px */ /* Figma `toast/icon/size: 15.75` (was 24) */
+  --sc-toast-padding-x: var(--sc-cmp-overlay-popover-padding); /* 8,75 — `toast.content.padding = {overlay.popover.padding}` */
+  --sc-toast-padding-y: var(--sc-cmp-overlay-popover-padding);
+  --sc-toast-gap-content: var(--sc-cmp-toast-content-gap); /* 7 — `toast.content.gap` (icono ↔ texto) */
+  --sc-toast-gap-text: var(--sc-cmp-toast-text-gap); /* 3,5 — `toast.text.gap` (resumen ↔ detalle) */
+  --sc-toast-icon-size: var(--sc-cmp-toast-icon-size); /* 14 — `toast.icon.size` */
   --sc-toast-icon-radius: var(--sc-radius-200);
-  --sc-toast-backdrop-blur: 1.5px; /* Figma `toast/blur: 1.5` — backdrop-filter frosted glass */
+  /* 10 — `toast.blur`, en claro y en oscuro. Es un efecto, no una medida de la escala: el Kit no lo genera como
+   * variable `--sc-cmp-*`, así que va con su valor. */
+  --sc-toast-backdrop-blur: 10px;
   --sc-toast-shadow: 0 4px 8px 0 rgba(1, 4, 8, 0.04); /* Figma `toast/<sev>/shadow: #0X0X0X0A offset(0,4) r8` */
 
   /* ─── Per-severity (background alpha F2 = 95% para efecto cristal) ─── */

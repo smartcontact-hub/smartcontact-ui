@@ -41,21 +41,11 @@
            «Nuevo agente» hasta que se escribe el nombre, y al crear la ficha no salta (DD-130). -->
       <div class="headline">
         <div class="headline__who">
-          @if (mode() === 'edit') {
-            <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. Su tooltip lo
-                 lleva el texto que se corta, dentro del Inplace: en el `h1` salía también editando. -->
-            <h1 class="headline__name headline__name--editable sc-text-title-semibold">
-              <sc-name-inplace
-                [name]="form().name"
-                [label]="'agents.form.fields.name' | translate"
-                (nameChange)="onNameRename($event)"
-              />
-            </h1>
-          } @else {
-            <h1 class="headline__name sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
-              {{ form().name || ((mode() === 'duplicate' ? 'agents.form.duplicate_title' : 'agents.form.create_title') | translate) }}
-            </h1>
-          }
+          <!-- El nombre es texto en los tres modos, como en Usuarios: se cambia en su campo de General y el título lo sigue según
+               se escribe (DD-258). Hasta entonces, al editar se pulsaba para escribirlo en su sitio. -->
+          <h1 class="headline__name sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
+            {{ form().name || ((mode() === 'duplicate' ? 'agents.form.duplicate_title' : 'agents.form.create_title') | translate) }}
+          </h1>
           <span class="headline__meta sc-text-caption-regular">
             @if (form().extension) {
               <!-- Dónde suena, en icono y no en palabra, como en la lista (revisión de producto del 2026-10-15). El rótulo va

@@ -113,6 +113,11 @@ export class ScBreadcrumbComponent {
           labelStyle: {
             color: 'var(--sc-text-primary)',
             fontWeight: 'var(--sc-font-weight-medium)',
+            // En una barra con poco hueco, el nombre largo de la página actual se corta con «…» en una línea.
+            display: 'block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           },
         };
       }
@@ -126,10 +131,18 @@ export class ScBreadcrumbComponent {
    */
   protected readonly pt = computed(() => {
     const actual = this.renderModel().at(-1);
+    const esActual = (options?: { context?: { item?: MenuItem } }) => !!actual && options?.context?.item === actual;
     return {
+      /* UNA SOLA LÍNEA: los tramos de delante y los separadores conservan su ancho y el último, el que cambia con el
+       * nombre de la ficha, es el que cede y se corta. En línea por el passthrough, sin selectores `.p-*`. */
+      list: { style: { flexWrap: 'nowrap', minWidth: '0' } },
+      separator: { style: { flexShrink: '0' } },
+      item: (options?: { context?: { item?: MenuItem } }) => ({
+        style: esActual(options) ? { minWidth: '0', overflow: 'hidden' } : { flexShrink: '0', whiteSpace: 'nowrap' },
+      }),
       // El inicio pide `itemLink` sin contexto: por eso el `?.`.
       itemLink: (options?: { context?: { item?: MenuItem } }) =>
-        actual && options?.context?.item === actual ? { 'aria-current': 'page' } : {},
+        esActual(options) ? { 'aria-current': 'page', style: { display: 'block', minWidth: '0' } } : {},
     };
   });
 

@@ -28,11 +28,16 @@
   background: var(--sc-bg-surface);
   border-bottom: 1px solid var(--sc-border-default);
 
+  /* El lead ocupa todo el hueco que dejan las acciones y el avatar (fill container) y termina 16 antes de lo que
+   * viene después, pegado o no: con una miga larga, el texto se corta con «…» antes de llegar al botón en vez de
+   * pasar por detrás. */
   &__lead {
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-875);
+    flex: 1 1 0;
     min-width: 0;
+    margin-right: var(--sc-spacing-1-143);
   }
 
   /* Cabecera contextual proyectada por una página-formulario (constructor de
@@ -102,7 +107,9 @@
    * preset del DS, idéntico a Figma. Solo se le deja encoger en el flex del
    * lead para que una ruta larga no empuje al avatar. */
   &__breadcrumb {
+    flex: 1 1 0;
     min-width: 0;
+    overflow: hidden;
   }
 
   &__user {

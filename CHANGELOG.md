@@ -151,6 +151,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Fixed
 
+- **`@smartcontact-hub/components`** — `sc-inline-rename-cell` llega con el nombre entero seleccionado, como promete:
+  lo que se teclea lo sustituye. Seleccionaba antes de que el campo tuviera el nombre, que entraba después con el
+  cursor al final, y en una lista tras duplicar lo tecleado se pegaba detrás de la copia («Horario (copia)Mañanas»).
+  Ahora el campo nace con el nombre y la selección se hace después de pintarlo. Afecta a toda celda de renombrar.
 - **`@smartcontact-hub/components`** — `sc-datatable` pinta todas las filas seleccionadas, también las que añade un
   tramo con Mayúsculas: cada una lleva `sc-row--selected`, que sale de la selección. p-table solo resaltaba las que
   marcaba él, y en las listas un tramo de cuatro pintaba dos (la barra decía cuatro). Antes lo tenía que pintar cada

@@ -39,9 +39,7 @@ test('miga · la edición de un grupo o un agente acaba en su nombre guardado, y
   await goto(page, 'admin/grupos/editar/11');
   await expect(ultimo).toHaveText('Online Support');
 
-  await page.locator('.headline__name .p-inplace-display').click();
-  await page.locator('.name-inplace__input').fill('Soporte en línea');
-  await page.locator('.name-inplace__input').press('Enter');
+  await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Soporte en línea');
   await expect(ultimo, 'lo tecleado aún no es el nombre del grupo').toHaveText('Online Support');
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(ultimo).toHaveText('Soporte en línea');

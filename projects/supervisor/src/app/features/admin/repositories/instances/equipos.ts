@@ -46,7 +46,8 @@ export class EquiposPageComponent {
    *  nombres en un tooltip, como las demás listas con una relación (Tipificaciones, Agentes, Grupos). */
   private readonly columns: readonly RepoColumnDef<Equipo>[] = [
     // Se ordena por cualquier columna, como todo listado (DD-180, DD-243).
-    { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true, sortable: true },
+    // `truncate`: un nombre largo ocupa el ancho de la columna, acaba en «…» y el tooltip lo da entero.
+    { key: 'name', labelKey: 'repositories.columns.name', kind: 'truncate', accessor: (i) => i.name, emphasis: true, sortable: true },
     {
       key: 'description',
       labelKey: 'repositories.columns.description',

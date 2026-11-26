@@ -101,6 +101,19 @@ los marcadores del alta de usuario en Figma, sigue en pie): `git show 1f086aca:d
 El de otra tarjeta del hub (2026-11-06, DD-249; su «No hecho» sigue en pie): `git show 3e8c2201:docs/handoff/supervisor-fichas.md`.
 El de Horarios con periodos, fechas especiales y festivos (2026-11-12, DD-251; su «No hecho» sigue en pie): `git show
 8f0fa7e2:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente».
+El de Horarios con las piezas de las fichas (2026-11-12, DD-252; su trampa de sonda ya está en LEARNINGS #6): `git show
+49ff8aac:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-23 · El nombre de grupo y agente se cambia en General, no en el título (DD-258)
+
+> **Sello:** rama `claude/quitar-nombre-editable` sobre `main` HEAD `49ff8aac` (#639 fundido).
+
+- **Hecho**: el título de las fichas de grupo y agente es texto en los tres modos, como el de Usuarios; fuera
+  `sc-name-inplace`, su mapeo de Code Connect y su prueba. En el Figma Supervisor, la fila 2 de la edición de grupo y de
+  agente dice que el título es texto, y los mapas pierden `p-inplace` (registro en `docs/guia-tokens.md`). Las congeladas
+  de SISMAC-4058, 4062 y 4064 avanzan al commit fundido (`docs/PROTOTIPOS.md`).
+- **No hecho**: los COA de SISMAC-4058 y SISMAC-4062 viven fuera del repo y piden su sesión; y el mapeo ya publicado de
+  Code Connect se quita con `figma connect unpublish` y token (`docs/code-connect.md`).
 
 ## ✅ 2026-11-16 · Variables sale de «Próximamente» en el hub y abre su panel (DD-255)
 
@@ -132,19 +145,6 @@ El de Horarios con periodos, fechas especiales y festivos (2026-11-12, DD-251; s
   retiene); para probar un «salir del campo» usa un control que sí lo tome, como la flecha del mes.
 - **Trampa de entorno**: `overflow: hidden` en un antecesor anula un `position: sticky` aunque nada haga scroll en él.
 - **Trampa de línea base**: una demo que pinta el mes en curso marca «hoy» y su línea base cae al día siguiente.
-
-## ✅ 2026-11-12 · Horarios con las piezas de las fichas, en uso sin ids muertos, y el arnés de piezas (DD-252)
-
-> **Sello:** rama `claude/calendarios-horarios-especiales-l3z4wx`, rebasada sobre `main` (con el campo de audio, #608).
-
-- **Hecho**: sublistas en `sc-datatable` con «⋮» (fuera los lápices); borrar un horario o un calendario en uso avisa y
-  suelta (el siguiente ya no hereda el id); la semana bajo «Horario de atención» del grupo; «Activo» con ayuda que dice
-  quién lo usa; filtro «Próximas / Pasadas»; destello de los días que cambian. Revisión a ciegas aplicada.
-- **Arnés**: `audit:screen-hygiene` §10 y el inventario de piezas dentro de `npm run revision` (`scripts/piezas-pantalla.mjs`).
-- **No hecho**: llegar a Festivos sin pasar por un horario (descartado en DD-252: el hub refleja el COA); locución por
-  regla y el nodo del diseñador VUI; el backend; el COA y el Figma de las pantallas.
-- **Trampa de sonda**: tras pulsar un `sc-selectbutton` que filtra una tabla, contar filas en el acto lee la tabla de
-  antes (sumó 6 de 5). Espera con `expect.poll` a que cuadre.
 
 ## SIGUIENTE — sin preguntar
 

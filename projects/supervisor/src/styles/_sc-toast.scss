@@ -24,7 +24,7 @@
   border: 1px solid var(--sc-toast-info-border);
   border-radius: var(--sc-toast-radius);
   background: var(--sc-toast-info-bg);
-  /* Backdrop blur — frosted-glass effect per Figma `toast/blur: 1.5`. */
+  /* Desenfoque del fondo (efecto cristal): `toast.blur` del Kit, 10. */
   backdrop-filter: blur(var(--sc-toast-backdrop-blur));
   -webkit-backdrop-filter: blur(var(--sc-toast-backdrop-blur));
   color: var(--sc-toast-title);
@@ -61,36 +61,39 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--sc-toast-icon-radius);
-    color: var(--sc-toast-icon-fg);
+    /* Solo el glifo, sin cuadro de fondo (`toast.icon` del Kit): el color es el de la severidad
+     * (`toast.<severidad>.color`), claro y oscuro. */
+    color: var(--sc-cmp-toast-info-color);
 
     .sc-toast[data-severity='success'] & {
-      background: var(--sc-toast-success-icon-bg);
+      color: var(--sc-cmp-toast-success-color);
     }
     .sc-toast[data-severity='info'] & {
-      background: var(--sc-toast-info-icon-bg);
+      color: var(--sc-cmp-toast-info-color);
     }
     .sc-toast[data-severity='warn'] & {
-      background: var(--sc-toast-warn-icon-bg);
+      color: var(--sc-cmp-toast-warn-color);
     }
     .sc-toast[data-severity='error'] & {
-      background: var(--sc-toast-error-icon-bg);
+      color: var(--sc-cmp-toast-error-color);
     }
     .sc-toast[data-severity='secondary'] & {
-      background: var(--sc-toast-violet-icon-bg);
+      color: var(--sc-toast-violet-icon);
     }
   }
 
   &__body {
     flex: 1 1 auto;
     min-width: 0;
+    /* Un nombre largo sin espacios (un equipo, una ficha) baja de línea en vez de salirse del aviso. */
+    overflow-wrap: anywhere;
     display: flex;
     flex-direction: column;
     gap: var(--sc-toast-gap-text);
   }
 
   &__title {
-    /* Figma `toast/summary/font/size: 14`, `toast/summary/font/weight: 500`. */
+    /* `toast.summary`: 14, peso 500. */
     font-family: var(--sc-font-family-primary);
     font-weight: var(--sc-toast-summary-font-weight);
     font-size: var(--sc-toast-summary-font-size);
@@ -99,7 +102,7 @@
   }
 
   &__message {
-    /* Figma `toast/detail/font/size: 12.25` raw, `toast/detail/font/weight: 500`. */
+    /* `toast.detail`: 12, peso 500. */
     font-family: var(--sc-font-family-primary);
     font-weight: var(--sc-toast-detail-font-weight);
     font-size: var(--sc-toast-detail-font-size);
