@@ -185,11 +185,12 @@ export function leerRepo(root) {
     }
 
   // Obsoleto = su clase principal lleva `@deprecated` en la API instalada (`Password` en `password`, `UIChart` en `chart`).
+  // Desde PrimeNG 22.1.5 la clase se escribe `export declare class`: sin aceptar el `export`, salían cero obsoletos.
   const obsoletos = new Set();
   for (const m of modulos) {
     const dts = join(root, 'node_modules/primeng/types', `primeng-${m}.d.ts`);
     if (!existsSync(dts)) continue;
-    for (const d of readFileSync(dts, 'utf8').matchAll(/@deprecated[^\n]*\n(?:\s*\*[^\n]*\n)*?\s*\*\/\s*\n\s*declare class (\w+) extends Base/g))
+    for (const d of readFileSync(dts, 'utf8').matchAll(/@deprecated[^\n]*\n(?:\s*\*[^\n]*\n)*?\s*\*\/\s*\n\s*(?:export\s+)?declare class (\w+) extends Base/g))
       if ([m, `ui${m}`].includes(d[1].toLowerCase())) obsoletos.add(m);
   }
 

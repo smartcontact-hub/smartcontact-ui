@@ -15,7 +15,7 @@ test.describe('sc-docs · PrimeNG por familias', () => {
 
   test('pinta todas las familias, cada componente con su estado y su enlace a primeng.dev', async ({ page }) => {
     await expect(page.locator('section.familia')).toHaveCount(17);
-    await expect(page.locator('.cuenta')).toContainText('109 de 109');
+    await expect(page.locator('.cuenta')).toContainText('111 de 111');
     const select = page.locator('section.familia tbody tr').filter({ hasText: 'Uno de una lista cerrada' });
     await expect(select.locator('a.tabla__nombre')).toHaveAttribute('href', 'https://primeng.dev/select');
     await expect(select.locator('sc-tag')).toHaveText('En el DS');
@@ -33,7 +33,7 @@ test.describe('sc-docs · PrimeNG por familias', () => {
 
   test('el filtro de obsoletos deja solo lo que PrimeNG retira, cada uno con su marca', async ({ page }) => {
     await page.locator('sc-selectbutton').getByText('Obsoletos').click();
-    await expect(page.locator('.cuenta')).toContainText('11 de 109');
+    await expect(page.locator('.cuenta')).toContainText('11 de 111');
     await expect(page.locator('section.familia tbody tr')).toHaveCount(11);
     await expect(page.locator('section.familia tbody tr').filter({ hasNotText: 'Obsoleto' })).toHaveCount(0);
   });
