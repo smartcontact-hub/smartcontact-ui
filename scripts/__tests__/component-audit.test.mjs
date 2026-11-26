@@ -7,6 +7,7 @@ import {
   analyzeComponent,
   audit,
   contratoDe,
+  entradasDeclaradas,
   huerfanas,
   informeSupervisor,
   miembrosPublicos,
@@ -407,6 +408,44 @@ declare class MultiSelect extends BaseComponent {
   const m = selectoresObsoletos('multiselect', () => dts);
   assert.ok(m.has('p-multiselect'), 'buscar la cadena entera no casaba nunca: ese fue el segundo fallo');
   assert.ok(m.has('p-multi-select'));
+});
+
+// Formato de los `.d.ts` desde PrimeNG 22.1.5: `export declare class`, la declaraci\u00f3n repartida en varias l\u00edneas y las
+// se\u00f1ales escritas `import("@angular/core").InputSignal<\u2026>`. Con el lector anterior, `sc-button` y `sc-multiselect`
+// dejaban de constar sobre componente jubilado y las props de `pTooltip` se quedaban sin tipo.
+const DTS_22_1_5 = `
+/**
+ * @deprecated Use the \`[pButton]\` directive instead.
+ * @group Components
+ */
+export declare class Tooltip extends BaseComponent {
+  tooltipPosition: import("@angular/core").InputSignal<TooltipPosition | undefined>;
+  content: import("@angular/core").InputSignal<string | TemplateRef<void> | undefined>;
+  static \u0275dir: i0.\u0275\u0275DirectiveDeclaration<Tooltip, "[pTooltip]", never, {
+    "tooltipPosition": {
+      "alias": "tooltipPosition";
+      "required": false;
+      "isSignal": true;
+    };
+    "content": {
+      "alias": "pTooltip";
+      "required": false;
+      "isSignal": true;
+    };
+  }, {}, never, never, true, never>;
+}
+`;
+
+test('selectoresObsoletos lee el JSDoc de una clase `export declare class` (PrimeNG 22.1.5)', () => {
+  const m = selectoresObsoletos('tooltip', () => DTS_22_1_5);
+  assert.equal(m.get('[pTooltip]'), 'Use the `[pButton]` directive instead.');
+});
+
+test('entradasDeclaradas lee la declaraci\u00f3n en varias l\u00edneas y las se\u00f1ales con `import(...)` (PrimeNG 22.1.5)', () => {
+  const m = entradasDeclaradas(DTS_22_1_5, 'Tooltip');
+  assert.deepEqual(m.get('tooltipPosition'), { alias: 'tooltipPosition', requerido: false, tipo: 'TooltipPosition' });
+  assert.equal(m.get('content')?.alias, 'pTooltip');
+  assert.equal(m.get('content')?.tipo, 'string | TemplateRef<void>');
 });
 
 test('selectoresObsoletos devuelve null si el m\u00f3dulo no se puede leer, no un Map vac\u00edo', () => {

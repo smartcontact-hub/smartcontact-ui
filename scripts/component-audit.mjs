@@ -393,12 +393,15 @@ function primerGenerico(lista) {
  */
 export function entradasDeclaradas(dts, clase) {
   const out = new Map();
-  const linea = dts.split('\n').find((l) => new RegExp(`\u0275\u0275(?:Directive|Component)Declaration<${clase}\\b`).test(l)) ?? '';
+  // La declaraci\u00f3n `\u0275\u0275\u2026Declaration<Clase, \u2026>` va en UNA l\u00ednea hasta PrimeNG 22.1.0 y repartida en varias desde la 22.1.5,
+  // con las se\u00f1ales escritas `import("@angular/core").InputSignal<\u2026>`: se lee hasta el `>;` que la cierra, sin contar l\u00edneas.
+  const decl = dts.search(new RegExp(`\u0275\u0275(?:Directive|Component)Declaration<${clase}\\b`));
+  const linea = decl < 0 ? '' : dts.slice(decl, dts.indexOf('>;', decl) + 2);
   const inicio = dts.indexOf(`declare class ${clase} `);
   const fin = dts.indexOf('declare class ', inicio + 1);
   const cuerpo = inicio < 0 ? '' : dts.slice(inicio, fin < 0 ? undefined : fin);
-  for (const [, campo, alias, requerido] of linea.matchAll(/"(\w+)": \{ "alias": "([^"]+)"; "required": (true|false)/g)) {
-    const senal = cuerpo.match(new RegExp(`\\n\\s*(?:readonly\\s+)?${campo}:\\s*[\\w.]*Input(?:Signal|SignalWithTransform)<(.+)>;`));
+  for (const [, campo, alias, requerido] of linea.matchAll(/"(\w+)":\s*\{\s*"alias":\s*"([^"]+)";\s*"required":\s*(true|false)/g)) {
+    const senal = cuerpo.match(new RegExp(`\\n\\s*(?:readonly\\s+)?${campo}:\\s*(?:import\\("@angular/core"\\)\\.)?[\\w.]*Input(?:Signal|SignalWithTransform)<(.+)>;`));
     const tipo = senal ? primerGenerico(senal[1]).replace(/\s*\|\s*undefined$/, '') : '';
     out.set(campo, { alias, requerido: requerido === 'true', tipo });
   }
@@ -543,7 +546,8 @@ export function selectoresObsoletos(mod, leerTipos) {
     const cuerpo = src.slice(cortes[i], cortes[i + 1]);
     // El JSDoc de la clase es el bloque que la PRECEDE, no uno de dentro.
     const antes = src.slice(i === 0 ? 0 : cortes[i - 1], cortes[i]);
-    const doc = antes.match(/\/\*\*([\s\S]*?)\*\/\s*$/);
+    // Desde PrimeNG 22.1.5 la clase se escribe `export declare class`: el `export` queda entre el JSDoc y el corte.
+    const doc = antes.match(/\/\*\*([\s\S]*?)\*\/\s*(?:export\s+)?$/);
     if (!doc || !/@deprecated/.test(doc[1])) continue;
     const motivo = (doc[1].match(/@deprecated\s*([^\n*]*)/) || [])[1]?.trim() ?? '';
     const raw = (cuerpo.match(/\u0275\u0275(?:Component|Directive)Declaration<\w+(?:<[^>]*>)?,\s*"([^"]+)"/) || [])[1];

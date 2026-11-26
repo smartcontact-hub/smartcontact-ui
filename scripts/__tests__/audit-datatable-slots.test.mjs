@@ -41,6 +41,11 @@ test('el instrumento LEE: saca las ranuras de PrimeNG y las del wrapper', () => 
   assert.deepEqual([...ranurasDelWrapper(TS_FALSO)].sort(), ['body', 'footer', 'header']);
 });
 
+test('el instrumento lee las ranuras con comillas dobles, como las escribe PrimeNG 22.1.5', () => {
+  const fuente = `summaryTemplate = contentChild("summary", { descendants: false });`;
+  assert.deepEqual([...ranurasDePrimeng(fuente)], ['summary']);
+});
+
 test('`ranurasEmitidas` mira la LLAMADA, no el nombre de la ranura', () => {
   // Es la pieza que distingue «declarada» de «emitida», y la que hace que el ROJO 3
   // signifique algo. Con la llamada, viva; sin ella, muerta aunque el `#nombre` esté.

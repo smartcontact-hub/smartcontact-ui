@@ -16,12 +16,12 @@ License»), salvo `primeicons`.
 
 | Paquete | Versión | Licencia | Cómo lo usamos | ¿Se redistribuye? |
 |---|---|---|---|---|
-| `primeng` | 22.1.0 | PrimeUI | Dependencia del DS y de las apps | No |
-| `@primeuix/themes` | 3.0.0 | PrimeUI | Dependencia del DS; `peerDependency` del paquete `smartcontact-tema` | No: `external` en el bundle del tema |
-| `@primeuix/styled`, `utils`, `styles`, `motion` | 1.0.0, 0.8.1, 3.0.0, 1.0.0 | PrimeUI | Vienen con PrimeNG. `styled` lo leen también `tema-zip.mjs` y `tema-plugin-zip.mjs` para calcular, sin empaquetarlo | No |
-| `@primeui/license-manager` | 1.0.0 | PrimeUI | Viene con PrimeNG; valida la clave sin red | No |
-| `@primeicons/angular` | 8.0.0 | PrimeUI | Iconos internos de PrimeNG 22, vienen con él | No |
-| `primeicons` | 7.0.0 | MIT | Solo está en el `package.json` raíz: ningún `src` lo importa | No |
+| `primeng` | 22.1.5 | PrimeUI | Dependencia del DS y de las apps | No |
+| `@primeuix/themes` | 3.1.1 | PrimeUI | Dependencia del DS; `peerDependency` del paquete `smartcontact-tema` | No: `external` en el bundle del tema |
+| `@primeuix/styled`, `utils`, `styles`, `motion` | 1.2.0, 0.8.3, 3.1.1, 1.0.0 | PrimeUI | Vienen con PrimeNG. `styled` lo leen también `tema-zip.mjs` y `tema-plugin-zip.mjs` para calcular, sin empaquetarlo | No |
+| `@primeui/license-manager` | 1.1.0 | PrimeUI | Viene con PrimeNG; valida la clave sin red | No |
+| `@primeicons/angular` | 8.0.2 | PrimeUI | Iconos internos de PrimeNG 22, vienen con él | No |
+| `primeicons` | 7.0.0 | MIT | Su CSS lo importan los estilos de `agent`, `cuscare`, `cuscare-ds` y `supervisor`; los iconos del DS son `sc-icon` | No |
 
 ## Lo que lo vigila
 
