@@ -21,6 +21,10 @@
   width: var(--sc-custom-modal-width);
   min-width: var(--sc-custom-modal-min-width);
   max-width: min(var(--sc-custom-modal-max-width), 100%);
+  /* Centrado en su contenedor: el diálogo de PrimeNG mide lo que mide el contenido sin recortar, y con un título largo
+   * sin espacios eso es más que el tope de esta carcasa (el `100%` del tope no cuenta para ese cálculo). Sin esto el
+   * cuadro quedaba pegado a la izquierda de un contenedor transparente centrado, y se veía desplazado. */
+  margin-inline: auto;
   max-height: var(--sc-custom-modal-max-height);
   min-height: 0;
   overflow: hidden;
