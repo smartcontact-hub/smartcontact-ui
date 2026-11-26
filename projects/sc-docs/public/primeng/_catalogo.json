@@ -31,7 +31,7 @@
           "cuando": "Obsoleto: PrimeNG pide <code>p-select</code> con <code>multiple</code>. Lo envolvemos igual porque a <code>multiple</code> le faltan seis entradas que usamos (handoff del DS, «Fuera de PrimeNG jubilado»).",
           "aqui": "<code>sc-multiselect</code>",
           "estado": "ds",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -321,7 +321,7 @@
           "cuando": "Obsoleto: InputPassword.",
           "aqui": "Sin uso (sección 5)",
           "estado": "sin-uso",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -335,7 +335,7 @@
           "cuando": "El contenido necesita formato. Obsoleto: PrimeNG lo retirará a favor de un editor de pago.",
           "aqui": "En uso: el contenido de las plantillas (sección 3)",
           "estado": "directo",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -439,7 +439,7 @@
           "cuando": "Obsoleto: InputColor.",
           "aqui": "Sin uso; <code>sc-color-dot-picker</code> elige de la paleta (sección 2)",
           "estado": "sin-uso",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -567,7 +567,7 @@
           "cuando": "Obsoleto como componente: la 22 pide la directiva <code>[pButton]</code>.",
           "aqui": "<code>sc-button</code>, todavía sobre el componente (handoff del DS, «Fuera de PrimeNG jubilado»)",
           "estado": "ds",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -727,7 +727,7 @@
           "cuando": "Obsoleto: Menu con <code>toggleable</code>.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -1129,7 +1129,7 @@
           "cuando": "Obsoleto: ScrollArea.",
           "aqui": "Sin uso (sección 5)",
           "estado": "sin-uso",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -1441,7 +1441,7 @@
           "cuando": "Obsoleto: Gallery.",
           "aqui": "Sin caso (sección 4)",
           "estado": "sin-uso",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -1455,7 +1455,7 @@
           "cuando": "Obsoleto: Gallery.",
           "aqui": "Sin caso (sección 4)",
           "estado": "sin-uso",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -1469,7 +1469,7 @@
           "cuando": "Obsoleto: Compare.",
           "aqui": "Sin caso (sección 4)",
           "estado": "sin-uso",
-          "obsoleto": true
+          "obsoleto": false
         },
         {
           "nombres": [
@@ -1497,7 +1497,7 @@
           "cuando": "Obsoleto: PrimeNG lo retirará a favor de gráficos de pago.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "obsoleto": true
+          "obsoleto": false
         }
       ]
     },
@@ -1600,6 +1600,34 @@
           "sirve": "Una consola de texto.",
           "cuando": null,
           "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Isolation"
+          ],
+          "modulos": [
+            "isolation"
+          ],
+          "enlace": "https://primeng.dev/isolation",
+          "sirve": "Encierra el tema y los estilos de PrimeNG de una app en su propio ámbito (<code>withIsolation</code>, experimental).",
+          "cuando": null,
+          "aqui": "Sin uso (sección 5)",
+          "estado": "sin-uso",
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "UseId"
+          ],
+          "modulos": [
+            "useid"
+          ],
+          "enlace": "https://primeng.dev/useid",
+          "sirve": "Numera los ids de los componentes de una app.",
+          "cuando": null,
+          "aqui": "Sin uso (sección 5)",
           "estado": "sin-uso",
           "obsoleto": false
         }
