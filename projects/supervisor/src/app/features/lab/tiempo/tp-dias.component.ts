@@ -1189,9 +1189,10 @@ export class TpDiasComponent {
   }
 
   @HostListener('document:pointermove', ['$event'])
-  protected mover(e: PointerEvent): void {
+  protected mover(e: Pick<PointerEvent, 'clientX' | 'clientY' | 'altKey'>): void {
     let a = this.arrastre();
     if (!a) return;
+    this.puntero = { x: e.clientX, y: e.clientY };
     if (!a.movido && Math.abs(e.clientX - a.x0) < 3 && (a.lado !== 'mover' || Math.abs(e.clientY - a.y0) < 3)) return;
     if (!a.movido) {
       this.elegida.set(null);
@@ -1287,10 +1288,31 @@ export class TpDiasComponent {
   private filaEn(y: number, a: Arrastre): number {
     const fs = a.filasY;
     if (!fs.length) return a.dia;
-    if (y < fs[0].top) return fs[0].dia;
-    for (const f of fs) if (y < f.bottom) return f.dia;
-    return fs[fs.length - 1].dia;
+    const alto = fs[0].bottom - fs[0].top;
+    // Lejos de la lista (más de media fila por encima o por debajo), la barra vuelve a su día: soltar fuera no la manda
+    // al lunes ni al domingo.
+    if (y < fs[0].top - alto / 2 || y > fs[fs.length - 1].bottom + alto / 2) return a.dia;
+    // Con resistencia: se cambia de día solo con el puntero bien dentro de otra fila (no en su quinto de arriba ni de
+    // abajo). Un arrastre de lado con el pulso torcido no salta al vecino.
+    const dentro = fs.find((f) => y >= f.top + alto * 0.2 && y <= f.bottom - alto * 0.2);
+    if (dentro) return dentro.dia;
+    const actual = fs.find((f) => f.dia === a.otroDia);
+    if (actual && y >= actual.top - alto * 0.5 && y <= actual.bottom + alto * 0.5) return a.otroDia;
+    return a.dia;
   }
+
+  /** ⌥ pulsada o soltada a medio arrastre: copiar o mover cambia en el acto, sin esperar a que se mueva el ratón. */
+  @HostListener('document:keydown.alt', ['$event'])
+  @HostListener('document:keyup.alt', ['$event'])
+  protected alternarCopia(e: Event): void {
+    const a = this.arrastre();
+    const p = this.puntero;
+    if (!a || a.lado !== 'mover' || !a.movido || !p) return;
+    e.preventDefault();
+    this.mover({ clientX: p.x, clientY: p.y, altKey: e.type === 'keydown' });
+  }
+  /** Dónde iba el puntero en el último movimiento: lo que necesita ⌥ para repintar sin otro movimiento. */
+  private puntero: { x: number; y: number } | null = null;
 
   /** La barra soltada en otro día ya está allí (la puso `mover`): queda contarlo y que ⌘Z lo deshaga de un paso. */
   private soltarEnOtroDia(a: Arrastre): void {
