@@ -1,8 +1,8 @@
 {
-  "commit": "f9803792",
+  "commit": "04bd6182",
   "primeng": "22.1.0",
   "themes": "3.0.2",
-  "generado": "2026-11-24T15:32:04.063Z",
+  "generado": "2026-11-26T16:59:37.639Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -25,19 +25,14 @@
     "diferencia": {
       "anterior": true,
       "ficheros": [
+        "sc-preset.mjs",
         "smartcontact-tokens.css"
       ],
       "variables": [
-        "claro|--sc-toast-backdrop-blur",
-        "claro|--sc-toast-gap-content",
-        "claro|--sc-toast-gap-text",
-        "claro|--sc-toast-icon-size",
-        "claro|--sc-toast-padding-x",
-        "claro|--sc-toast-padding-y",
-        "claro|--sc-toast-width"
+        "claro|--sc-cmp-tooltip-max-width"
       ],
       "retirados": [],
-      "semanticaComun": false,
+      "semanticaComun": true,
       "reglasCss": false,
       "componentes": [],
       "guia": false
@@ -51,5 +46,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261124.1532"
+  "version": "0.20261126.1659"
 }
