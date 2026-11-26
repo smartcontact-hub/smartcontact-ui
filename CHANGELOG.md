@@ -18,13 +18,19 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ## [Unreleased]
 
-- **`@smartcontact-hub/components` · preparada 1.1.0, sin publicar** — `sc-multiselect` gana
-  `iconOnly` e `icon` para elegir columnas con nombre accesible. `ScColumnDef` publica `frozen`
-  y `alignFrozen`: posiciones nativas y sombra solo cuando hay contenido oculto. Las tablas con
-  scroll encogen dentro de flex, con fondos opacos en los estados de fila. ([DD-153](docs/DECISIONS.md))
+## [1.1.0] — 2026-11-26
 
+Versión menor: lo nuevo se suma sin romper nada de 1.0.0. Lo que se quitó por el camino (31 tokens, la familia
+`azure` y el `null` de `appendTo` en `sc-select`) vuelve a funcionar igual que en 1.0.0 y queda en desuso hasta
+2.0.0. El único cambio de comportamiento que conviene mirar al actualizar es dónde se pinta la lista de `sc-select`
+(*Changed*, abajo).
 
 ### Added
+
+- **`@smartcontact-hub/components`** — `sc-multiselect` gana `iconOnly` e `icon` para elegir columnas con nombre
+  accesible. `ScColumnDef` publica `frozen` y `alignFrozen`: posiciones nativas y sombra solo cuando hay contenido
+  oculto. Las tablas con scroll encogen dentro de flex, con fondos opacos en los estados de fila.
+  ([DD-153](docs/DECISIONS.md))
 
 - **`@smartcontact-hub/components`** — `sc-datepicker` gana `defaultDate`: el mes que enseña al abrir mientras no hay
   nada elegido, sin marcar ningún día. ([DD-254](docs/DECISIONS.md))
@@ -102,10 +108,11 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 - **`@smartcontact-hub/components`** — `sc-alert-modal` con `variant="warning"` y `surface="plain"` lleva los botones de
   `error`: la salida segura gris a la izquierda y la acción roja rellena a la derecha. Antes la salida segura iba rellena
   en el primario y la acción con borde rojo, y el relleno cambiaba de lado entre un aviso y otro (enmienda de DD-242).
-- **`@smartcontact-hub/components`** — `appendTo` de `sc-select` y `sc-multiselect` pasa de `'body' | null` (por defecto
-  `null`, el panel dentro del componente) a `'body' | 'self'` (por defecto `'body'`, el panel en el `<body>`, donde no
-  lo recorta una tarjeta o un diálogo con `overflow: hidden`). Quien dependía de que el panel se quedara dentro, que
-  pase `appendTo="self"`; `null` ya no es un valor admitido. Cambió después de 1.0.0 (`d2459189`) sin esta nota.
+- **`@smartcontact-hub/components`** — `appendTo` de `sc-select` pasa de `'body' | null` (por defecto `null`, el panel
+  dentro del componente) a `'body' | 'self' | null` (por defecto `'body'`, el panel en el `<body>`, donde no lo recorta
+  una tarjeta o un diálogo con `overflow: hidden`). `sc-multiselect` estrena `appendTo` con el mismo valor por defecto.
+  Quien dependía de que el panel se quedara dentro, que pase `appendTo="self"`. `null` sigue admitido (*Deprecated*).
+  Cambió después de 1.0.0 (`d2459189`) sin esta nota.
 
 - **`@smartcontact-hub/components`** — `sc-drawer` modal es un diálogo (WCAG 2.4.3 y 4.1.2): se anuncia con
   `role="dialog"`, `aria-modal` y su título por nombre; al abrirse lleva el foco al primer control de su contenido, y
@@ -207,6 +214,13 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   `--sc-font-size-caption-bold`), lo que rompía la promesa de esta cabecera (`--sc-*` solo rompe en un major). Siguen
   definidos con el valor de antes, en un bloque propio fuera de las zonas generadas. Quien los use, que los cambie
   por el token de su rol (la guía del tema los nombra).
+- **`@smartcontact-hub/styles`** — la familia `azure` (`--sc-color-azure-50` a `--sc-color-azure-950`, 11 tokens) queda
+  **en desuso y se retira en 2.0.0**. Salió de la paleta con DD-247 (la etiqueta azul y los avisos de información
+  toman `sky`) sin pasar por aquí; sigue definida con los mismos valores que en 1.0.0, en el bloque en desuso. Quien la
+  use, que pase a `sky`. ([DD-247](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `[appendTo]="null"` en `sc-select`: compila y se comporta como en 1.0.0 (la
+  lista la coloca el `overlayAppendTo` de PrimeNG, que sin fijar la deja dentro). Usa `appendTo="self"`; se retira en
+  2.0.0.
 
 ## [1.0.0] — 2026-09-09
 

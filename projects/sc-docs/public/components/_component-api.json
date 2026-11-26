@@ -9678,10 +9678,10 @@
         {
           "nombre": "appendTo",
           "clase": "input",
-          "tipo": "'body' | 'self'",
+          "tipo": "'body' | 'self' | null",
           "porDefecto": "'body'",
           "requerido": false,
-          "descripcion": "Dónde se pinta la lista desplegable. Por defecto en `<body>`: dentro de su componente la recortaba cualquier contenedor con `overflow: hidden` (`sc-section-card`, `sc-dialog`). Medido el 2026-09-13 en `config/aed/grupos`: el «Tipo» de la última sección se abría cortado contra el borde de la tarjeta. Los estilos del panel ya son globales (`ViewEncapsulation.None`), así que en `<body>` se ve igual. `'self'` la deja dentro. Va aquí y no en `overlayAppendTo` de `provideSmartContactUi`: esa opción la leen TODOS los flotantes de PrimeNG, diálogos incluidos, y sacar `sc-dialog` de su componente dejaba sin efecto sus reglas `:host ::ng-deep` (doble marco).",
+          "descripcion": "Dónde se pinta la lista desplegable. Por defecto en `<body>`: dentro de su componente la recortaba cualquier contenedor con `overflow: hidden` (`sc-section-card`, `sc-dialog`). Medido el 2026-09-13 en `config/aed/grupos`: el «Tipo» de la última sección se abría cortado contra el borde de la tarjeta. Los estilos del panel ya son globales (`ViewEncapsulation.None`), así que en `<body>` se ve igual. `'self'` la deja dentro. Va aquí y no en `overlayAppendTo` de `provideSmartContactUi`: esa opción la leen TODOS los flotantes de PrimeNG, diálogos incluidos, y sacar `sc-dialog` de su componente dejaba sin efecto sus reglas `:host ::ng-deep` (doble marco). `null` era el valor por defecto en 1.0.0 y sigue admitido: `p-select` lo resuelve con `overlayAppendTo` de la configuración de PrimeNG, que sin fijar deja la lista dentro. Retirar un valor público es de un major (docs/migration-safety.md).",
           "origen": "nativo",
           "nativo": {
             "descripcion": "Target element to attach the overlay, valid values are \"body\" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]=\"mydiv\" for a div element having #mydiv as variable name).",

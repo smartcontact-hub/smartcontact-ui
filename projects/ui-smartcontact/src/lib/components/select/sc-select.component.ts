@@ -167,8 +167,13 @@ export class ScSelectComponent {
    * Va aquí y no en `overlayAppendTo` de `provideSmartContactUi`: esa opción la
    * leen TODOS los flotantes de PrimeNG, diálogos incluidos, y sacar `sc-dialog` de
    * su componente dejaba sin efecto sus reglas `:host ::ng-deep` (doble marco).
+   *
+   * `null` era el valor por defecto en 1.0.0 y sigue admitido: `p-select` lo resuelve con
+   * `overlayAppendTo` de la configuración de PrimeNG, que sin fijar deja la lista dentro.
+   * Retirar un valor público es de un major (docs/migration-safety.md).
+   * @deprecated `null`: usa `'self'`. Se retira en 2.0.0.
    */
-  readonly appendTo = input<'body' | 'self'>('body');
+  readonly appendTo = input<'body' | 'self' | null>('body');
   /** Key del flag de opción deshabilitada (passthrough de p-select). */
   readonly optionDisabled = input<string>();
   /** Spinner de carga (passthrough de p-select). */
