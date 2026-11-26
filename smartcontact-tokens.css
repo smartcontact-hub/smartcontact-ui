@@ -2213,6 +2213,20 @@
   --sc-shadow-focus-ring-rgb: 20 100 254;
   --sc-shadow-focus-ring: 0 0 0 3px rgb(var(--sc-shadow-focus-ring-rgb) / 0.35);
   --sc-font-size-caption-bold: var(--sc-font-size-100);
+  /* La familia `azure` (el azul de fábrica de Aura, #3b82f6) salió de la paleta con DD-247: la etiqueta azul y los
+   * avisos de información toman `sky`. Venía en 1.0.0, así que sigue definida con sus valores de entonces hasta
+   * 2.0.0. No es un alias de `sky` a propósito: quien la use sigue viendo el mismo color. */
+  --sc-color-azure-50: #eff6ff;
+  --sc-color-azure-100: #dbeafe;
+  --sc-color-azure-200: #bfdbfe;
+  --sc-color-azure-300: #93c5fd;
+  --sc-color-azure-400: #60a5fa;
+  --sc-color-azure-500: #3b82f6;
+  --sc-color-azure-600: #2563eb;
+  --sc-color-azure-700: #1d4ed8;
+  --sc-color-azure-800: #1e40af;
+  --sc-color-azure-900: #1e3a8a;
+  --sc-color-azure-950: #172554;
 }
 
 /* ── 07-dark.css ── */

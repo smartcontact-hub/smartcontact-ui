@@ -1,8 +1,8 @@
 {
-  "commit": "4437e047",
+  "commit": "764b533d",
   "primeng": "22.1.5",
   "themes": "3.1.1",
-  "generado": "2026-11-26T18:02:00.945Z",
+  "generado": "2026-11-26T19:35:52.027Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -25,12 +25,24 @@
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs"
+        "smartcontact-tokens.css"
       ],
-      "variables": [],
+      "variables": [
+        "claro|--sc-color-azure-100",
+        "claro|--sc-color-azure-200",
+        "claro|--sc-color-azure-300",
+        "claro|--sc-color-azure-400",
+        "claro|--sc-color-azure-50",
+        "claro|--sc-color-azure-500",
+        "claro|--sc-color-azure-600",
+        "claro|--sc-color-azure-700",
+        "claro|--sc-color-azure-800",
+        "claro|--sc-color-azure-900",
+        "claro|--sc-color-azure-950"
+      ],
       "retirados": [],
       "semanticaComun": false,
-      "reglasCss": true,
+      "reglasCss": false,
       "componentes": [],
       "guia": false
     },
@@ -43,5 +55,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261126.1802"
+  "version": "0.20261126.1935"
 }
