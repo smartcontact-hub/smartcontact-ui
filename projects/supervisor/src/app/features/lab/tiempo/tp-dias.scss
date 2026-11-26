@@ -31,6 +31,11 @@
 .tp-dias[data-arrastre='pintar'] {
   cursor: col-resize;
 }
+/* Con ⌥ sobre otro día, la barra se copia: el cursor de copiar lo dice antes de soltar. */
+.tp-dias.is-copiando,
+.tp-dias.is-copiando * {
+  cursor: copy;
+}
 
 /* ── La ayuda: una línea, arriba, y una sola cosa a la vez ──────────────────────────────────────────────────────── */
 

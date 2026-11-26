@@ -45,6 +45,7 @@ interface Arrastre {
   readonly lado: Lado;
   readonly pista: DOMRect;
   readonly x0: number;
+  readonly y0: number;
   readonly f0: Franja;
   readonly min: number;
   readonly max: number;
@@ -56,6 +57,12 @@ interface Arrastre {
   /** Los días que siguen a este y se mueven con él; y si este era una copia que aún no se había tocado. */
   readonly siguen: readonly number[];
   readonly copia: boolean;
+  /** La barra entera puede ir a otro día: la fila bajo el puntero, si se copia (con ⌥) y dónde quedaría. */
+  readonly otroDia: number;
+  readonly duplica: boolean;
+  readonly puesta: Franja;
+  /** Dónde está cada fila al empezar, para saber sobre qué día va el puntero. */
+  readonly filasY: readonly { readonly dia: number; readonly top: number; readonly bottom: number }[];
 }
 
 /**
@@ -100,6 +107,22 @@ function juntar(fs: readonly Franja[]): { franjas: Franja[]; junta: Franja | nul
   }
   return { franjas, junta };
 }
+/**
+ * Lo que llega de otro día se funde con lo que se pisa o se toca: dos franjas no pueden solaparse. La de noche no se
+ * funde. Dice cuál queda si se juntó algo.
+ */
+function fundir(fs: readonly Franja[]): { franjas: Franja[]; junta: Franja | null } {
+  const franjas: Franja[] = [];
+  let junta: Franja | null = null;
+  for (const f of ordenar(fs)) {
+    const prev = franjas[franjas.length - 1];
+    if (prev && !cruza(prev) && !cruza(f) && f[0] <= prev[1]) {
+      junta = [prev[0], Math.max(prev[1], f[1])];
+      franjas[franjas.length - 1] = junta;
+    } else franjas.push([f[0], f[1]]);
+  }
+  return { franjas, junta };
+}
 /** Un hueco entre dos franjas de una hora o menos: una pausa. */
 const esPausa = (h: { readonly min: number; readonly max: number }): boolean => h.max - h.min <= 60 && h.min > 0 && h.max < 1440;
 
@@ -117,7 +140,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
   selector: 'sc-tp-dias',
   imports: [NgTemplateOutlet, ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, ScMessageComponent, ScSelectComponent, ScTagComponent, ScToggleSwitchComponent, ScIconComponent, PopoverModule, TooltipModule],
   template: `
-    <div class="tp-dias" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null" role="group" aria-label="La semana, día a día">
+    <div class="tp-dias" [class.is-arrastrando]="arrastre() !== null" [class.is-copiando]="arrastre()?.duplica" [attr.data-arrastre]="arrastre()?.lado ?? null" role="group" aria-label="La semana, día a día">
       <!-- La ayuda: arriba, donde se empieza a leer, y una sola cosa a la vez. -->
       <!-- El aviso del DS (\`sc-message\`): su color dice qué es (guía, oferta, hecho o problema) y la oferta lleva sus botones. -->
       <div class="tp-dias__ayuda" [attr.data-tono]="ayuda().tono">
@@ -536,10 +559,11 @@ export class TpDiasComponent {
     if (el && f) {
       const que = `${capital(NOMBRES[el.dia])}, de ${horaCorta(f[0])} a ${horaCorta(f[1])}`;
       const pausa = partible(f) ? ' y otro clic en la barra pone una pausa donde la ves' : '';
-      return { texto: `${que}: ⌫ la quita, Intro escribe sus horas${pausa}.`, icono: 'info', tono: 'guia' };
+      const abajo = el.dia < 6 ? `, ⌘D la copia al ${NOMBRES[el.dia + 1]}` : '';
+      return { texto: `${que}: ⌫ la quita, Intro escribe sus horas${abajo}${pausa}.`, icono: 'info', tono: 'guia' };
     }
     if (this.vacia()) return { texto: 'Activa un día para abrirlo. Los siguientes copian sus horas.', icono: 'info', tono: 'guia' };
-    return { texto: 'Arrastra o escribe las horas. Pulsa en una barra para elegirla: luego puedes quitarla o partirla con una pausa.', icono: 'info', tono: 'neutro' };
+    return { texto: 'Arrastra o escribe las horas. Lleva una barra a otro día para moverla; con ⌥, la copias. Pulsa en una barra para elegirla: luego puedes quitarla o partirla con una pausa.', icono: 'info', tono: 'neutro' };
   });
 
   /* ── Las horas que se ven ─────────────────────────────────────────────────────────────────────────────────────── */
@@ -624,7 +648,10 @@ export class TpDiasComponent {
           ...t,
           j,
           movible: !t.arrastre && !cruza(t.franja),
-          viva: !!a && a.movido && a.dia === dia && a.franja === j,
+          viva:
+            !!a &&
+            a.movido &&
+            (a.otroDia === a.dia ? a.dia === dia && a.franja === j : a.otroDia === dia && t.franja[0] <= a.puesta[0] && t.franja[1] >= a.puesta[1]),
           asaIni: !t.arrastre,
           asaFin: !t.arrastre && !cruza(t.franja),
           texto: `${horaCorta(t.franja[0])}–${horaCorta(t.franja[1])}`,
@@ -1102,6 +1129,10 @@ export class TpDiasComponent {
       this.elegida.set(null);
       this.corte.set(null);
       this.enfocarCaja(dia, j, 0);
+    } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'd') {
+      e.preventDefault();
+      this.corte.set(null);
+      this.duplicarAbajo(dia, j);
     }
   }
 
@@ -1121,7 +1152,12 @@ export class TpDiasComponent {
     this.origen.set(dia);
     this.gesto.emit(true);
     const lazos = { siguen: this.seguidores(dia, s), copia: this.sigue.has(dia) };
-    this.arrastre.set({ dia, franja: j, lado, pista, x0: e.clientX, f0: s[dia][j], rango: this.rango(), antes: s, movido: false, ...lazos, ...this.limites(dia, j, lado) });
+    const filasY = [...this.host.nativeElement.querySelectorAll<HTMLElement>('.tp-dias__fila')].map((el) => {
+      const c = el.getBoundingClientRect();
+      return { dia: Number(el.dataset['dia']), top: c.top, bottom: c.bottom };
+    });
+    const f0 = s[dia][j];
+    this.arrastre.set({ dia, franja: j, lado, pista, x0: e.clientX, y0: e.clientY, f0, rango: this.rango(), antes: s, movido: false, ...lazos, ...this.limites(dia, j, lado), otroDia: dia, duplica: false, puesta: f0, filasY });
   }
 
   /** Pintar sobre lo vacío: nace una franja donde se pulsa y crece hacia donde se arrastre. En un día cerrado, lo abre. */
@@ -1143,7 +1179,7 @@ export class TpDiasComponent {
     this.gesto.emit(true);
     const lazos = { siguen: this.seguidores(dia, antes), copia: this.sigue.has(dia) };
     this.emitir(this.conDia(antes, dia, [...franjas.slice(0, j), nueva, ...franjas.slice(j)], lazos.siguen));
-    this.arrastre.set({ dia, franja: j, lado: 'pintar', pista, x0: e.clientX, f0: nueva, rango: this.rango(), antes, movido: false, ...lazos, min: h.min, max: h.max });
+    this.arrastre.set({ dia, franja: j, lado: 'pintar', pista, x0: e.clientX, y0: e.clientY, f0: nueva, rango: this.rango(), antes, movido: false, ...lazos, min: h.min, max: h.max, otroDia: dia, duplica: false, puesta: nueva, filasY: [] });
   }
 
   /** Una franja a mitad de arrastre: los días que siguen a este se mueven con él, a la vista. */
@@ -1156,7 +1192,7 @@ export class TpDiasComponent {
   protected mover(e: PointerEvent): void {
     let a = this.arrastre();
     if (!a) return;
-    if (!a.movido && Math.abs(e.clientX - a.x0) < 3) return;
+    if (!a.movido && Math.abs(e.clientX - a.x0) < 3 && (a.lado !== 'mover' || Math.abs(e.clientY - a.y0) < 3)) return;
     if (!a.movido) {
       this.elegida.set(null);
       a = { ...a, movido: true };
@@ -1168,8 +1204,24 @@ export class TpDiasComponent {
     const dentro = (n: number): number => Math.min(max, Math.max(min, n));
     if (a.lado === 'mover') {
       const largo = f0[1] - f0[0];
-      const desde = Math.min(max - largo, Math.max(min, f0[0] + aMin(e.clientX - a.x0)));
-      this.ponerFranja(a.dia, a.franja, [desde, desde + largo]);
+      const s0 = a.antes;
+      const otroDia = this.filaEn(e.clientY, a);
+      if (otroDia === a.dia) {
+        // En su fila, de lado, sin pisar lo que hay. Siempre desde la semana de antes: pudo pasar por otro día.
+        const desde = Math.min(max - largo, Math.max(min, f0[0] + aMin(e.clientX - a.x0)));
+        const puesta: Franja = [desde, desde + largo];
+        this.arrastre.set({ ...a, otroDia, duplica: false, puesta });
+        this.emitir(this.conDia(s0, a.dia, s0[a.dia].map((y, k) => (k === a.franja ? puesta : y)), a.siguen));
+        return;
+      }
+      // A otro día: la barra se va (con ⌥, se queda y va una copia) y se funde con lo que pise allí.
+      const desde = Math.min(1440 - largo, Math.max(0, f0[0] + aMin(e.clientX - a.x0)));
+      const puesta: Franja = [desde, desde + largo];
+      const duplica = e.altKey;
+      this.arrastre.set({ ...a, otroDia, duplica, puesta });
+      const deOrigen = duplica ? s0[a.dia] : s0[a.dia].filter((_, k) => k !== a.franja);
+      const llegada = fundir([...s0[otroDia], puesta]).franjas;
+      this.emitir(s0.map((fs, d) => (d === a.dia ? [...deOrigen] : d === otroDia ? llegada : fs)));
       return;
     }
     if (a.lado === 'pintar') {
@@ -1199,6 +1251,10 @@ export class TpDiasComponent {
       } else this.elegir(a.dia, a.franja);
       return;
     }
+    if (a.lado === 'mover' && a.otroDia !== a.dia) {
+      this.soltarEnOtroDia(a);
+      return;
+    }
     if (a.lado === 'pintar' && !a.movido) {
       // Un clic en lo vacío pone una hora; en una pausa de una hora o menos, la rellena entera.
       this.ponerFranja(a.dia, a.franja, esPausa(a) ? [a.min, a.max] : [a.f0[0], Math.min(a.f0[0] + 60, a.max)]);
@@ -1208,18 +1264,73 @@ export class TpDiasComponent {
     const junta = this.juntarTocadas(a.dia, a.siguen);
     // Las horas que se ven se quedan como al pulsar: si se ajustaran solas a lo nuevo, todo el mapa saltaría al soltar
     // y la barra recién hecha caería lejos de donde se soltó. «Ajustar» las vuelve a ajustar; si coinciden, no sale.
-    this.ventana.set(a.rango);
-    setTimeout(() => {
-      const v = this.ventana();
-      const auto = this.automatica();
-      if (v && v.desde === auto.desde && v.hasta === auto.hasta) this.ventana.set(null);
-    });
+    this.fijarVista(a.rango);
     this.arrastre.set(null);
     this.gesto.emit(false);
     if (!igual(this.actual()[a.dia], a.antes[a.dia])) this.sigue.delete(a.dia);
     this.ofrecer(a.dia, a.antes[a.dia], a.siguen, a.copia);
     if (junta) this.aviso.set(`Se tocaban, así que ahora es una sola franja: ${junta}. ⌘Z lo deshace.`);
     this.corte.set(null);
+  }
+
+  /** Deja la vista con las horas dadas; si coinciden con las que saldrían solas, vuelve a ajustarse sola. */
+  private fijarVista(r: Rango): void {
+    this.ventana.set(r);
+    setTimeout(() => {
+      const v = this.ventana();
+      const auto = this.automatica();
+      if (v && v.desde === auto.desde && v.hasta === auto.hasta) this.ventana.set(null);
+    });
+  }
+
+  /** La fila bajo el puntero, con las de los extremos para lo que quede por encima o por debajo. */
+  private filaEn(y: number, a: Arrastre): number {
+    const fs = a.filasY;
+    if (!fs.length) return a.dia;
+    if (y < fs[0].top) return fs[0].dia;
+    for (const f of fs) if (y < f.bottom) return f.dia;
+    return fs[fs.length - 1].dia;
+  }
+
+  /** La barra soltada en otro día ya está allí (la puso `mover`): queda contarlo y que ⌘Z lo deshaga de un paso. */
+  private soltarEnOtroDia(a: Arrastre): void {
+    const destino = a.otroDia;
+    const [ini, fin] = a.puesta;
+    contarUso('arrastrar');
+    this.fijarVista(a.rango);
+    this.arrastre.set(null);
+    this.gesto.emit(false);
+    // Los dos días cambiaron a mano: ya no siguen a otro.
+    this.sigue.delete(destino);
+    if (!a.duplica) this.sigue.delete(a.dia);
+    const s = this.actual();
+    const queda = s[destino].find((f) => f[0] <= ini && f[1] >= fin && (f[0] < ini || f[1] > fin));
+    const junta = queda ? ` Se junta con lo que había: de ${horaCorta(queda[0])} a ${horaCorta(queda[1])}.` : '';
+    const cerrado = !a.duplica && !s[a.dia].length ? ` ${capital(this.nombreCon(a.dia))} queda cerrado.` : '';
+    const hecho = a.duplica ? 'Copiada' : 'Movida';
+    this.oferta.set(null);
+    this.aviso.set(`${hecho} al ${NOMBRES[destino]}, de ${horaCorta(ini)} a ${horaCorta(fin)}.${junta}${cerrado} ⌘Z lo deshace.`);
+    this.corte.set(null);
+  }
+
+  /** ⌘D: la barra elegida, copiada al día de abajo y elegida allí, para seguir bajándola con otro ⌘D. */
+  private duplicarAbajo(dia: number, j: number): void {
+    const s = this.actual();
+    const f = s[dia][j];
+    // El domingo no tiene día debajo: su ayuda no ofrece ⌘D, y un aviso verde diría «hecho» sin haber hecho nada.
+    if (!f || dia === 6) return;
+    const abajo = dia + 1;
+    const { franjas, junta } = fundir([...s[abajo], f]);
+    contarUso('arrastrar');
+    this.sigue.delete(abajo);
+    this.origen.set(abajo);
+    this.emitir(s.map((fs, d) => (d === abajo ? franjas : fs)));
+    const nj = franjas.findIndex((x) => x[0] <= f[0] && (cruza(x) || x[1] >= f[1]));
+    const extra = junta ? ` Se junta con lo que había: de ${horaCorta(junta[0])} a ${horaCorta(junta[1])}.` : '';
+    this.oferta.set(null);
+    this.aviso.set(`Copiada al ${NOMBRES[abajo]}, de ${horaCorta(f[0])} a ${horaCorta(f[1])}.${extra} ⌘Z lo deshace.`);
+    this.elegida.set({ dia: abajo, j: nj });
+    setTimeout(() => this.host.nativeElement.querySelector<HTMLElement>(`.tp-dias__fila[data-dia="${abajo}"] .tp-sem__barra[data-j="${nj}"]`)?.focus());
   }
 
   /** Al soltar, dos franjas que se tocan quedan en una (`juntar`). Dice cuál queda. */
