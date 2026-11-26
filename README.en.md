@@ -7,7 +7,7 @@
   </picture>
 </a>
 
-[![Versión](https://img.shields.io/badge/versi%C3%B3n-1.0.0-0B2C5C)](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest)
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-1.1.0-0B2C5C)](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest)
 ![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
 ![PrimeNG](https://img.shields.io/badge/PrimeNG-22-10B981)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
@@ -32,7 +32,7 @@ Every version ships as a [GitHub release](https://github.com/smartcontact-hub/sm
 with the three packages attached as tarballs. No need to clone or compile:
 
 ```bash
-npm i https://github.com/smartcontact-hub/smartcontact-ui/releases/download/v1.0.0/smartcontact-hub-styles-1.0.0.tgz
+npm i https://github.com/smartcontact-hub/smartcontact-ui/releases/download/v1.1.0/smartcontact-hub-styles-1.1.0.tgz
 ```
 
 If you already have access to the `smartcontact-hub` org, those same three packages are on

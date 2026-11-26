@@ -46,8 +46,13 @@ test('tocar [Unreleased] NO desincroniza: una versión sin publicar no existe pa
 test('las versiones salen de nueva a vieja, con su fecha', () => {
   const { versiones } = construir(changelog);
   assert.ok(versiones.length >= 3);
-  assert.equal(versiones[0].version, '1.0.0');
-  assert.match(versiones[0].fecha, /^\d{4}-\d{2}-\d{2}$/);
+  // El orden, no un número fijo: con `versiones[0] === '1.0.0'` cada release ponía rojo este test.
+  const num = ({ version }) => version.split('.').map(Number);
+  for (let i = 1; i < versiones.length; i++) {
+    const [a, b] = [num(versiones[i - 1]), num(versiones[i])];
+    assert.ok((a[0] - b[0] || a[1] - b[1] || a[2] - b[2]) > 0,`${versiones[i - 1].version} tiene que ir antes que ${versiones[i].version}`);
+  }
+  for (const { version, fecha } of versiones) assert.match(fecha, /^\d{4}-\d{2}-\d{2}$/, `${version} sin fecha`);
 });
 
 test('el markdown en línea llega convertido, no crudo', () => {

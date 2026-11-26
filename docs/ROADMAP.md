@@ -310,6 +310,9 @@
   servido en RAÍZ (Cloudflare); si algún día va a subpath, pasar a `APP_BASE_HREF`/ruta relativa.
 
 ## Operador / sesiones aparte
+- ✅ **1.1.0 cortada** (2026-11-26) — menor, sin roturas: antes del corte se midió el contrato contra el tag
+  `v1.0.0` (tokens `--sc-*`, exports, selectores, entradas y sus tipos) y lo único que faltaba (la familia `azure`
+  y el `null` de `appendTo` en `sc-select`) vuelve en desuso hasta 2.0.0, como los 31 tokens de #417.
 - ✅ **1.0.0 cortada** (2026-09-09) — primera estable, descargable como
   [release de GitHub](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest) con los 3
   tarballs adjuntos ([DD-58](DECISIONS.md)) **y** publicando los 3 paquetes en GitHub Packages

@@ -10,6 +10,7 @@
  *
  * Que ningún desplegable de las pantallas se quede sin nombre lo vigila `audit:screen-hygiene`.
  */
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -85,5 +86,36 @@ describe('sc-select · las opciones apagadas', () => {
       ['Media', 'true'],
       ['Baja', null],
     ]);
+  });
+});
+
+/*
+ * `[appendTo]="null"` era el valor por defecto de 1.0.0. Retirarlo en un minor rompe la compilación de quien lo
+ * escribía (docs/migration-safety.md): sigue admitido, en desuso hasta 2.0.0. La plantilla de abajo se compila con
+ * comprobación estricta de tipos, así que si el tipo vuelve a excluir `null`, este fichero no compila.
+ */
+@Component({
+  imports: [ScSelectComponent],
+  template: `<sc-select [options]="opciones" optionValue="value" ariaLabel="Prioridad" [appendTo]="null" />`,
+})
+class SelectConAppendToNull {
+  readonly opciones = PRIORIDADES;
+}
+
+describe('sc-select · `appendTo` en null (1.0.0)', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideTranslateService()] });
+    window.matchMedia ??= (query: string) =>
+      ({ matches: false, media: query, addEventListener: () => undefined, removeEventListener: () => undefined }) as unknown as MediaQueryList;
+  });
+
+  it('se admite y, sin `overlayAppendTo` global, la lista se abre dentro del componente, como en 1.0.0', async () => {
+    const fixture = TestBed.createComponent(SelectConAppendToNull);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    (fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement).click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('[role="option"]').length).toBe(3);
   });
 });

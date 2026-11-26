@@ -17,7 +17,7 @@ el monorepo), que consume el DS **por nombre** igual que una app externa.
 > con los tres tarballs adjuntos.
 >
 > ```bash
-> V=1.0.0; B=https://github.com/smartcontact-hub/smartcontact-ui/releases/download/v$V
+> V=1.1.0; B=https://github.com/smartcontact-hub/smartcontact-ui/releases/download/v$V
 > npm i $B/smartcontact-hub-styles-$V.tgz $B/smartcontact-hub-icons-$V.tgz $B/smartcontact-hub-components-$V.tgz
 > ```
 >
