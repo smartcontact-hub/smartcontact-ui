@@ -1206,6 +1206,14 @@ export class TpDiasComponent {
     if (a.lado === 'pintar') contarUso('pintar');
     else if (a.movido) contarUso('arrastrar');
     const junta = this.juntarTocadas(a.dia, a.siguen);
+    // Las horas que se ven se quedan como al pulsar: si se ajustaran solas a lo nuevo, todo el mapa saltaría al soltar
+    // y la barra recién hecha caería lejos de donde se soltó. «Ajustar» las vuelve a ajustar; si coinciden, no sale.
+    this.ventana.set(a.rango);
+    setTimeout(() => {
+      const v = this.ventana();
+      const auto = this.automatica();
+      if (v && v.desde === auto.desde && v.hasta === auto.hasta) this.ventana.set(null);
+    });
     this.arrastre.set(null);
     this.gesto.emit(false);
     if (!igual(this.actual()[a.dia], a.antes[a.dia])) this.sigue.delete(a.dia);
