@@ -9,7 +9,7 @@
 /* Nombre, descripción y zona horaria en una fila bajo el título (con poco ancho, apilados). */
 .bloque {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr) minmax(0, 0.8fr);
   gap: var(--sc-spacing-1);
   margin-block-end: var(--sc-spacing-1-5);
 
