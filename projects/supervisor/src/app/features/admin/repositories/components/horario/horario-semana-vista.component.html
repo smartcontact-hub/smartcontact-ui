@@ -6,6 +6,12 @@
       }
     </div>
 
+    <!-- La leyenda, en el hueco de la derecha del eje: una muestra de cada cosa y su nombre. -->
+    <ul class="sv__leyenda" role="list">
+      <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--abierto" aria-hidden="true"></span>{{ 'repositories.horarios.sv.open' | translate }}</li>
+      <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--fuera" aria-hidden="true"></span>{{ 'repositories.horarios.sv.closed' | translate }}</li>
+    </ul>
+
     <ul class="sv__filas">
       @for (d of dias(); track d.fecha) {
         <li class="fila" [class.fila--hoy]="d.esHoy">
@@ -80,14 +86,4 @@
       }
     </ul>
   </div>
-
-  <!-- La leyenda, como etiquetas: una muestra de cada cosa y su nombre. -->
-  <ul class="sv__leyenda" role="list">
-    <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--abierto" aria-hidden="true"></span>{{ 'repositories.horarios.sv.open' | translate }}</li>
-    <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--fuera" aria-hidden="true"></span>{{ 'repositories.horarios.sv.closed' | translate }}</li>
-    <!-- Los atajos del mapa, a un vistazo al pasar por aquí. -->
-    <li class="leyenda leyenda--atajos sc-text-caption-semibold" tabindex="0" [pTooltip]="atajos()" tooltipPosition="top">
-      <sc-icon name="keyboard" [size]="16" aria-hidden="true" />{{ 'repositories.horarios.sv.shortcuts_label' | translate }}
-    </li>
-  </ul>
 </div>

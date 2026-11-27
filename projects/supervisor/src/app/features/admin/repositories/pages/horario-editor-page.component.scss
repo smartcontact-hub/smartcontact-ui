@@ -160,3 +160,33 @@
   display: flex;
   margin-block-end: var(--sc-spacing-1);
 }
+
+/* El texto de dónde se usa, bajo el mapa; sus cifras se subrayan a puntos para avisar de que dicen más al pasar el ratón. */
+.usos-texto {
+  margin: var(--sc-spacing-1) 0 0;
+  color: var(--sc-text-secondary);
+}
+
+.usos-texto__dato {
+  color: var(--sc-text-primary);
+  font-weight: 600;
+  text-decoration: underline dotted;
+  text-underline-offset: var(--sc-spacing-0-25);
+  cursor: help;
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-sm);
+  }
+}
+
+.usos-tip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--sc-font-size-caption);
+}

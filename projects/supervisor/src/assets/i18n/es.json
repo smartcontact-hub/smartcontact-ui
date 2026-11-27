@@ -1498,6 +1498,15 @@
       "contacts_delete_title_one": "¿Eliminar 1 contacto?"
     },
     "horarios": {
+      "usage_new": "Nuevo horario: aún no está aplicado en ningún sitio.",
+      "usage_none": "Este horario aún no se usa en ningún sitio.",
+      "usage_intro": "Este horario se usa en {{count}} sitios:",
+      "usage_intro_one": "Este horario se usa en 1 sitio:",
+      "usage_groups": "{{count}} grupos",
+      "usage_groups_one": "1 grupo",
+      "usage_calendars": "{{count}} calendarios",
+      "usage_calendars_one": "1 calendario",
+      "usage_and": "y",
       "see_uses": "Usado en {{count}} sitios",
       "see_uses_one": "Usado en 1 sitio",
       "see_uses_none": "Sin usar todavía",

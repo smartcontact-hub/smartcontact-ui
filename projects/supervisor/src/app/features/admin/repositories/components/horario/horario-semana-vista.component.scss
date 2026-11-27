@@ -103,6 +103,11 @@
 }
 
 @container (max-width: 44rem) {
+  .sv__leyenda {
+    grid-column: 2 / -1;
+    grid-row: 9;
+  }
+
   .sv__rejilla {
     grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-horas);
   }
@@ -240,6 +245,10 @@
 
 /* La leyenda, en etiquetas: borde fino, esquina redonda y una muestra de cada cosa. */
 .sv__leyenda {
+  grid-column: 3 / -1;
+  grid-row: 1;
+  align-self: center;
+  justify-self: start;
   display: flex;
   flex-wrap: wrap;
   gap: var(--sc-spacing-0-5);
@@ -361,9 +370,4 @@
 .barra--fantasma {
   opacity: 0.55;
   pointer-events: none;
-}
-
-.leyenda--atajos {
-  cursor: help;
-  color: var(--sc-text-secondary);
 }

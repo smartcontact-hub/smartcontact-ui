@@ -482,13 +482,6 @@ export class HorarioSemanaVistaComponent {
     }, 30);
   }
 
-  /** El texto de los atajos, con las teclas de cada sistema (⌘ y ⌥ en Mac). */
-  protected readonly atajos = computed(() => {
-    this.lang();
-    const mac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
-    return this.translate.instant('repositories.horarios.sv.shortcuts', { mod: mac ? '⌘' : 'Ctrl', alt: mac ? '⌥' : 'Alt' }) as string;
-  });
-
   /** Quitar un tramo (su ×, o Suprimir con el foco en él). */
   protected quitar(dia: number, idx: number): void {
     const franjas = this.semana()[dia] ?? [];

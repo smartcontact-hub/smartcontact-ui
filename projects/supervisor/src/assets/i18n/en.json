@@ -1498,6 +1498,15 @@
       "contacts_delete_title_one": "Delete 1 contact?"
     },
     "horarios": {
+      "usage_new": "New schedule: not applied anywhere yet.",
+      "usage_none": "This schedule is not used anywhere yet.",
+      "usage_intro": "This schedule is used in {{count}} places:",
+      "usage_intro_one": "This schedule is used in 1 place:",
+      "usage_groups": "{{count}} groups",
+      "usage_groups_one": "1 group",
+      "usage_calendars": "{{count}} calendars",
+      "usage_calendars_one": "1 calendar",
+      "usage_and": "and",
       "see_uses": "Used in {{count}} places",
       "see_uses_one": "Used in 1 place",
       "see_uses_none": "Not used yet",

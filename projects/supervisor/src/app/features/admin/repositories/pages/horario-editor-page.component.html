@@ -20,12 +20,8 @@
   <!-- Arquetipo de editor con su resultado al lado (`page__inner--resultado`: 1600 desde 1340, como las fichas con
        resumen). Las reglas y el año lado a lado: el año se repinta con cada cambio; por debajo de 1340 va debajo. -->
   <div class="page__inner page__inner--resultado">
-    <!-- Título y, al editar, arriba a la derecha el botón que abre «Dónde se usa» (al crear, el horario aún no está en ningún sitio). -->
     <div class="titulo">
       <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
-      @if (mode() === 'edit') {
-        <sc-button variant="secondary" appearance="outlined" icon="account_tree" [label]="etiquetaUsos()" (clicked)="usosAbierto.set(true)" />
-      }
     </div>
 
     <!-- Nombre, descripción y zona horaria en una fila, directamente bajo el título (sin tarjeta). -->
@@ -61,72 +57,46 @@
       />
     </div>
 
-    <sc-section-card
-      anchorId="horario-semana"
-      titleKey="repositories.horarios.section_schedule"
-      surface="subtle"
-      icon="date_range"
-    >
-      <sc-subsection>
-        <!-- Una sola vista: el mapa de la semana (se arrastra sobre las horas) y, a su lado, las franjas de cada día para escribir las horas. -->
-        <sc-horario-semana-vista
-          [semana]="form().week"
-          [zona]="form().timezone"
-          [falta]="faltaDeSemana()"
-          (semanaChange)="update('week', $event)"
-        />
-      </sc-subsection>
-    </sc-section-card>
-  </div>
-</div>
+    <!-- El mapa de la semana (se arrastra sobre las horas) y, a su lado, las franjas de cada día para escribir las horas. Sin tarjeta. -->
+    <sc-horario-semana-vista
+      [semana]="form().week"
+      [zona]="form().timezone"
+      [falta]="faltaDeSemana()"
+      (semanaChange)="update('week', $event)"
+    />
 
-@if (mode() === 'edit') {
-  <!-- Dónde se usa este horario: grupos y calendarios, cada uno con su icono y su cifra. -->
-  <sc-drawer
-    position="right"
-    width="var(--sc-spacing-25)"
-    [visible]="usosAbierto()"
-    [header]="'repositories.horarios.section_uses' | translate"
-    (visibleChange)="usosAbierto.set($event)"
-  >
-    <div class="vistas">
-      <sc-selectbutton
-        size="sm"
-        [ariaLabel]="'repositories.horarios.section_uses' | translate"
-        [options]="opcionesDeUso()"
-        optionLabel="label"
-        optionValue="value"
-        [allowEmpty]="false"
-        [value]="usoVista()"
-        (valueChange)="usoVista.set($any($event))"
-      >
-        <ng-template #item let-o>
-          <span class="opcion"><sc-icon [name]="o.icono" [size]="16" aria-hidden="true" />{{ o.label }} <span class="opcion__cifra">{{ o.cuantos }}</span></span>
-        </ng-template>
-      </sc-selectbutton>
-    </div>
-    @if (usoActual().length === 0) {
-      <p class="usos__nada sc-text-body-regular">{{ usoNada() }}</p>
-    } @else {
-      <ul class="usos__lista" role="list">
-        @for (i of usoActual(); track $index) {
-          <li class="uso">
-            <span class="uso__icono" [class.uso__icono--cal]="usoVista() === 'calendarios'" aria-hidden="true"><sc-icon [name]="iconoDeUso()" [size]="16" /></span>
-            <span class="uso__cuerpo">
-              @if (i.grupoId) {
-                <a class="uso__nombre uso__nombre--enlace sc-text-body-semibold" [routerLink]="['/admin/grupos/editar', i.grupoId]">{{ i.nombre }}</a>
-              } @else {
-                <span class="uso__nombre sc-text-body-semibold">{{ i.nombre }}</span>
-              }
-              <span class="uso__etiquetas">
-                @for (e of i.etiquetas; track e) {
-                  <sc-tag [severity]="tonoDeEtiqueta(e)" [value]="e" />
-                }
-              </span>
-            </span>
-          </li>
+    <!-- Dónde se usa: al crear, todavía en ningún sitio; al editar, cuántos y, al pasar el ratón, cuáles. -->
+    <p class="usos-texto sc-text-body-regular">
+      @if (mode() === 'create') {
+        {{ 'repositories.horarios.usage_new' | translate }}
+      } @else if (totalUsos() === 0) {
+        {{ 'repositories.horarios.usage_none' | translate }}
+      } @else {
+        {{ ('repositories.horarios.usage_intro' + (totalUsos() === 1 ? '_one' : '')) | translate: { count: totalUsos() } }}
+        @if (nGrupos() > 0) {
+          <span class="usos-texto__dato" tabindex="0" [pTooltip]="tipGrupos" tooltipPosition="top">{{ ('repositories.horarios.usage_groups' + (nGrupos() === 1 ? '_one' : '')) | translate: { count: nGrupos() } }}</span>
+        }
+        @if (nGrupos() > 0 && nCalendarios() > 0) {
+          {{ 'repositories.horarios.usage_and' | translate }}
+        }
+        @if (nCalendarios() > 0) {
+          <span class="usos-texto__dato" tabindex="0" [pTooltip]="tipCalendarios" tooltipPosition="top">{{ ('repositories.horarios.usage_calendars' + (nCalendarios() === 1 ? '_one' : '')) | translate: { count: nCalendarios() } }}</span>
+        }
+      }
+    </p>
+    <ng-template #tipGrupos>
+      <ul class="usos-tip" role="list">
+        @for (n of nombresGrupos(); track $index) {
+          <li>{{ n }}</li>
         }
       </ul>
-    }
-  </sc-drawer>
-}
+    </ng-template>
+    <ng-template #tipCalendarios>
+      <ul class="usos-tip" role="list">
+        @for (n of nombresCalendarios(); track $index) {
+          <li>{{ n }}</li>
+        }
+      </ul>
+    </ng-template>
+  </div>
+</div>

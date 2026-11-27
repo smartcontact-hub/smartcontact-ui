@@ -1,18 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { LocationStrategy } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScIconComponent } from '@smartcontact-hub/icons';
 import {
   ScButtonComponent,
   ScDividerComponent,
   ScInputTextComponent,
   ScMultiSelectComponent,
   ScSectionCardComponent,
-  ScDrawerComponent,
-  ScSelectButtonComponent,
-  ScTagComponent,
   ScSelectComponent,
   ScSubsectionComponent,
 } from '@smartcontact-hub/components';
@@ -75,8 +71,6 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 @Component({
   selector: 'sc-horario-editor-page',
   imports: [
-    RouterLink,
-    ScIconComponent,
     HorarioSemanaVistaComponent,
     HorarioEspecialModalComponent,
     HorarioFilasTableComponent,
@@ -86,10 +80,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
     ScInputTextComponent,
     ScMultiSelectComponent,
     ScSectionCardComponent,
-    ScDrawerComponent,
-    ScSelectButtonComponent,
-    ScTagComponent,
-    ScSelectComponent,
+          ScSelectComponent,
     ScSubsectionComponent,
     TooltipModule,
     TranslateModule,
@@ -203,50 +194,16 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     if (id === null || this.mode() !== 'edit') return [];
     return this.groupsStore.groups().filter((g) => subcanalesConHorario(g).some((s) => s.id === id));
   });
-  /** Qué forma de editar la semana se ve: «Semana» (arrastrar sobre las horas) o «Franjas» (escribir las horas de cada día). */
   /** Dónde se usa: por sitios (grupos y calendarios), cada uno con sus nombres. */
   protected readonly usos = computed(() => usosDelHorario(this.mode() === 'edit' ? this.horarioId : null, this.groupsStore.groups()));
 
-  /** Qué sitio se ve en «Dónde se usa». */
-  /** El texto del botón que abre «Dónde se usa»: «Usado en 11 sitios» (o «Sin usar todavía»). */
-  protected readonly etiquetaUsos = computed(() => {
-    this.lang();
-    const n = this.usos().reduce((suma, u) => suma + u.items.length, 0);
-    const clave = n === 0 ? 'see_uses_none' : n === 1 ? 'see_uses_one' : 'see_uses';
-    return this.translate.instant(`repositories.horarios.${clave}`, { count: n }) as string;
-  });
-
-  /** El cajón de «Dónde se usa» (al editar). */
-  protected readonly usosAbierto = signal(false);
-
-  protected readonly usoVista = signal<TipoDeUso>('grupos');
-  protected readonly opcionesDeUso = computed(() => {
-    this.lang();
-    return TIPOS_DE_USO.map((t) => ({
-      value: t,
-      label: this.translate.instant(`repositories.horarios.uses.${CLAVE_DE_USO[t]}`) as string,
-      icono: ICONO_DE_USO[t],
-      cuantos: this.usos().find((u) => u.tipo === t)?.items.length ?? 0,
-    }));
-  });
-  protected readonly usoActual = computed(() => this.usos().find((u) => u.tipo === this.usoVista())?.items ?? []);
-  /** El color de cada sitio, una regla única: los grupos, en azul (info); los calendarios, en ámbar (warning). Icono y etiquetas lo comparten. */
-  protected readonly tonoDeUso = computed<'info' | 'warning'>(() => (this.usoVista() === 'grupos' ? 'info' : 'warning'));
-
-  /** El color de cada etiqueta: WhatsApp en verde, Email en gris, Voz en azul; los ámbitos de calendario, en ámbar. */
-  protected tonoDeEtiqueta(etiqueta: string): 'success' | 'secondary' | 'info' | 'warning' {
-    if (this.usoVista() === 'calendarios') return 'warning';
-    const porCanal: Record<string, 'success' | 'secondary' | 'info' | 'warning'> = {
-      WhatsApp: 'success',
-      Email: 'secondary',
-      Voz: 'info',
-      'Web Chat': 'warning',
-    };
-    return porCanal[etiqueta] ?? 'secondary';
-  }
-
-  protected readonly iconoDeUso = computed(() => ICONO_DE_USO[this.usoVista()]);
-  protected readonly usoNada = computed(() => (this.lang(), this.translate.instant(`repositories.horarios.uses_none_${CLAVE_DE_USO[this.usoVista()]}`) as string));
+  /** Cuántos sitios usan este horario, y cuáles (para el texto de debajo del mapa y sus tooltips). */
+  private readonly nombresDe = (tipo: TipoDeUso): readonly string[] => this.usos().find((u) => u.tipo === tipo)?.items.map((i) => i.nombre) ?? [];
+  protected readonly nombresGrupos = computed(() => this.nombresDe('grupos'));
+  protected readonly nombresCalendarios = computed(() => this.nombresDe('calendarios'));
+  protected readonly nGrupos = computed(() => this.nombresGrupos().length);
+  protected readonly nCalendarios = computed(() => this.nombresCalendarios().length);
+  protected readonly totalUsos = computed(() => this.nGrupos() + this.nCalendarios());
 
   /* ── Ir a Festivos: sale del horario, así que con cambios pide guardar antes, como «Gestionar en Repositorios» del
    *    grupo (SISMAC-4058). Con Cmd+clic o el botón central se abre en otra pestaña sin preguntar. ─────────────────── */
