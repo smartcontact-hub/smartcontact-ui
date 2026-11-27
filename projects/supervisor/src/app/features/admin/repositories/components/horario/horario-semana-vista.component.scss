@@ -103,11 +103,6 @@
 }
 
 @container (max-width: 44rem) {
-  .sv__leyenda {
-    grid-column: 2 / -1;
-    grid-row: 9;
-  }
-
   .sv__rejilla {
     grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-horas);
   }
@@ -245,10 +240,12 @@
 
 /* La leyenda, en etiquetas: borde fino, esquina redonda y una muestra de cada cosa. */
 .sv__leyenda {
-  grid-column: 3 / -1;
-  grid-row: 1;
+  /* Debajo del mapa (tras el eje y los siete días), pegada al borde derecho de la línea. */
+  grid-column: 2;
+  grid-row: 9;
   align-self: center;
   justify-self: end;
+  margin-block-start: var(--sc-spacing-0-5);
   display: flex;
   flex-wrap: wrap;
   gap: var(--sc-spacing-0-5);

@@ -6,12 +6,6 @@
       }
     </div>
 
-    <!-- La leyenda, en el hueco de la derecha del eje: una muestra de cada cosa y su nombre. -->
-    <ul class="sv__leyenda" role="list">
-      <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--abierto" aria-hidden="true"></span>{{ 'repositories.horarios.sv.open' | translate }}</li>
-      <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--fuera" aria-hidden="true"></span>{{ 'repositories.horarios.sv.closed' | translate }}</li>
-    </ul>
-
     <ul class="sv__filas">
       @for (d of dias(); track d.fecha) {
         <li class="fila" [class.fila--hoy]="d.esHoy">
@@ -85,5 +79,12 @@
         </li>
       }
     </ul>
+
+    <!-- La leyenda, debajo del mapa, a la derecha: una muestra de cada cosa y su nombre. -->
+    <ul class="sv__leyenda" role="list">
+      <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--abierto" aria-hidden="true"></span>{{ 'repositories.horarios.sv.open' | translate }}</li>
+      <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--fuera" aria-hidden="true"></span>{{ 'repositories.horarios.sv.closed' | translate }}</li>
+    </ul>
+
   </div>
 </div>
