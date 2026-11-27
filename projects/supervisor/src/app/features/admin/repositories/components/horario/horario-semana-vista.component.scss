@@ -164,10 +164,11 @@
   &::before {
     content: '';
     position: absolute;
-    inset-block-start: -1px;
+    /* Dentro de la pista (que recorta lo que se sale): arriba del todo y más pequeño, para que no se corte. */
+    inset-block-start: 0;
     inset-inline-start: 50%;
-    inline-size: var(--sc-spacing-0-75);
-    block-size: var(--sc-spacing-0-75);
+    inline-size: var(--sc-spacing-0-5);
+    block-size: var(--sc-spacing-0-5);
     translate: -50% 0;
     border-radius: var(--sc-radius-full);
     background: inherit;
@@ -252,7 +253,6 @@
   align-items: center;
   gap: var(--sc-spacing-0-5);
   padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
-  border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-full);
   background: var(--sc-bg-surface);
   color: var(--sc-text-primary);
@@ -268,7 +268,6 @@
   }
 
   &--fuera {
-    border: 1px solid var(--sc-border-default);
     background: var(--sc-bg-hover);
   }
 }

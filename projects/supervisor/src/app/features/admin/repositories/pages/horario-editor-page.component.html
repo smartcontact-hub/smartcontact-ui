@@ -24,7 +24,7 @@
     <div class="titulo">
       <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
       @if (mode() === 'edit') {
-        <sc-button variant="secondary" appearance="outlined" icon="link" [label]="'repositories.horarios.see_uses' | translate" (clicked)="usosAbierto.set(true)" />
+        <sc-button variant="secondary" appearance="outlined" icon="account_tree" [label]="etiquetaUsos()" (clicked)="usosAbierto.set(true)" />
       }
     </div>
 

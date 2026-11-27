@@ -208,6 +208,14 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   protected readonly usos = computed(() => usosDelHorario(this.mode() === 'edit' ? this.horarioId : null, this.groupsStore.groups()));
 
   /** Qué sitio se ve en «Dónde se usa». */
+  /** El texto del botón que abre «Dónde se usa»: «Usado en 11 sitios» (o «Sin usar todavía»). */
+  protected readonly etiquetaUsos = computed(() => {
+    this.lang();
+    const n = this.usos().reduce((suma, u) => suma + u.items.length, 0);
+    const clave = n === 0 ? 'see_uses_none' : n === 1 ? 'see_uses_one' : 'see_uses';
+    return this.translate.instant(`repositories.horarios.${clave}`, { count: n }) as string;
+  });
+
   /** El cajón de «Dónde se usa» (al editar). */
   protected readonly usosAbierto = signal(false);
 

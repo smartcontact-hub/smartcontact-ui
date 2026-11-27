@@ -1498,7 +1498,9 @@
       "contacts_delete_title_one": "¿Eliminar 1 contacto?"
     },
     "horarios": {
-      "see_uses": "Ver dónde se usa",
+      "see_uses": "Usado en {{count}} sitios",
+      "see_uses_one": "Usado en 1 sitio",
+      "see_uses_none": "Sin usar todavía",
       "title": "Horarios",
       "singular": "horario",
       "create_title": "Nuevo horario",
