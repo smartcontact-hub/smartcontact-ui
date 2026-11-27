@@ -357,3 +357,14 @@
   }
 }
 
+
+/* La sombra del tramo que se lleva a otro día mientras se arrastra: del mismo azul, a medias, y sin recibir el ratón. */
+.barra--fantasma {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.leyenda--atajos {
+  cursor: help;
+  color: var(--sc-text-secondary);
+}

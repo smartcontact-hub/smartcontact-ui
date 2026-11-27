@@ -15,12 +15,15 @@
           <!-- La línea del día: se aprieta en un hueco y se arrastra, sin soltar, hasta donde se quiera; al soltar queda un tramo. -->
           <span
             class="pista"
+            [attr.data-dia]="d.indice"
             role="group"
             [attr.aria-label]="d.aria"
             (pointerdown)="empezar($event, d.indice)"
             (pointermove)="mover($event)"
             (pointerup)="soltar($event)"
             (pointercancel)="cancelar()"
+            (pointerenter)="ratonEnDia(d.indice)"
+            (pointerleave)="ratonEnDia(null)"
           >
             @for (b of d.barras; track $index) {
               <span
@@ -30,9 +33,10 @@
                 [style.width.%]="b.ancho"
                 [class.barra--movible]="b.editable"
                 [attr.tabindex]="b.editable ? 0 : null"
+                [attr.data-idx]="b.editable ? b.idx : null"
                 (pointerdown)="b.editable && empezarMover($event, d.indice, b.idx)"
-                (keydown.delete)="b.editable && quitar(d.indice, b.idx)"
-                (keydown.backspace)="b.editable && quitar(d.indice, b.idx)"
+                (pointerenter)="b.editable && ratonEnTramo({ dia: d.indice, idx: b.idx })"
+                (pointerleave)="ratonEnTramo(null)"
               >
                 @if (b.editable) {
                   <span class="asa asa--ini" aria-hidden="true" (pointerdown)="empezarBorde($event, d.indice, b.idx, 'ini')"></span>
@@ -47,6 +51,9 @@
                   <span class="asa asa--fin" aria-hidden="true" (pointerdown)="empezarBorde($event, d.indice, b.idx, 'fin')"></span>
                 }
               </span>
+            }
+            @if (d.fantasma; as f) {
+              <span class="barra barra--fantasma sc-text-caption-semibold" [style.left.%]="f.izq" [style.width.%]="f.ancho">{{ f.texto }}</span>
             }
             @if (d.seleccion; as s) {
               <span class="seleccion sc-text-caption-semibold" [style.left.%]="s.izq" [style.width.%]="s.ancho">{{ s.texto }}</span>
@@ -78,5 +85,9 @@
   <ul class="sv__leyenda" role="list">
     <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--abierto" aria-hidden="true"></span>{{ 'repositories.horarios.sv.open' | translate }}</li>
     <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--fuera" aria-hidden="true"></span>{{ 'repositories.horarios.sv.closed' | translate }}</li>
+    <!-- Los atajos del mapa, a un vistazo al pasar por aquí. -->
+    <li class="leyenda leyenda--atajos sc-text-caption-semibold" tabindex="0" [pTooltip]="atajos()" tooltipPosition="top">
+      <sc-icon name="keyboard" [size]="16" aria-hidden="true" />{{ 'repositories.horarios.sv.shortcuts_label' | translate }}
+    </li>
   </ul>
 </div>

@@ -1522,6 +1522,8 @@
       "days_open": "Días que se atienden",
       "no_days_open": "Ningún día se atiende todavía.",
       "sv": {
+        "shortcuts_label": "Atajos",
+        "shortcuts": "Arrastra un tramo para moverlo, también a otro día · {{alt}} + arrastrar lo copia · {{mod}} + D lo duplica en el día de abajo · {{mod}} + C, X y V copian, cortan y pegan · Supr lo borra · Flechas lo mueven (Mayús + ← → cambia su final)",
         "repeat_title": "Repetir horario",
         "repeat_prompt_weekdays": "{{day}} ya tiene horario. ¿Lo repites de lunes a viernes?",
         "repeat_yes": "Repetir",

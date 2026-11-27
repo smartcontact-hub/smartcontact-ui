@@ -1522,6 +1522,8 @@
       "days_open": "Jours assurés",
       "no_days_open": "Aucun jour n'est encore assuré.",
       "sv": {
+        "shortcuts_label": "Raccourcis",
+        "shortcuts": "Glissez une plage pour la déplacer, même vers un autre jour · {{alt}} + glisser la copie · {{mod}} + D la duplique sur le jour du dessous · {{mod}} + C, X et V copient, coupent et collent · Suppr la supprime · Les flèches la déplacent (Maj + ← → change sa fin)",
         "repeat_title": "Répéter les horaires",
         "repeat_prompt_weekdays": "{{day}} a déjà des horaires. Les répéter du lundi au vendredi ?",
         "repeat_yes": "Répéter",

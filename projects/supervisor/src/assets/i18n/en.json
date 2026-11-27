@@ -1522,6 +1522,8 @@
       "days_open": "Days served",
       "no_days_open": "No day is served yet.",
       "sv": {
+        "shortcuts_label": "Shortcuts",
+        "shortcuts": "Drag a slot to move it, even to another day · {{alt}} + drag copies it · {{mod}} + D duplicates it on the day below · {{mod}} + C, X and V copy, cut and paste · Del removes it · Arrows move it (Shift + ← → changes its end)",
         "repeat_title": "Repeat hours",
         "repeat_prompt_weekdays": "{{day}} already has hours. Repeat them from Monday to Friday?",
         "repeat_yes": "Repeat",

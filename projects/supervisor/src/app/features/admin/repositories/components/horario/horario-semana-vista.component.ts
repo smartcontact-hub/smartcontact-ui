@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, HostListener, inject, input, output, signal, untracked } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScConfirmService } from '@smartcontact-hub/components';
@@ -44,6 +44,10 @@ interface Arrastre {
   readonly ancla: number;
   /** Donde está el ratón ahora (en minutos). */
   readonly actual: number;
+  /** El día sobre el que está el ratón (al mover un tramo se puede llevar a otro día). */
+  readonly destino: number;
+  /** Con Alt/Opción, el tramo se copia en vez de moverse. */
+  readonly copiar: boolean;
 }
 
 /**
@@ -201,6 +205,8 @@ export class HorarioSemanaVistaComponent {
       const propios = franjas.filter((f) => !cruzaMedianoche(f)).map((f) => [f[0], f[1]] as [number, number]);
       const editables = propios.map(([a, b], idx) => {
         if (drag && drag.dia === i && drag.modo === 'mover' && drag.idx === idx) {
+          // Llevado a otro día: aquí queda el tramo (copia) o se va (mover); en el otro día se ve su sombra.
+          if (drag.destino !== i) return [a, b] as [number, number];
           const s = this.desplazamiento(drag, a, b);
           return [a + s, b + s] as [number, number];
         }
@@ -215,8 +221,9 @@ export class HorarioSemanaVistaComponent {
         ...franjas.filter((f) => cruzaMedianoche(f)).map((f) => [f[0], MINUTOS_DEL_DIA] as [number, number]),
         ...previa.filter((f) => cruzaMedianoche(f) && f[1] > 0).map((f) => [0, f[1]] as [number, number]),
       ];
+      const quitado = drag && drag.modo === 'mover' && drag.dia === i && drag.destino !== i && !drag.copiar ? drag.idx : -1;
       const todos = [
-        ...editables.map(([a, b], idx) => ({ a, b, idx, editable: true })),
+        ...editables.map(([a, b], idx) => ({ a, b, idx, editable: true })).filter((t) => t.idx !== quitado),
         ...fijos.map(([a, b]) => ({ a, b, idx: -1, editable: false })),
       ];
       const barras = todos.map((t) => ({
@@ -226,6 +233,15 @@ export class HorarioSemanaVistaComponent {
         texto: rangoTexto(t.a, t.b),
         conTexto: ((t.b - t.a) / MINUTOS_DEL_DIA) * 100 >= MIN_ANCHO_PARA_TEXTO,
       }));
+      // La sombra del tramo que se lleva a este día.
+      let fantasma: { izq: number; ancho: number; texto: string } | null = null;
+      if (drag && drag.modo === 'mover' && drag.destino === i && drag.dia !== i) {
+        const f = (semana[drag.dia] ?? []).filter((x) => !cruzaMedianoche(x))[drag.idx];
+        if (f) {
+          const sh = this.desplazamiento(drag, f[0], f[1]);
+          fantasma = { izq: ((f[0] + sh) / MINUTOS_DEL_DIA) * 100, ancho: ((f[1] - f[0]) / MINUTOS_DEL_DIA) * 100, texto: rangoTexto(f[0] + sh, f[1] + sh) };
+        }
+      }
       let seleccion: { izq: number; ancho: number; texto: string } | null = null;
       if (drag && drag.dia === i && drag.modo === 'nuevo') {
         const [a, b] = this.rangoElegido(drag);
@@ -240,6 +256,7 @@ export class HorarioSemanaVistaComponent {
         ahora: fecha === hoy ? (this.momento().minutos / MINUTOS_DEL_DIA) * 100 : null,
         ahoraTexto: fecha === hoy ? horaTexto(this.momento().minutos) : '',
         barras,
+        fantasma,
         seleccion,
         franjas,
         nombre: largo.format(aFecha(fecha)),
@@ -271,7 +288,7 @@ export class HorarioSemanaVistaComponent {
     const pista = event.currentTarget as HTMLElement;
     pista.setPointerCapture(event.pointerId);
     const m = this.minutoDe(event, pista);
-    this.arrastre.set({ dia, modo: 'nuevo', idx: -1, ancla: m, actual: m });
+    this.arrastre.set({ dia, modo: 'nuevo', idx: -1, ancla: m, actual: m, destino: dia, copiar: false });
   }
 
   /** Cuánto se ha movido un tramo entero (en minutos, de 15 en 15), sin salirse del día. */
@@ -286,7 +303,7 @@ export class HorarioSemanaVistaComponent {
     const pista = (event.currentTarget as HTMLElement).closest('.pista') as HTMLElement;
     pista.setPointerCapture(event.pointerId);
     const m = this.minutoDe(event, pista);
-    this.arrastre.set({ dia, modo: 'mover', idx, ancla: m, actual: m });
+    this.arrastre.set({ dia, modo: 'mover', idx, ancla: m, actual: m, destino: dia, copiar: event.altKey });
   }
 
   /** Apretar en el borde de un tramo: mueve su principio o su final. */
@@ -296,13 +313,20 @@ export class HorarioSemanaVistaComponent {
     const pista = (event.currentTarget as HTMLElement).closest('.pista') as HTMLElement;
     pista.setPointerCapture(event.pointerId);
     const m = this.minutoDe(event, pista);
-    this.arrastre.set({ dia, modo, idx, ancla: m, actual: m });
+    this.arrastre.set({ dia, modo, idx, ancla: m, actual: m, destino: dia, copiar: false });
   }
 
   protected mover(event: PointerEvent): void {
     const a = this.arrastre();
     if (!a) return;
-    this.arrastre.set({ ...a, actual: this.minutoDe(event, event.currentTarget as HTMLElement) });
+    // El día sobre el que está el ratón: con el puntero capturado, los eventos llegan a la pista de origen, así que se mira qué hay debajo.
+    let destino = a.destino;
+    if (a.modo === 'mover') {
+      const pista = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('.pista');
+      const dia = pista ? Number(pista.dataset['dia']) : NaN;
+      if (!Number.isNaN(dia)) destino = dia;
+    }
+    this.arrastre.set({ ...a, actual: this.minutoDe(event, event.currentTarget as HTMLElement), destino, copiar: event.altKey });
   }
 
   /** Soltar: el hueco elegido (o el rango arrastrado) queda como tramo abierto. */
@@ -323,7 +347,19 @@ export class HorarioSemanaVistaComponent {
     if (!f) return;
     if (a.modo === 'mover') {
       const s = this.desplazamiento({ ...a, actual: this.minutoDe(event, event.currentTarget as HTMLElement) }, f[0], f[1]);
-      if (s !== 0) this.poner(a.dia, unir([...franjas.filter((x) => x !== f), [f[0] + s, f[1] + s]]));
+      const nueva: Franja = [f[0] + s, f[1] + s];
+      if (a.destino !== a.dia) {
+        // A otro día: se añade allí (y se quita de aquí, salvo que se copie con Alt/Opción). Un solo cambio.
+        const semana = this.semana().map((fr, i): readonly Franja[] => {
+          if (i === a.destino) return unir([...fr, nueva]);
+          if (i === a.dia && !a.copiar) return fr.filter((x) => x !== f);
+          return fr;
+        });
+        this.semanaChange.emit(semana);
+        this.enfocar(a.destino, nueva);
+      } else if (s !== 0) {
+        this.poner(a.dia, unir([...franjas.filter((x) => x !== f), nueva]));
+      }
       return;
     }
     const nuevo: Franja = a.modo === 'ini' ? [Math.min(m, f[1] - PASO), f[1]] : [f[0], Math.max(m, f[0] + PASO)];
@@ -333,6 +369,125 @@ export class HorarioSemanaVistaComponent {
   protected cancelar(): void {
     this.arrastre.set(null);
   }
+
+  /* ── Con el teclado ───────────────────────────────────────────────────────────────────────────────────────────── */
+
+  /** El tramo copiado o cortado (Ctrl/Cmd + C o X), para pegarlo en otro día. */
+  private portapapeles: Franja | null = null;
+  /** Lo que hay bajo el ratón: el día de la línea y el tramo (si lo hay). */
+  private diaBajoRaton: number | null = null;
+  private tramoBajoRaton: { dia: number; idx: number } | null = null;
+
+  protected ratonEnDia(dia: number | null): void {
+    this.diaBajoRaton = dia;
+  }
+
+  /** Quién manda al elegir el tramo: el foco (tras duplicar o mover con el teclado) o el ratón (al pasar por otro tramo). */
+  private preferirFoco = false;
+
+  protected ratonEnTramo(tramo: { dia: number; idx: number } | null): void {
+    this.tramoBajoRaton = tramo;
+    if (tramo) this.preferirFoco = false;
+  }
+
+  /** El tramo sobre el que se actúa: el que tiene el foco o, si no, el que está bajo el ratón. */
+  private tramoActivo(): { dia: number; idx: number } | null {
+    const foco = document.activeElement as HTMLElement | null;
+    if (!this.preferirFoco && this.tramoBajoRaton) return this.tramoBajoRaton;
+    if (foco && this.host.nativeElement.contains(foco) && foco.classList.contains('barra') && foco.dataset['idx'] !== undefined) {
+      const dia = Number(foco.closest<HTMLElement>('.pista')?.dataset['dia']);
+      const idx = Number(foco.dataset['idx']);
+      if (!Number.isNaN(dia) && idx >= 0) return { dia, idx };
+    }
+    return this.tramoBajoRaton;
+  }
+
+  private franjaDe(t: { dia: number; idx: number }): Franja | null {
+    return (this.semana()[t.dia] ?? []).filter((f) => !cruzaMedianoche(f))[t.idx] ?? null;
+  }
+
+  /**
+   * Atajos sobre un tramo (con el foco en él o con el ratón encima): Ctrl/Cmd + D lo duplica en el día de abajo (y el duplicado
+   * queda elegido: repetirlo baja día a día); Ctrl/Cmd + C / X / V, copiar, cortar y pegar (en el día bajo el ratón o en el de
+   * abajo); Suprimir lo borra; las flechas lo mueven (← → de 15 en 15 minutos, ↑ ↓ de día) y con Mayús ← → cambian su final.
+   */
+  @HostListener('document:keydown', ['$event'])
+  protected teclas(event: KeyboardEvent): void {
+    const objetivo = event.target as HTMLElement | null;
+    // Escribiendo en un campo (las horas de las franjas, el nombre…), las teclas son del campo.
+    if (objetivo && (objetivo.closest('input, textarea, select, [contenteditable="true"]') || objetivo.closest('.p-popover, .p-confirmpopup'))) return;
+    if (event.key === 'Escape' && this.arrastre()) {
+      this.arrastre.set(null);
+      return;
+    }
+    const t = this.tramoActivo();
+    const mod = event.metaKey || event.ctrlKey;
+    const tecla = event.key.toLowerCase();
+    if (mod && tecla === 'v' && this.portapapeles && (t || this.diaBajoRaton !== null)) {
+      event.preventDefault();
+      const dia = this.diaBajoRaton ?? Math.min((t?.dia ?? 0) + 1, 6);
+      this.insertar(dia, this.portapapeles);
+      return;
+    }
+    if (!t) return;
+    const f = this.franjaDe(t);
+    if (!f) return;
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      event.preventDefault();
+      this.quitar(t.dia, t.idx);
+    } else if (mod && tecla === 'd') {
+      event.preventDefault();
+      if (t.dia < 6) this.insertar(t.dia + 1, f);
+    } else if (mod && tecla === 'c') {
+      event.preventDefault();
+      this.portapapeles = [f[0], f[1]];
+    } else if (mod && tecla === 'x') {
+      event.preventDefault();
+      this.portapapeles = [f[0], f[1]];
+      this.quitar(t.dia, t.idx);
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      const destino = limitar(t.dia + (event.key === 'ArrowDown' ? 1 : -1), 0, 6);
+      if (destino === t.dia) return;
+      const semana = this.semana().map((fr, i): readonly Franja[] => (i === t.dia ? fr.filter((x) => x !== f) : i === destino ? unir([...fr, f]) : fr));
+      this.semanaChange.emit(semana);
+      this.enfocar(destino, f);
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      const paso = event.key === 'ArrowRight' ? PASO : -PASO;
+      const nueva: Franja = event.shiftKey
+        ? [f[0], limitar(f[1] + paso, f[0] + PASO, MINUTOS_DEL_DIA)]
+        : [limitar(f[0] + paso, 0, MINUTOS_DEL_DIA - (f[1] - f[0])), limitar(f[1] + paso, f[1] - f[0], MINUTOS_DEL_DIA)];
+      const resto = (this.semana()[t.dia] ?? []).filter((x) => x !== f);
+      this.poner(t.dia, unir([...resto, nueva]));
+      this.enfocar(t.dia, nueva);
+    }
+  }
+
+  /** Añade un tramo a un día (se funde con los que toque) y lo deja elegido. */
+  private insertar(dia: number, franja: Franja): void {
+    const nueva: Franja = [franja[0], franja[1]];
+    this.poner(dia, unir([...(this.semana()[dia] ?? []), nueva]));
+    this.enfocar(dia, nueva);
+  }
+
+  /** Pasa el foco al tramo que contiene a esta franja, cuando ya se ha pintado. */
+  private enfocar(dia: number, franja: Franja): void {
+    this.preferirFoco = true;
+    setTimeout(() => {
+      const propios = (this.semana()[dia] ?? []).filter((x) => !cruzaMedianoche(x));
+      const idx = propios.findIndex((x) => x[0] <= franja[0] && x[1] >= franja[1]);
+      if (idx < 0) return;
+      this.host.nativeElement.querySelector<HTMLElement>(`.pista[data-dia="${dia}"] .barra[data-idx="${idx}"]`)?.focus();
+    }, 30);
+  }
+
+  /** El texto de los atajos, con las teclas de cada sistema (⌘ y ⌥ en Mac). */
+  protected readonly atajos = computed(() => {
+    this.lang();
+    const mac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+    return this.translate.instant('repositories.horarios.sv.shortcuts', { mod: mac ? '⌘' : 'Ctrl', alt: mac ? '⌥' : 'Alt' }) as string;
+  });
 
   /** Quitar un tramo (su ×, o Suprimir con el foco en él). */
   protected quitar(dia: number, idx: number): void {
