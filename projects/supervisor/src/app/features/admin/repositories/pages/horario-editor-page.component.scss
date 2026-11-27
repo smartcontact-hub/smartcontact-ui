@@ -11,7 +11,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr) minmax(0, 0.8fr);
   gap: var(--sc-spacing-1);
-  margin-block-end: var(--sc-spacing-1-5);
+  margin-block-end: calc(var(--sc-spacing-1-5) + 0.75rem);
 
   @media (max-width: 899px) {
     grid-template-columns: minmax(0, 1fr);
