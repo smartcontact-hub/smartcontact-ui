@@ -93,8 +93,7 @@ export class HorariosPageComponent {
     breadcrumbExtraKey: 'repositories.horarios.title',
     columns: columnas({
       celda: (h) => {
-        const { dias, diasLargos, cerrado, siempre } = this.textos();
-        const cerrados = new Set(h.closedDays ?? []);
+        const { dias, diasLargos, siempre } = this.textos();
         const grupos = gruposDeLaSemana(h.week).map((g) => {
           const todoElDia = g.desde === 0 && g.hasta === 6 && g.franjas.length === 1 && g.franjas[0][0] === 0 && g.franjas[0][1] === MINUTOS_DEL_DIA;
           return {
@@ -108,7 +107,7 @@ export class HorariosPageComponent {
             const fr = h.week[i] ?? [];
             return fr.length > 0
               ? { name, lines: fr.map(textoDeFranja), closed: false }
-              : { name, lines: [cerrados.has(i) ? cerrado : '—'], closed: cerrados.has(i) };
+              : { name, lines: ['—'], closed: false };
           }),
         };
       },

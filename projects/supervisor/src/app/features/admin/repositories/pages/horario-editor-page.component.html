@@ -20,115 +20,113 @@
   <!-- Arquetipo de editor con su resultado al lado (`page__inner--resultado`: 1600 desde 1340, como las fichas con
        resumen). Las reglas y el año lado a lado: el año se repinta con cada cambio; por debajo de 1340 va debajo. -->
   <div class="page__inner page__inner--resultado">
+    <!-- Título y, al editar, arriba a la derecha el botón que abre «Dónde se usa» (al crear, el horario aún no está en ningún sitio). -->
     <div class="titulo">
       <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
+      @if (mode() === 'edit') {
+        <sc-button variant="secondary" appearance="outlined" icon="link" [label]="'repositories.horarios.see_uses' | translate" (clicked)="usosAbierto.set(true)" />
+      }
     </div>
 
-    <div class="horario">
-      <!-- A la izquierda y lo que más ocupa: la semana, donde se edita (se arrastra sobre las horas). Debajo, plegado, el ajuste al
-           minuto y con teclado. -->
-      <div class="horario__reglas">
-        <!-- Un solo bloque con las dos formas de editar el horario, que se cambian con los botones de arriba: «Semana» (se arrastra sobre
-             las horas) y «Franjas» (se escriben las horas de cada día y se copian). Las dos editan lo mismo. -->
-        <sc-section-card
-          anchorId="horario-semana"
-          titleKey="repositories.horarios.section_schedule"
-          surface="subtle"
-          icon="date_range"
-        >
-          <sc-subsection>
-            <!-- Una sola vista: el mapa de la semana (se arrastra sobre las horas) y, bajo cada día, sus franjas para escribir las horas. -->
-            <sc-horario-semana-vista
-              [semana]="form().week"
-              [cerrados]="form().closedDays ?? []"
-              [zona]="form().timezone"
-              [falta]="faltaDeSemana()"
-              (semanaChange)="ponerSemana($event)"
-              (cierreChange)="cerrarDia($event.dia, $event.cerrado)"
-            />
-          </sc-subsection>
-        </sc-section-card>
-
-        <!-- General, en horizontal: nombre, descripción y zona horaria en una fila, sobre el horario. -->
-        <sc-section-card titleKey="repositories.horarios.section_general" surface="subtle" icon="tune">
-          <div class="general">
-          <sc-subsection titleKey="repositories.horarios.section_identity">
-            <div class="bloque">
-              <sc-inputtext
-                inputId="horario-name"
-                fluid
-                required
-                [label]="'repositories.columns.name' | translate"
-                [placeholder]="'repositories.horarios.name_placeholder' | translate"
-                [value]="form().name"
-                [error]="nameError()"
-                (valueChange)="update('name', $event)"
-                (focusout)="dejarNombre($event)"
-              />
-              <sc-inputtext
-                inputId="horario-description"
-                fluid
-                [label]="'repositories.columns.description' | translate"
-                [placeholder]="'repositories.placeholders.description' | translate"
-                [value]="form().description"
-                (valueChange)="update('description', $event)"
-              />
-              <sc-select
-                inputId="horario-zona"
-                filter
-                [label]="'repositories.horarios.timezone' | translate"
-                [options]="zonas()"
-                optionLabel="label"
-                optionValue="value"
-                [value]="form().timezone"
-                (valueChange)="update('timezone', $any($event))"
-              />
-            </div>
-          </sc-subsection>
-          <sc-subsection titleKey="repositories.horarios.section_uses">
-            <div class="vistas">
-              <sc-selectbutton
-                size="sm"
-                [ariaLabel]="'repositories.horarios.section_uses' | translate"
-                [options]="opcionesDeUso()"
-                optionLabel="label"
-                optionValue="value"
-                [allowEmpty]="false"
-                [value]="usoVista()"
-                (valueChange)="usoVista.set($any($event))"
-              >
-                <ng-template #item let-o>
-                  <span class="opcion"><sc-icon [name]="o.icono" [size]="16" aria-hidden="true" />{{ o.label }} <span class="opcion__cifra">{{ o.cuantos }}</span></span>
-                </ng-template>
-              </sc-selectbutton>
-            </div>
-            @if (usoActual().length === 0) {
-              <p class="usos__nada sc-text-body-regular">{{ usoNada() }}</p>
-            } @else {
-              <ul class="usos__lista" role="list">
-                @for (i of usoActual(); track $index) {
-                  <li class="uso">
-                    <span class="uso__icono" [class.uso__icono--cal]="usoVista() === 'calendarios'" aria-hidden="true"><sc-icon [name]="iconoDeUso()" [size]="16" /></span>
-                    <span class="uso__cuerpo">
-                      @if (i.grupoId) {
-                        <a class="uso__nombre uso__nombre--enlace sc-text-body-semibold" [routerLink]="['/admin/grupos/editar', i.grupoId]">{{ i.nombre }}</a>
-                      } @else {
-                        <span class="uso__nombre sc-text-body-semibold">{{ i.nombre }}</span>
-                      }
-                      <span class="uso__etiquetas">
-                        @for (e of i.etiquetas; track e) {
-                          <sc-tag [severity]="tonoDeEtiqueta(e)" [value]="e" />
-                        }
-                      </span>
-                    </span>
-                  </li>
-                }
-              </ul>
-            }
-          </sc-subsection>
-          </div>
-        </sc-section-card>
-      </div>
+    <!-- Nombre, descripción y zona horaria en una fila, directamente bajo el título (sin tarjeta). -->
+    <div class="bloque">
+      <sc-inputtext
+        inputId="horario-name"
+        fluid
+        required
+        [label]="'repositories.columns.name' | translate"
+        [placeholder]="'repositories.horarios.name_placeholder' | translate"
+        [value]="form().name"
+        [error]="nameError()"
+        (valueChange)="update('name', $event)"
+        (focusout)="dejarNombre($event)"
+      />
+      <sc-inputtext
+        inputId="horario-description"
+        fluid
+        [label]="'repositories.columns.description' | translate"
+        [placeholder]="'repositories.placeholders.description' | translate"
+        [value]="form().description"
+        (valueChange)="update('description', $event)"
+      />
+      <sc-select
+        inputId="horario-zona"
+        filter
+        [label]="'repositories.horarios.timezone' | translate"
+        [options]="zonas()"
+        optionLabel="label"
+        optionValue="value"
+        [value]="form().timezone"
+        (valueChange)="update('timezone', $any($event))"
+      />
     </div>
+
+    <sc-section-card
+      anchorId="horario-semana"
+      titleKey="repositories.horarios.section_schedule"
+      surface="subtle"
+      icon="date_range"
+    >
+      <sc-subsection>
+        <!-- Una sola vista: el mapa de la semana (se arrastra sobre las horas) y, a su lado, las franjas de cada día para escribir las horas. -->
+        <sc-horario-semana-vista
+          [semana]="form().week"
+          [zona]="form().timezone"
+          [falta]="faltaDeSemana()"
+          (semanaChange)="update('week', $event)"
+        />
+      </sc-subsection>
+    </sc-section-card>
   </div>
 </div>
+
+@if (mode() === 'edit') {
+  <!-- Dónde se usa este horario: grupos y calendarios, cada uno con su icono y su cifra. -->
+  <sc-drawer
+    position="right"
+    width="var(--sc-spacing-25)"
+    [visible]="usosAbierto()"
+    [header]="'repositories.horarios.section_uses' | translate"
+    (visibleChange)="usosAbierto.set($event)"
+  >
+    <div class="vistas">
+      <sc-selectbutton
+        size="sm"
+        [ariaLabel]="'repositories.horarios.section_uses' | translate"
+        [options]="opcionesDeUso()"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        [value]="usoVista()"
+        (valueChange)="usoVista.set($any($event))"
+      >
+        <ng-template #item let-o>
+          <span class="opcion"><sc-icon [name]="o.icono" [size]="16" aria-hidden="true" />{{ o.label }} <span class="opcion__cifra">{{ o.cuantos }}</span></span>
+        </ng-template>
+      </sc-selectbutton>
+    </div>
+    @if (usoActual().length === 0) {
+      <p class="usos__nada sc-text-body-regular">{{ usoNada() }}</p>
+    } @else {
+      <ul class="usos__lista" role="list">
+        @for (i of usoActual(); track $index) {
+          <li class="uso">
+            <span class="uso__icono" [class.uso__icono--cal]="usoVista() === 'calendarios'" aria-hidden="true"><sc-icon [name]="iconoDeUso()" [size]="16" /></span>
+            <span class="uso__cuerpo">
+              @if (i.grupoId) {
+                <a class="uso__nombre uso__nombre--enlace sc-text-body-semibold" [routerLink]="['/admin/grupos/editar', i.grupoId]">{{ i.nombre }}</a>
+              } @else {
+                <span class="uso__nombre sc-text-body-semibold">{{ i.nombre }}</span>
+              }
+              <span class="uso__etiquetas">
+                @for (e of i.etiquetas; track e) {
+                  <sc-tag [severity]="tonoDeEtiqueta(e)" [value]="e" />
+                }
+              </span>
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </sc-drawer>
+}

@@ -216,18 +216,6 @@
   white-space: nowrap;
 }
 
-/* Un día cerrado: la línea entera en rojo suave, de un solo color, y su letra en rojo. */
-.fila--cerrada {
-  .fila__letra {
-    color: var(--sc-text-danger);
-  }
-
-  .pista {
-    background-color: var(--sc-bg-danger-subtle);
-    background-image: none;
-  }
-}
-
 /* Dice por qué está cerrado si no es por la semana: «Cerrado» o el nombre del festivo. */
 .pista__nota {
   position: absolute;
@@ -282,11 +270,6 @@
   &--fuera {
     border: 1px solid var(--sc-border-default);
     background: var(--sc-bg-hover);
-  }
-
-  &--dia {
-    border: 1px solid var(--sc-border-danger);
-    background-color: var(--sc-bg-danger-subtle);
   }
 }
 
@@ -374,11 +357,3 @@
   }
 }
 
-/* «Cerrado»: un interruptor con su nombre, a la derecha de la fila. */
-.cierre {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-  color: var(--sc-text-secondary);
-  cursor: pointer;
-}

@@ -6,37 +6,14 @@
   background: var(--sc-bg-canvas);
 }
 
-/* Una sola columna: la tarjeta General (identidad y dónde se usa, lado a lado) y debajo el horario, a todo el ancho. */
-.horario {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Identidad a la izquierda y dónde se usa a la derecha, sin huecos: las dos columnas parten de arriba. */
-.general {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  column-gap: var(--sc-spacing-2);
-  align-items: stretch;
-
-  @media (max-width: 1099px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* General en horizontal: nombre, descripción y zona horaria en una fila (con poco ancho, apilados). */
+/* Nombre, descripción y zona horaria en una fila bajo el título (con poco ancho, apilados). */
 .bloque {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--sc-spacing-1);
+  margin-block-end: var(--sc-spacing-1-5);
 
-  /* La descripción, a todo el ancho. */
-  > :nth-child(2) {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  @media (max-width: 599px) {
+  @media (max-width: 899px) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -84,6 +61,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
   margin-block-end: var(--sc-spacing-1);
 
@@ -124,7 +102,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-125);
-  max-block-size: 7.5rem;
+  max-block-size: 24rem;
   margin: 0;
   padding: 0;
   overflow-y: auto;

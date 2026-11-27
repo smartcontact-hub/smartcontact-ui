@@ -10,6 +10,7 @@ import {
   ScInputTextComponent,
   ScMultiSelectComponent,
   ScSectionCardComponent,
+  ScDrawerComponent,
   ScSelectButtonComponent,
   ScTagComponent,
   ScSelectComponent,
@@ -58,7 +59,6 @@ const VACIO: Borrador = {
   status: 'active',
   // De primeras, sin configurar: ningún día tiene franjas ni está cerrado.
   week: [[], [], [], [], [], [], []],
-  closedDays: [],
   periods: [],
   specials: [],
   holidayCalendarIds: [],
@@ -86,6 +86,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
     ScInputTextComponent,
     ScMultiSelectComponent,
     ScSectionCardComponent,
+    ScDrawerComponent,
     ScSelectButtonComponent,
     ScTagComponent,
     ScSelectComponent,
@@ -207,6 +208,9 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   protected readonly usos = computed(() => usosDelHorario(this.mode() === 'edit' ? this.horarioId : null, this.groupsStore.groups()));
 
   /** Qué sitio se ve en «Dónde se usa». */
+  /** El cajón de «Dónde se usa» (al editar). */
+  protected readonly usosAbierto = signal(false);
+
   protected readonly usoVista = signal<TipoDeUso>('grupos');
   protected readonly opcionesDeUso = computed(() => {
     this.lang();
@@ -298,20 +302,6 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     }
     const { id: _id, ...datos } = normalizarHorario(origen as unknown as Record<string, unknown>) as Horario;
     this.form.set({ ...datos, name: nombreDeCopia(origen.name, this.store.items().map((h) => h.name)) });
-  }
-
-  /** Las franjas de la semana cambian: un día con franjas deja de estar cerrado; quitarlas todas lo deja sin configurar, no cerrado. */
-  protected ponerSemana(week: Semana): void {
-    this.form.update((f) => ({ ...f, week, closedDays: (f.closedDays ?? []).filter((d) => (week[d] ?? []).length === 0) }));
-  }
-
-  /** Marca o desmarca un día como cerrado; cerrarlo borra sus franjas. */
-  protected cerrarDia(dia: number, cerrado: boolean): void {
-    this.form.update((f) => ({
-      ...f,
-      week: cerrado ? f.week.map((x, i) => (i === dia ? [] : x)) : f.week,
-      closedDays: cerrado ? [...new Set([...(f.closedDays ?? []), dia])].sort() : (f.closedDays ?? []).filter((d) => d !== dia),
-    }));
   }
 
   protected update<K extends keyof Borrador>(key: K, value: Borrador[K]): void {

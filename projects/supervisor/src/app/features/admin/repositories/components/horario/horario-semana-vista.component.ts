@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, input, output, signal, untracked } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScConfirmService, ScToggleSwitchComponent } from '@smartcontact-hub/components';
+import { ScConfirmService } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { LanguageService } from '@core/services/language.service';
@@ -56,7 +56,7 @@ interface Arrastre {
  */
 @Component({
   selector: 'sc-horario-semana-vista',
-  imports: [HorarioFranjasComponent, ScIconComponent, ScToggleSwitchComponent, TooltipModule, TranslateModule],
+  imports: [HorarioFranjasComponent, ScIconComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-semana-vista.component.html',
   styleUrl: './horario-semana-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -84,12 +84,9 @@ export class HorarioSemanaVistaComponent {
 
   readonly semana = input.required<Semana>();
   readonly zona = input('Europe/Madrid');
-  /** Los días (0 = lunes) marcados como cerrados. */
-  readonly cerrados = input<readonly number[]>([]);
   /** Lo que le pasa a la semana (`validarSemana`), para decirlo bajo su día; `null` si vale. */
   readonly falta = input<{ readonly dia: number; readonly codigo: string } | null>(null);
   readonly semanaChange = output<Semana>();
-  readonly cierreChange = output<{ readonly dia: number; readonly cerrado: boolean }>();
 
   /** El instante de ahora en la zona del horario; se refresca cada minuto. */
   private readonly ahora = signal(Date.now());
@@ -109,10 +106,9 @@ export class HorarioSemanaVistaComponent {
   protected readonly sugerencia = computed(() => {
     this.lang();
     const semana = this.semana();
-    const cerrados = new Set(this.cerrados());
     const origen = semana.findIndex((f) => f.length > 0);
     if (origen < 0) return null;
-    const vacios = semana.map((f, i) => (i !== origen && f.length === 0 && !cerrados.has(i) ? i : -1)).filter((i) => i >= 0);
+    const vacios = semana.map((f, i) => (i !== origen && f.length === 0 ? i : -1)).filter((i) => i >= 0);
     if (vacios.length === 0) return null;
     const largo = new Intl.DateTimeFormat(this.language.locale(), { weekday: 'long' });
     return {
@@ -182,9 +178,6 @@ export class HorarioSemanaVistaComponent {
     this.semanaChange.emit(this.semana().map((f, i) => (destinos.includes(i) ? franjas.map((x): Franja => [x[0], x[1]]) : f)));
   }
 
-  protected alternarCierre(dia: number, cerrado: boolean): void {
-    this.cierreChange.emit({ dia, cerrado });
-  }
 
   private readonly arrastre = signal<Arrastre | null>(null);
 
@@ -197,7 +190,6 @@ export class HorarioSemanaVistaComponent {
     const hoy = this.hoy();
     const drag = this.arrastre();
     const semana = this.semana();
-    const cerrados = new Set(this.cerrados());
     const letra = new Intl.DateTimeFormat(this.language.locale(), { weekday: 'narrow' });
     const largo = new Intl.DateTimeFormat(this.language.locale(), { weekday: 'long' });
     const cerrado = this.translate.instant('repositories.horarios.closed') as string;
@@ -249,9 +241,6 @@ export class HorarioSemanaVistaComponent {
         ahoraTexto: fecha === hoy ? horaTexto(this.momento().minutos) : '',
         barras,
         seleccion,
-        cerrado: cerrados.has(i) && minutos === 0 && !seleccion,
-        nota: cerrados.has(i) && minutos === 0 && !seleccion ? cerrado : null,
-        marcado: cerrados.has(i),
         franjas,
         nombre: largo.format(aFecha(fecha)),
         horas: minutos > 0 ? this.formatoHoras(minutos) : '—',

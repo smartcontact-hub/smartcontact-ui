@@ -8,7 +8,7 @@
 
     <ul class="sv__filas">
       @for (d of dias(); track d.fecha) {
-        <li class="fila" [class.fila--hoy]="d.esHoy" [class.fila--cerrada]="d.cerrado">
+        <li class="fila" [class.fila--hoy]="d.esHoy">
           <span class="fila__dia">
             <span class="fila__letra sc-text-body-semibold" [attr.title]="d.esHoy ? ('repositories.horarios.sv.today' | translate) : null">{{ d.letra }}</span>
           </span>
@@ -64,16 +64,7 @@
           <span class="fila__horas sc-text-caption-semibold">{{ d.minutos > 0 ? d.horas : '' }}</span>
           <!-- Las franjas al lado del mapa (con poco ancho, debajo). -->
           <span class="fila__franjas">
-            @if (!d.cerrado) {
-              <sc-horario-franjas class="semana__franjas" [franjas]="d.franjas" [conVacia]="true" [maxVisibles]="2" [etiqueta]="d.nombre" (franjasChange)="ponerDia(d.indice, $event)" />
-            }
-            <!-- El día cerrado se marca a propósito (un día sin tramos puede estar solo sin configurar) y solo se ofrece sin tramos. -->
-            @if (d.marcado || d.barras.length === 0) {
-              <label class="cierre sc-text-caption-semibold">
-                <sc-toggleswitch size="sm" [ariaLabel]="('repositories.horarios.closed' | translate) + ': ' + d.nombre" [checked]="d.marcado" (checkedChange)="alternarCierre(d.indice, $event)" />
-                {{ 'repositories.horarios.closed' | translate }}
-              </label>
-            }
+            <sc-horario-franjas class="semana__franjas" [franjas]="d.franjas" [conVacia]="true" [maxVisibles]="2" [etiqueta]="d.nombre" (franjasChange)="ponerDia(d.indice, $event)" />
           </span>
           @if (falta()?.dia === d.indice) {
             <p class="fila__error field__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>
@@ -87,6 +78,5 @@
   <ul class="sv__leyenda" role="list">
     <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--abierto" aria-hidden="true"></span>{{ 'repositories.horarios.sv.open' | translate }}</li>
     <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--fuera" aria-hidden="true"></span>{{ 'repositories.horarios.sv.closed' | translate }}</li>
-    <li class="leyenda sc-text-caption-semibold"><span class="leyenda__muestra leyenda__muestra--dia" aria-hidden="true"></span>{{ 'repositories.horarios.sv.day_closed' | translate }}</li>
   </ul>
 </div>

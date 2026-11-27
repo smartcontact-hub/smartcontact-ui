@@ -1498,6 +1498,7 @@
       "contacts_delete_title_one": "Eliminar 1 contato?"
     },
     "horarios": {
+      "see_uses": "Ver onde é usado",
       "title": "Horários",
       "singular": "horário",
       "create_title": "Novo horário",
@@ -1538,8 +1539,8 @@
         "prev": "Semana anterior",
         "next": "Semana seguinte",
         "today": "Hoje",
-        "open": "Atendido",
-        "closed": "Não atendido"
+        "open": "Em horário",
+        "closed": "Fora de horário"
       },
       "col_schedule": "Horário",
       "uses": {

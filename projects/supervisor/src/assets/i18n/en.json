@@ -1498,6 +1498,7 @@
       "contacts_delete_title_one": "Delete 1 contact?"
     },
     "horarios": {
+      "see_uses": "See where it is used",
       "title": "Schedules",
       "singular": "schedule",
       "create_title": "New schedule",
@@ -1538,8 +1539,8 @@
         "prev": "Previous week",
         "next": "Next week",
         "today": "Today",
-        "open": "Served",
-        "closed": "Not served"
+        "open": "In hours",
+        "closed": "Out of hours"
       },
       "col_schedule": "Schedule",
       "uses": {
