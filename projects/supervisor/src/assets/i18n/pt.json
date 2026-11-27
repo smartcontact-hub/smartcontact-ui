@@ -1620,6 +1620,7 @@
       "slot_start_aria": "Início, {{day}}",
       "slot_end_aria": "Fim, {{day}}",
       "slot_remove_aria": "Remover faixa, {{day}}",
+      "slot_midnight": "Um período não pode passar das 00:00: termina no máximo a essa hora.",
       "slot_add": "Adicionar faixa",
       "copy_from": "Copiar as faixas de",
       "copy_to": "Para os dias",

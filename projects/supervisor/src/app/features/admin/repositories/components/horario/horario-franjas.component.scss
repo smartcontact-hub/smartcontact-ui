@@ -1,4 +1,5 @@
 :host {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -57,4 +58,15 @@
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-5);
+}
+
+/* El aviso de una franja que pasa de las 00:00: justo bajo ella, sin mover las filas de al lado. */
+.franjas__aviso {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 0;
+  z-index: 2;
+  margin: 0;
+  white-space: nowrap;
+  color: var(--sc-text-danger);
 }

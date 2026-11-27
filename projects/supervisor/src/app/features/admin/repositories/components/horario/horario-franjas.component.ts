@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output, signal } f
 import { TranslateModule } from '@ngx-translate/core';
 import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScBadgeComponent, ScButtonComponent, ScDatepickerComponent } from '@smartcontact-hub/components';
 
 import { cruzaMedianoche, type Franja, MINUTOS_DEL_DIA } from '../../state/horarios.core.mjs';
 
@@ -27,7 +27,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
  */
 @Component({
   selector: 'sc-horario-franjas',
-  imports: [NgTemplateOutlet, PopoverModule, TooltipModule, ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, ScTagComponent, TranslateModule],
+  imports: [NgTemplateOutlet, PopoverModule, TooltipModule, ScBadgeComponent, ScButtonComponent, ScDatepickerComponent, TranslateModule],
   template: `
     <ng-template #filaTpl let-fila let-i="i">
       <div class="franjas__fila">
@@ -53,9 +53,6 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
           [value]="fila.fin"
           (valueChange)="cambiar(i, 1, $event)"
         />
-        @if (fila.noche) {
-          <sc-tag severity="secondary" [value]="'repositories.horarios.next_day' | translate" />
-        }
         <!-- Quitar una franja: la papelera, que elimina algo que existe. -->
         @if (fila.quitable) {
           <sc-button
@@ -72,6 +69,10 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
 
     @for (fila of visibles(); track $index) {
       <ng-container *ngTemplateOutlet="filaTpl; context: { $implicit: fila, i: $index }" />
+    }
+    <!-- Una franja no puede pasar de las 00:00 (no acaba al día siguiente): el aviso sale bajo ella y la hora no se aplica. -->
+    @if (aviso()) {
+      <p class="franjas__aviso sc-text-caption-regular" role="alert">{{ 'repositories.horarios.slot_midnight' | translate }}</p>
     }
     <!-- Las que pasan de las visibles, tras un badge con su número; al pulsarlo se abren para editarlas. -->
     @if (extras().length > 0) {
@@ -110,6 +111,9 @@ export class HorarioFranjasComponent {
   /** Cuántas filas se ven; las demás, tras un badge «+N». `0` = todas. */
   readonly maxVisibles = input(0);
   readonly franjasChange = output<readonly Franja[]>();
+
+  /** Se intentó una franja que pasa de las 00:00. */
+  protected readonly aviso = signal(false);
 
   /** Filas a medio rellenar: sin franjas hay siempre una; un «+» añade otra. Con las dos horas puestas, la fila pasa a ser una franja. */
   private readonly borradores = signal<readonly (readonly [Date | null, Date | null])[]>([]);
@@ -152,13 +156,16 @@ export class HorarioFranjasComponent {
     const n = this.franjas().length;
     if (indice >= n) return this.rellenarBorrador(indice - n, extremo, hora);
     const minutos = aMinutos(hora);
-    this.franjasChange.emit(
-      this.franjas().map((f, i): Franja => {
-        if (i !== indice) return f;
-        // El fin a las 00:00 es el final del día, no su principio.
-        return extremo === 0 ? [minutos, f[1]] : [f[0], minutos === 0 ? MINUTOS_DEL_DIA : minutos];
-      }),
-    );
+    const actual = this.franjas()[indice];
+    // El fin a las 00:00 es el final del día, no su principio.
+    const nueva: Franja = extremo === 0 ? [minutos, actual[1]] : [actual[0], minutos === 0 ? MINUTOS_DEL_DIA : minutos];
+    // Una franja no pasa de las 00:00: si el fin no es posterior al inicio, no se aplica y se avisa.
+    if (nueva[1] <= nueva[0]) {
+      this.aviso.set(true);
+      return;
+    }
+    this.aviso.set(false);
+    this.franjasChange.emit(this.franjas().map((f, i): Franja => (i === indice ? nueva : f)));
   }
 
   /** Una fila vacía guarda lo que se va poniendo; con las dos horas, pasa a ser una franja. */
@@ -166,7 +173,13 @@ export class HorarioFranjasComponent {
     const bs = this.borradoresActuales();
     const [a, b] = bs[k] ?? [null, null];
     const nuevo: readonly [Date | null, Date | null] = extremo === 0 ? [hora, b] : [a, hora];
-    if (nuevo[0] && nuevo[1]) {
+    if (nuevo[0] && nuevo[1] && aMinutos(nuevo[1]) !== 0 && aMinutos(nuevo[1]) <= aMinutos(nuevo[0])) {
+      // Acabaría al día siguiente: no se crea, se avisa y se deja la fila para corregirla.
+      this.aviso.set(true);
+      bs[k] = nuevo;
+      this.borradores.set(bs);
+    } else if (nuevo[0] && nuevo[1]) {
+      this.aviso.set(false);
       bs.splice(k, 1);
       this.borradores.set(bs);
       const fin = aMinutos(nuevo[1]);

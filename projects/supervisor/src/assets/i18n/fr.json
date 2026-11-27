@@ -1620,6 +1620,7 @@
       "slot_start_aria": "Début, {{day}}",
       "slot_end_aria": "Fin, {{day}}",
       "slot_remove_aria": "Retirer la plage, {{day}}",
+      "slot_midnight": "Une plage ne peut pas dépasser 00:00 : elle finit au plus tard à cette heure.",
       "slot_add": "Ajouter une plage",
       "copy_from": "Copier les plages de",
       "copy_to": "Vers les jours",

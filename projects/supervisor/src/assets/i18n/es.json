@@ -1620,6 +1620,7 @@
       "slot_start_aria": "Inicio, {{day}}",
       "slot_end_aria": "Fin, {{day}}",
       "slot_remove_aria": "Quitar franja, {{day}}",
+      "slot_midnight": "Una franja no puede pasar de las 00:00: acaba como mucho a esa hora.",
       "slot_add": "Añadir franja",
       "copy_from": "Copiar las franjas de",
       "copy_to": "A los días",

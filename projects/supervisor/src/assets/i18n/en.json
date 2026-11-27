@@ -1620,6 +1620,7 @@
       "slot_start_aria": "Start, {{day}}",
       "slot_end_aria": "End, {{day}}",
       "slot_remove_aria": "Remove time slot, {{day}}",
+      "slot_midnight": "A slot cannot go past 00:00: it can end at that time at the latest.",
       "slot_add": "Add time slot",
       "copy_from": "Copy the time slots from",
       "copy_to": "To the days",
