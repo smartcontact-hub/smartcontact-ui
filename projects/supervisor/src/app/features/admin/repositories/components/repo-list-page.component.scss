@@ -53,14 +53,13 @@
 .sched {
   display: inline-flex;
   align-items: center;
-  gap: var(--sc-spacing-1);
+  gap: 1rem;
   white-space: nowrap;
 }
 
 .sched__grupo {
   display: flex;
   align-items: center;
-  min-inline-size: 8rem;
 }
 
 .sched__linea {

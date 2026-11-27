@@ -130,16 +130,50 @@ export class HorarioSemanaVistaComponent {
     const destinos = sug.laborables.length > 0 ? sug.laborables : sug.todos;
     const celdas = this.host.nativeElement.querySelectorAll('.fila__franjas');
     const clave = sug.laborables.length > 0 ? 'repeat_prompt_weekdays' : 'repeat_prompt';
-    const acepta = await this.confirm.request({
+    const objetivo = celdas[sug.origen]?.querySelector('.franjas__fila') ?? celdas[sug.origen] ?? null;
+    const respuesta = this.confirm.request({
       title: this.translate.instant('repositories.horarios.sv.repeat_title') as string,
       body: this.translate.instant(`repositories.horarios.sv.${clave}`, { day: sug.nombre.charAt(0).toUpperCase() + sug.nombre.slice(1) }) as string,
       acceptLabel: this.translate.instant('repositories.horarios.sv.repeat_yes') as string,
       rejectLabel: this.translate.instant('repositories.horarios.sv.repeat_no') as string,
       icon: 'content_copy',
       // Pegado a la franja recién puesta (su fila de horas), no a toda la celda, que es mucho más ancha.
-      target: celdas[sug.origen]?.querySelector('.franjas__fila') ?? celdas[sug.origen] ?? null,
+      target: objetivo,
     });
+    this.colocarGlobo(objetivo);
+    const acepta = await respuesta;
     if (acepta) this.repetir(sug.origen, destinos);
+  }
+
+  /**
+   * PrimeNG pega el globo al borde izquierdo del botón y lo abre hacia abajo: con una franja estrecha queda corrido a la derecha y
+   * tapa los días de debajo. Se recoloca encima de la franja recién puesta y centrado sobre ella, con la flecha apuntando hacia
+   * abajo (la variante «flipped» del propio componente).
+   */
+  private colocarGlobo(objetivo: Element | null, intentos = 12): void {
+    if (!objetivo) return;
+    const globo = document.querySelector<HTMLElement>('.p-confirmpopup');
+    if (!globo) {
+      if (intentos > 0) requestAnimationFrame(() => this.colocarGlobo(objetivo, intentos - 1));
+      return;
+    }
+    // Se coloca ya y otra vez al asentarse el globo (su ancho final llega tras pintarse el texto).
+    this.posicionarGlobo(globo, objetivo);
+    setTimeout(() => this.posicionarGlobo(globo, objetivo), 150);
+  }
+
+  private posicionarGlobo(globo: HTMLElement, objetivo: Element): void {
+    const t = objetivo.getBoundingClientRect();
+    // El tamaño sin la animación de entrada (la escala del globo falsea `getBoundingClientRect`).
+    const ancho = globo.offsetWidth;
+    const alto = globo.offsetHeight;
+    const margen = 8;
+    const izquierda = Math.min(Math.max(t.left + t.width / 2 - ancho / 2, margen), window.innerWidth - ancho - margen);
+    globo.style.left = `${izquierda + window.scrollX}px`;
+    globo.style.top = `${t.top - alto - margen + window.scrollY}px`;
+    globo.style.setProperty('--p-confirmpopup-arrow-left', `${t.left + t.width / 2 - izquierda - 18}px`);
+    globo.setAttribute('data-p-confirmpopup-flipped', 'true');
+    globo.classList.add('p-confirmpopup-flipped');
   }
 
   /** Repite las franjas de un día en los días indicados. */
